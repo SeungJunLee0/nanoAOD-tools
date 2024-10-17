@@ -164,7 +164,7 @@ class ExampleAnalysis(Module):
                 lepton_index.append(index)
         if count_leptons != 2 or muons[lepton_index[0]].charge == muons[lepton_index[1]].charge:
             return False
-        if  (muons[lepton_index[0]].p4 + muons[lepton_index[1]].p4).M() <=20.0 or np.abs((muons[lepton_index[0]].p4 + muons[lepton_index[1]].p4).M() - 91.19) <=15.0:
+        if  (muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M() <=20.0 or np.abs((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M() - 91.19) <=15.0:
             return False
 
         nBtag =0
@@ -188,7 +188,7 @@ class ExampleAnalysis(Module):
             self.h_zerosubjeteta.Fill(jets[jet_index[1]].eta)
             self.h_zerosubjetpt.Fill(jets[jet_index[1]].pt)
             self.h_num_muon.Fill(len(muons))
-            self.h_zeromll.Fill((muons[lepton_index[0]].p4 + muons[lepton_index[1]].p4).M())
+            self.h_zeromll.Fill((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M())
         if nBtag ==1 and nDeltaR >= 2:
             self.h_oneleptonpt.Fill(muons[lepton_index[0]].pt)
             self.h_oneleptoneta.Fill(muons[lepton_index[0]].eta)
@@ -198,7 +198,7 @@ class ExampleAnalysis(Module):
             self.h_onesubleptoneta.Fill(muons[lepton_index[1]].eta)
             self.h_onesubjeteta.Fill(jets[jet_index[1]].eta)
             self.h_onesubjetpt.Fill(jets[jet_index[1]].pt)
-            self.h_onemll.Fill((muons[lepton_index[0]].p4 + muons[lepton_index[1]].p4).M())
+            self.h_onemll.Fill((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M())
         if nBtag ==2 and nDeltaR >= 2:    
             self.h_twoleptonpt.Fill(muons[lepton_index[0]].pt)
             self.h_twoleptoneta.Fill(muons[lepton_index[0]].eta)
@@ -208,7 +208,7 @@ class ExampleAnalysis(Module):
             self.h_twosubleptoneta.Fill(muons[lepton_index[1]].eta)
             self.h_twosubjeteta.Fill(jets[jet_index[1]].eta)
             self.h_twosubjetpt.Fill(jets[jet_index[1]].pt)
-            self.h_twomll.Fill((muons[lepton_index[0]].p4 + muons[lepton_index[1]].p4).M())
+            self.h_twomll.Fill((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M())
                 
           
 
@@ -232,13 +232,13 @@ def presel():
     parser.add_argument('-o', '--option',type=str, default='test')
     args = parser.parse_args()
     print(args.option)
-    json ="Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt" 
+    json ="Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
     AllName = "hist_" + args.option +".root"
-    preselection = "Muon_pt[0] > 25" , "Muon_pt[1] >20" 
+    preselection = "Muon_pt[0] > 25 && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = collectfile(args.option) 
     some_variable = "My Example Variable"
     p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
-                      ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots")
+                      ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
     p.run()
 
 if __name__=="__main__":
