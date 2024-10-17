@@ -237,6 +237,7 @@ def presel():
     preselection = "Muon_pt[0] > 25 && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = collectfile(args.option) 
     some_variable = "My Example Variable"
+
     p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
                       ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
     p.run()
