@@ -60,7 +60,7 @@ class ExampleAnalysis(Module):
         self.h_num_muon = ROOT.TH1F('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0., 10.)
         self.addObject(self.h_num_muon)
 
-        self.h_zerosubleptonpt = ROOT.TH1F('Zerotag_subeptonpt', 'Zerotag_subleptonpt', 100, 0., 500.)
+        self.h_zerosubleptonpt = ROOT.TH1F('Zerotag_subleptonpt', 'Zerotag_subleptonpt', 100, 0., 500.)
         self.addObject(self.h_zerosubleptonpt)
 
         self.h_zerosubleptoneta = ROOT.TH1F('Zerotag_subleptoneta', 'Zerotag_subleptoneta', 100, -6, 6.)
@@ -214,28 +214,19 @@ class ExampleAnalysis(Module):
 
         return True
 
-def collectfile(s):
-    if s == "test":
-        a =['/cms/ldap_home/seungjun/CMSSW_13_0_10/src/RDF_NANOTop/data.root'] 
-        return a 
-    if s == "c":
-        file_list = glob.glob('/store/data/Run2016C/DoubleMuon/NANOAOD/UL2016_MiniAODv1_NanoAODv2-v1/*/*')
-    for i in file_list:
-        a.append("file:"+str(i))
-    
-    return a
-
-
 
 def presel():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--option',type=str, default='test')
+    #parser.add_argument('-o', '--option',type=str, default='root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAOD/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_05Feb2018_94X_mcRun2_asymptotic_v2-v1/40000/2CE738F9-C212-E811-BD0E-EC0D9A8222CE.root')
+    parser.add_argument('-f', '--file',type=str, nargs='+', default=['root://cmsxrootd.fnal.gov//store/data/Run2018A/DoubleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/270000/C489C20E-FD93-8B42-9F63-0AB2FB0F5C39.root'])
+    #parser.add_argument('-f', '--file',type=str, default=['/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/data.root'])
+    parser.add_argument('-n', '--name',type=str, default='what')
     args = parser.parse_args()
-    print(args.option)
+    print(str(args.file))
     json ="Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
-    AllName = "hist_" + args.option +".root"
+    AllName = "hist_" + args.name +".root"
     preselection = "Muon_pt[0] > 25 && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
-    files = collectfile(args.option) 
+    files = args.file
     some_variable = "My Example Variable"
 
     p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
