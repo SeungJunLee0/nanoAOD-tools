@@ -148,11 +148,11 @@ class ExampleAnalysis(Module):
             #pass
         if met.pt <= 40:
             return False
-        if muons[0].pt <= 25 or np.abs(muons[0].eta) >= 2.4:
+        if muons[0].pt <= 25:
             return False
         if len(jets) < 2:
             return False
-        if jets[0].pt <= 30 or np.abs(jets[0].eta) >=2.4:
+        if jets[0].pt <= 30:
             return False
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
             return False
@@ -171,7 +171,7 @@ class ExampleAnalysis(Module):
         nDeltaR =0
         jet_index = []
         for index,j in enumerate(jets):
-            if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1 and count_leptons == 2:
+            if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1:
                 if deltaR(j.eta,j.phi,muons[lepton_index[0]].eta,muons[lepton_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[lepton_index[1]].eta,muons[lepton_index[1]].phi) > 0.4:
                     nDeltaR +=1
                     jet_index.append(index) 
@@ -218,13 +218,14 @@ class ExampleAnalysis(Module):
 def presel():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file',type=str, nargs='+', default='root://cmsxrootd.fnal.gov//store/data/Run2018A/DoubleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/270000/C489C20E-FD93-8B42-9F63-0AB2FB0F5C39.root')
+    #parser.add_argument('-f', '--file',type=str, default=['/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/test.root'])
     #parser.add_argument('-f', '--file',type=str, default=['/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/data.root'])
     parser.add_argument('-n', '--name',type=str, default='what')
     args = parser.parse_args()
     print(str(args.file))
     json ="Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
     AllName = "hist_" + args.name +".root"
-    preselection = "Muon_pt[0] > 25 && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
+    preselection = "Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = args.file
     some_variable = "My Example Variable"
 
