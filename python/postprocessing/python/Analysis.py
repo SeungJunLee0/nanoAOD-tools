@@ -141,6 +141,7 @@ class ExampleAnalysis(Module):
         pv = Object(event,"PV")
         #print(self.some_variable)
 
+
         hlt_conditions = {
             "Data_DoubleMuon_2018": [
                  hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
@@ -188,6 +189,23 @@ class ExampleAnalysis(Module):
         hlt_check = any(trigger for trigger in hlt_triggers)
         if hlt_check == False:
             return False
+
+        Channel = "None"
+        hlt_trigger_results = {}
+        for key, triggers in hlt_conditions.items():
+            hlt_trigger_results[key] = any(trigger for trigger in triggers)
+        
+        # 특정 트리거 조건이 충족되는지 확인
+        if hlt_trigger_results.get("Data_DoubleMuon_2018", False):
+            channel ="mumu"
+            print("This event matches the Data_DoubleMuon_2018 trigger.")
+        if hlt_trigger_results.get("Data_SingleMuon_2018", False) and hlt_trigger_results.get("Data_DoubleMuon_2018", True):
+            channel ="mumu"
+            print("This event matches the Data_SingleMuon_2018 trigger.")
+
+
+
+
         if len(jets) < 2:
             return False
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
