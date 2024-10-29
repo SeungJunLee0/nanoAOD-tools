@@ -143,86 +143,145 @@ class ExampleAnalysis(Module):
 
 
         hlt_conditions = {
-            "Data_DoubleMuon_2018": [
+            "mumu_2018": [
                  hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
             ],
-            "Data_SingleMuon_2018": [
+            "single_mu_2018": [
                  hlt.IsoMu24,
             ],
-            "Data_SingleElectron_2018": [
+            "single_e_2018": [
                  hlt.Ele32_WPTight_Gsf,
             ],
-            "Data_DoubleElectron_2018": [
+            "ee_2018": [
                  hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL,
                  hlt.DoubleEle25_CaloIdL_MW,
             ],
-            "Data_ElectronMuon_2018": [
+            "emu_2018": [
                  hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ,
                  hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
-            ],
-            "MC_2018": [
-                 hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ,
-                 hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
-                 hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL,
-                 hlt.DoubleEle25_CaloIdL_MW,
-                 hlt.Ele32_WPTight_Gsf,
-                 hlt.IsoMu24,
-                 hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
             ],
         }
 
+        channel = "None"
         condition_key = ""
-        if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable:
-            condition_key = "Data_DoubleMuon_2018"
-        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable:
-            condition_key = "Data_SingleMuon_2018"        
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable:
-            condition_key = "Data_SingleElectron_2018"        
-        elif "Data" in self.some_variable and "DoubleElectron" in self.some_variable and "2018" in self.some_variable:
-            condition_key = "Data_DoubleElectron_2018"        
-        elif "Data" in self.some_variable and "ElectronMuon" in self.some_variable and "2018" in self.some_variable:
-            condition_key = "Data_ElectronMuon_2018"        
-        elif "MC" in self.some_variable and "2018" in self.some_variable:
-            condition_key = "MC_2018"        
-
-        hlt_triggers = hlt_conditions.get(condition_key, [])
-        hlt_check = any(trigger for trigger in hlt_triggers)
-        if hlt_check == False:
-            return False
-
-        Channel = "None"
         hlt_trigger_results = {}
         for key, triggers in hlt_conditions.items():
             hlt_trigger_results[key] = any(trigger for trigger in triggers)
-        
-        # 특정 트리거 조건이 충족되는지 확인
-        if hlt_trigger_results.get("Data_DoubleMuon_2018", False):
-            channel ="mumu"
-            print("This event matches the Data_DoubleMuon_2018 trigger.")
-        if hlt_trigger_results.get("Data_SingleMuon_2018", False) and hlt_trigger_results.get("Data_DoubleMuon_2018", True):
-            channel ="mumu"
-            print("This event matches the Data_SingleMuon_2018 trigger.")
 
 
+        if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable and \
+            hlt_trigger_results.get("mumu_2018", False):
+            channel = "mumu"
+
+        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and \
+            hlt_trigger_results.get("mumu_2018", True) and hlt_trigger_results.get("single_mu_2018", False):
+            channel = "mumu"
+
+
+        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and \
+            hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_e_2018", True) and hlt_trigger_results.get("single_mu_2018", False):
+            channel = "emu"
+
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_mu_2018", True) and hlt_trigger_results.get("single_e_2018", False):
+            channel = "emu"
+
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("ee_2018", True) and  hlt_trigger_results.get("single_e_2018", False):
+            channel = "ee"
+
+        elif "Data" in self.some_variable and "DoubleEG" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("ee_2018", False):
+            channel = "ee"
+
+        elif "Data" in self.some_variable and "MuonEG" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("emu_2018", False):
+            channel = "emu"
+
+
+        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("ee_2018", False) or hlt_trigger_results.get("single_e_2018", False):
+            channel = "ee"
+
+        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_mu_2018", True) and hlt_trigger_results.get("single_e_2018", False):
+            channel = "emu"
+
+
+
+
+
+        elif "MC" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("ee_2018", False) or hlt_trigger_results.get("single_e_2018", False):
+            channel = "ee"
+
+
+
+        elif "MC" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("emu_2018", False) or hlt_trigger_results.get("single_e_2018", False) and hlt_trigger_results.get("single_mu_2018", False):
+            channel = "emu"
+
+        elif "MC" in self.some_variable and "2018" in self.some_variable \
+            hlt_trigger_results.get("mumu_2018", False) or hlt_trigger_results.get("single_mu_2018", False):
+            channel = "mumu"
+
+
+
+
+
+
+
+        if channel == "None":
+            return False
 
 
         if len(jets) < 2:
             return False
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
             return False
-        if "ElectronMuon" not in condition_key:
-            if met.pt <=40.0:
-                return False
-        count_leptons =0
-        lepton_index = []
+        if channel != "emu" and met.pt <=40.0:
+            return False
+
+
+
+        count_muons =0
+        muons_index = []
         for index,l in enumerate(muons):
-            if muons[index].pfRelIso04_all < 0.15 and muons[index].tightId:
-                count_leptons +=1 
-                lepton_index.append(index)
-        if count_leptons != 2 or muons[lepton_index[0]].charge == muons[lepton_index[1]].charge:
+            if muons[index].pfRelIso04_all < 0.15 and muons[index].tightId and muons[index].pt >20. and muons[index].eta < 2.4:
+                count_muons +=1 
+                muons_index.append(index)
+
+        count_electrons =0
+        electrons_index = []
+        for index,l in enumerate(electrons):
+            if electrons[index].tightId and electrons[index].pt >20. and electrons[index].eta < 2.4:
+                count_electrons +=1 
+                electrons_index.append(index)
+
+
+
+        if channel == "mumu" and count_muons != 2 and muons[muons_index[0]].pt <= 25. and muons[muons_index[1]].pt <= 25 :
             return False
-        if  (muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M() <=20.0 or np.abs((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M() - 91.19) <=15.0:
+        
+        if channel == "emu" and (count_muons + count_electrons) != 2 and muons[muons_index[0]].pt <= 25. and electrons[electrons_index[0]].pt <= 25:
             return False
+
+        if channel == "ee" and count_electrons != 2 and electrons[electrons_index[0]].pt <= 25. and electrons[electrons_index[1]].pt <= 25:
+            return False
+
+
+
+
+        if channel =="mumu" and ( (muons[muons_index[0]].p4 + muons[muons_index[1]].p4).M() <= 20 or np.abs((muons[muons_index[0]].p4 + muons[muons_index[1]].p4).M() -91.19) <= 15.0:
+            return False
+
+        if channel == "ee" and ( (electrons[electrons_index[0]].p4 + electrons[electrons_index[1]].p4).M() <= 20 or np.abs((electrons[electrons_index[0]].p4 + electrons[electrons_index[1]].p4).M() -91.19) <15.0:
+            return False
+
+        if channel == "emu" and (muons[muons_index[0]].p4 + electrons[electrons_index[0]].p4).M() <= 20:
+            return False
+
+
 
         nBtag =0
         nDeltaR =0
