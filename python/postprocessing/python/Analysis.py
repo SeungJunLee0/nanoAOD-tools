@@ -262,7 +262,7 @@ class ExampleAnalysis(Module):
         if channel == "mumu" and count_muons != 2:
             return False
 
-        if channel == "emu" and (count_muons + count_electrons) != 2:
+        if channel == "emu" and count_muons ==1 and  count_electrons == 1:
             return False
 
         if channel == "ee" and count_electrons != 2:
@@ -273,7 +273,7 @@ class ExampleAnalysis(Module):
             if muons[muons_index[0]].pt <= 25. and muons[muons_index[1]].pt <= 25 :
                 return False
         
-        if channel == "emu" and (count_muons + count_electrons) == 2:
+        if channel == "emu" and count_muons == 1 and  count_electrons == 1:
             if muons[muons_index[0]].pt <= 25. and electrons[electrons_index[0]].pt <= 25:
                 return False
 
