@@ -223,13 +223,20 @@ def presel():
     json ="../data/JSON/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
     AllName = "output/hist_" + args.name +".root"
     preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
-    # HLT or PV 
     files = args.file
     some_variable = "My Example Variable"
 
-    p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
-                      ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
-    p.run()
+    if args.name in "Data":
+        p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
+                          ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
+        p.run()
+
+    else:
+        p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
+                          ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots")
+        p.run()
+
+
 
 if __name__=="__main__":
     presel()
