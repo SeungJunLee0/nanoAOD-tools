@@ -48,7 +48,7 @@ class ExampleAnalysis(Module):
         self.h_zeroleptonpt = ROOT.TH1F('Zerotag_leptonpt', 'Zerotag_leptonpt', 100, 0., 500.)
         self.addObject(self.h_zeroleptonpt)
 
-        self.h_zeroleptoneta = ROOT.TH1F('Zerotag_leptoneta', 'Zerotag_leptoneta', 100, -6, 6.)
+        self.h_zeroleptoneta = ROOT.TH1F('Zerotag_leptoneta', 'Zerotag_leptoneta', 100, -6., 6.)
         self.addObject(self.h_zeroleptoneta)
 
         self.h_zerojeteta = ROOT.TH1F('Zerotag_jeteta', 'Zerotag_jeteta', 100,-6., 6.)
@@ -63,13 +63,13 @@ class ExampleAnalysis(Module):
         self.h_zerosubleptonpt = ROOT.TH1F('Zerotag_subleptonpt', 'Zerotag_subleptonpt', 100, 0., 500.)
         self.addObject(self.h_zerosubleptonpt)
 
-        self.h_zerosubleptoneta = ROOT.TH1F('Zerotag_subleptoneta', 'Zerotag_subleptoneta', 100, -6, 6.)
+        self.h_zerosubleptoneta = ROOT.TH1F('Zerotag_subleptoneta', 'Zerotag_subleptoneta', 100, -6., 6.)
         self.addObject(self.h_zerosubleptoneta)
 
-        self.h_zerosubjeteta = ROOT.TH1F('Zerotag_subjeteta', 'Zerotag_subjeteta', 100, 0., 500.)
+        self.h_zerosubjeteta = ROOT.TH1F('Zerotag_subjeteta', 'Zerotag_subjeteta', 100, -6., 6.)
         self.addObject(self.h_zerosubjeteta)
 
-        self.h_zerosubjetpt = ROOT.TH1F('Zerotag_subjetpt', 'Zerotag_subjetpt', 100, -6., 6.)
+        self.h_zerosubjetpt = ROOT.TH1F('Zerotag_subjetpt', 'Zerotag_subjetpt', 100, 0., 500.)
         self.addObject(self.h_zerosubjetpt)
 
         self.h_zeromll = ROOT.TH1F('Zerotag_m_ll', 'Zerotagm_{ll}', 300, 0, 100.)
@@ -79,53 +79,53 @@ class ExampleAnalysis(Module):
         self.h_oneleptonpt = ROOT.TH1F('Onetag_leptonpt', 'Onetag_leptonpt', 100, 0., 500.)
         self.addObject(self.h_oneleptonpt)
 
-        self.h_oneleptoneta = ROOT.TH1F('Onetag_leptoneta', 'Onetag_leptoneta', 100, -6, 6.)
+        self.h_oneleptoneta = ROOT.TH1F('Onetag_leptoneta', 'Onetag_leptoneta', 100, -6., 6.)
         self.addObject(self.h_oneleptoneta)
 
-        self.h_onejeteta = ROOT.TH1F('Onetag_jeteta', 'Onetag_jeteta', 100, 0., 500.)
+        self.h_onejeteta = ROOT.TH1F('Onetag_jeteta', 'Onetag_jeteta', 100, -6., 6.)
         self.addObject(self.h_onejeteta)
 
-        self.h_onejetpt = ROOT.TH1F('Onetag_jetpt', 'Onetag_jetpt', 100, -6., 6.)
+        self.h_onejetpt = ROOT.TH1F('Onetag_jetpt', 'Onetag_jetpt', 100, 0., 500.)
         self.addObject(self.h_onejetpt)
 
         self.h_onesubleptonpt = ROOT.TH1F('Onetag_subeptonpt', 'Onetag_subleptonpt', 100, 0., 500.)
         self.addObject(self.h_onesubleptonpt)
 
-        self.h_onesubleptoneta = ROOT.TH1F('Onetag_subleptoneta', 'Onetag_subleptoneta', 100, -6, 6.)
+        self.h_onesubleptoneta = ROOT.TH1F('Onetag_subleptoneta', 'Onetag_subleptoneta', 100, -6., 6.)
         self.addObject(self.h_onesubleptoneta)
 
-        self.h_onesubjeteta = ROOT.TH1F('Onetag_subjeteta', 'Onetag_subjeteta', 100, 0., 500.)
+        self.h_onesubjeteta = ROOT.TH1F('Onetag_subjeteta', 'Onetag_subjeteta', 100, -6., 6.)
         self.addObject(self.h_onesubjeteta)
 
-        self.h_onesubjetpt = ROOT.TH1F('Onetag_subjetpt', 'Onetag_subjetpt', 100, -6., 6.)
+        self.h_onesubjetpt = ROOT.TH1F('Onetag_subjetpt', 'Onetag_subjetpt', 100, 0., 500.)
         self.addObject(self.h_onesubjetpt)
 
         self.h_onemll = ROOT.TH1F('Onetag_m_ll', 'Onetagm_{ll}', 300, 0, 100.)
         self.addObject(self.h_onemll)
 
 ####################### Two     
-        self.h_twoleptonpt = ROOT.TH1F('Twotag_leptonpt', 'Onetag_leptonpt', 100, 0., 500.)
+        self.h_twoleptonpt = ROOT.TH1F('Twotag_leptonpt', 'Twotag_leptonpt', 100, 0., 500.)
         self.addObject(self.h_twoleptonpt)                                                                                                 
 
-        self.h_twoleptoneta = ROOT.TH1F('Twotag_leptoneta', 'Onetag_leptoneta', 100, -6, 6.)
+        self.h_twoleptoneta = ROOT.TH1F('Twotag_leptoneta', 'Twotag_leptoneta', 100, -6., 6.)
         self.addObject(self.h_twoleptoneta)
         
-        self.h_twojeteta = ROOT.TH1F('Twotag_jeteta', 'Onetag_jeteta', 100, 0., 500.)
+        self.h_twojeteta = ROOT.TH1F('Twotag_jeteta', 'Twotag_jeteta', 100, -6., 6.)
         self.addObject(self.h_twojeteta)
     
-        self.h_twojetpt = ROOT.TH1F('Twotag_jetpt', 'Onetag_jetpt', 100, -6., 6.)
+        self.h_twojetpt = ROOT.TH1F('Twotag_jetpt', 'Twotag_jetpt', 100, 0., 500.)
         self.addObject(self.h_twojetpt)
     
-        self.h_twosubleptonpt = ROOT.TH1F('Twotag_subeptonpt', 'Onetag_subleptonpt', 100, 0., 500.)
+        self.h_twosubleptonpt = ROOT.TH1F('Twotag_subeptonpt', 'Twotag_subleptonpt', 100, 0., 500.)
         self.addObject(self.h_twosubleptonpt)
     
-        self.h_twosubleptoneta = ROOT.TH1F('Twotag_subleptoneta', 'Onetag_subleptoneta', 100, -6, 6.)
+        self.h_twosubleptoneta = ROOT.TH1F('Twotag_subleptoneta', 'Twotag_subleptoneta', 100, -6., 6.)
         self.addObject(self.h_twosubleptoneta)
     
-        self.h_twosubjeteta = ROOT.TH1F('Twotag_subjeteta', 'Onetag_subjeteta', 100, 0., 500.)
+        self.h_twosubjeteta = ROOT.TH1F('Twotag_subjeteta', 'Twotag_subjeteta', 100, -6., 6.)
         self.addObject(self.h_twosubjeteta) 
     
-        self.h_twosubjetpt = ROOT.TH1F('Twotag_subjetpt', 'Onetag_subjetpt', 100, -6., 6.)
+        self.h_twosubjetpt = ROOT.TH1F('Twotag_subjetpt', 'Twotag_subjetpt', 100, 0, 500.)
         self.addObject(self.h_twosubjetpt)                                   
 
         self.h_twomll = ROOT.TH1F('Twotag_m_ll', 'Twotagm_{ll}', 300, 0, 100.)
@@ -146,10 +146,6 @@ class ExampleAnalysis(Module):
         if len(muons) < 2:
             return False
             #pass
-        if met.pt <= 40:
-            return False
-        if muons[0].pt <= 25:
-            return False
         if len(jets) < 2:
             return False
         if jets[0].pt <= 30:
@@ -173,9 +169,10 @@ class ExampleAnalysis(Module):
         for index,j in enumerate(jets):
             if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1:
                 if deltaR(j.eta,j.phi,muons[lepton_index[0]].eta,muons[lepton_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[lepton_index[1]].eta,muons[lepton_index[1]].phi) > 0.4:
+            #continue
                     nDeltaR +=1
                     jet_index.append(index) 
-                if j.btagDeepFlavB > 0.2770:
+                if deltaR(j.eta,j.phi,muons[lepton_index[0]].eta,muons[lepton_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[lepton_index[1]].eta,muons[lepton_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
                     nBtag +=1
         if nBtag ==0 and nDeltaR >=2:
             self.h_zeroleptonpt.Fill(muons[lepton_index[0]].pt)
@@ -225,7 +222,8 @@ def presel():
     print(str(args.file))
     json ="Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
     AllName = "hist_" + args.name +".root"
-    preselection = "Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
+    preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
+    # HLT or PV 
     files = args.file
     some_variable = "My Example Variable"
 
