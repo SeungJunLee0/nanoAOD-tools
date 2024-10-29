@@ -185,10 +185,8 @@ class ExampleAnalysis(Module):
             condition_key = "MC_2018"        
 
         hlt_triggers = hlt_conditions.get(condition_key, [])
-        #print(hlt_triggers)
         hlt_check = any(trigger for trigger in hlt_triggers)
         if hlt_check == False:
-            #print(hlt_check)
             return False
         if len(jets) < 2:
             return False
