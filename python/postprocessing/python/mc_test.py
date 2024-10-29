@@ -8,7 +8,6 @@ import random
 from argparse import ArgumentParser
 
 
-#data_title = ["test.txt"]
 data_title = ["DoubleMuon_Data_2018.txt"]
 
 print("press the mode")

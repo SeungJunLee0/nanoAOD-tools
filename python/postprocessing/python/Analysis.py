@@ -226,12 +226,15 @@ def presel():
     files = args.file
     some_variable = "My Example Variable"
 
-    if args.name in "Data":
+    print(args.name)
+    if "Data" in args.name:
+        print("It is data")
         p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
                           ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
         p.run()
 
     else:
+        print("It is MC")
         p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
                           ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots")
         p.run()
