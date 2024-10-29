@@ -226,7 +226,6 @@ def presel():
     files = args.file
     some_variable = "My Example Variable"
 
-    print(args.name)
     if "Data" in args.name:
         print("It is data")
         p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
