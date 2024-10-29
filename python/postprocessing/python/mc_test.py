@@ -98,7 +98,7 @@ cmsenv
 scram b
 cd /cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python
 python3 Analysis.py -f {dataset_name} -n {dir_name}_{job_id} 
-xrdcp -f hist_{dir_name}_{job_id}.root {output_dir}/
+xrdcp -f output/hist_{dir_name}_{job_id}.root {output_dir}/
 EndOfMCGenerationFile
 
 # Make file executable
