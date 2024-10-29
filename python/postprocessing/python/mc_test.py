@@ -8,7 +8,7 @@ import random
 from argparse import ArgumentParser
 
 
-data_title = ["DoubleMuon_Data_2018.txt"]
+data_title = ["DoubleMuon_Data_2018.txt" , "SingleMuon_Data_2018.txt" ]
 
 print("press the mode")
 for i in range(len(data_title)):
