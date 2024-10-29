@@ -1,5 +1,13 @@
 # NANOTop
 
+git clone https://github.com/SeungJunLee0/nanoAOD-tools.git  PhysicsTools/NanoAODTools 
+
+
+cd PhysicsTools/NanoAODTools/python/postprocessing/python
+
+mkdir output
+
+
 
 ## find some nanoAODv9
 
@@ -16,3 +24,8 @@ python3 Analysis.py -o test
 
 root://cmsxrootd.fnal.gov//store/data/Run2018A/DoubleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/270000/C218937D-A2AC-9949-8E65-D14C50F824AF.root
 root://cms-xrd-global.cern.ch//store/data/Run2018A/DoubleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/270000/C218937D-A2AC-9949-8E65-D14C50F824AF.root
+
+
+
+
+
