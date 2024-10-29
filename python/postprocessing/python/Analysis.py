@@ -139,16 +139,57 @@ class ExampleAnalysis(Module):
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
-        # select events with at least 2 muons
+        #print(self.some_variable)
 
-        #hlt_h = hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ or hlt.Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ 
-        #hlt_all = hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL or hlt.Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL 
-        if len(muons) < 2:
-            return False
+        hlt_conditions = {
+            "Data_DoubleMuon_2018": [
+                 hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
+            ],
+            "Data_SingleMuon_2018": [
+                 hlt.IsoMu24,
+            ],
+            "Data_SingleElectron_2018": [
+                 hlt.Ele32_WPTight_Gsf,
+            ],
+            "Data_DoubleElectron_2018": [
+                 hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL,
+                 hlt.DoubleEle25_CaloIdL_MW,
+            ],
+            "Data_ElectronMuon_2018": [
+                 hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ,
+                 hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
+            ],
+            "MC_2018": [
+                 hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ,
+                 hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
+                 hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL,
+                 hlt.DoubleEle25_CaloIdL_MW,
+                 hlt.Ele32_WPTight_Gsf,
+                 hlt.IsoMu24,
+                 hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
+            ],
+        }
+
+        condition_key = ""
+        if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable:
+            condition_key = "Data_DoubleMuon_2018"
+        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable:
+            condition_key = "Data_SingleMuon_2018"        
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable:
+            condition_key = "Data_SingleElectron_2018"        
+        elif "Data" in self.some_variable and "DoubleElectron" in self.some_variable and "2018" in self.some_variable:
+            condition_key = "Data_DoubleElectron_2018"        
+        elif "Data" in self.some_variable and "ElectronMuon" in self.some_variable and "2018" in self.some_variable:
+            condition_key = "Data_ElectronMuon_2018"        
+        elif "MC" in self.some_variable and "2018" in self.some_variable:
+            condition_key = "MC_2018"        
+
+        hlt_triggers = hlt_conditions.get(condition_key, [])
+        print(hlt_triggers)
+        hlt_check = any(trigger for trigger in hlt_triggers)
+
             #pass
         if len(jets) < 2:
-            return False
-        if jets[0].pt <= 30:
             return False
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
             return False
@@ -224,7 +265,7 @@ def presel():
     AllName = "output/hist_" + args.name +".root"
     preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = args.file
-    some_variable = "My Example Variable"
+    some_variable = args.name#"My Example Variable"
 
     if "Data" in args.name:
         print("It is data")
