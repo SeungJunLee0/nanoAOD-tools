@@ -8,8 +8,9 @@ for file in *.submit
 do
     PWD=$(pwd)
 #echo ${PWD:46:-15}
-    width=${PWD:46:-15}"_"${file:19:-7}
-#echo $width
+#    width=${PWD:46:-15}"_"${file:19:-7}
+    width=${PWD:110:-13}"_"${file:19:-7}
+#    echo $width
     condor_submit -append accounting_group="group_cms" -batch-name $width  $file
 done
 
