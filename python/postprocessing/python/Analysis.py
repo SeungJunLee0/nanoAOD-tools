@@ -185,14 +185,18 @@ class ExampleAnalysis(Module):
             condition_key = "MC_2018"        
 
         hlt_triggers = hlt_conditions.get(condition_key, [])
-        print(hlt_triggers)
+        #print(hlt_triggers)
         hlt_check = any(trigger for trigger in hlt_triggers)
-
-            #pass
+        if hlt_check == False:
+            #print(hlt_check)
+            return False
         if len(jets) < 2:
             return False
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
             return False
+        if "ElectronMuon" not in condition_key:
+            if met.pt <=40.0:
+                return False
         count_leptons =0
         lepton_index = []
         for index,l in enumerate(muons):
