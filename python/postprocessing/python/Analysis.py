@@ -220,8 +220,8 @@ def presel():
     parser.add_argument('-n', '--name',type=str, default='what')
     args = parser.parse_args()
     print(str(args.file))
-    json ="Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
-    AllName = "hist_" + args.name +".root"
+    json ="../data/JSON/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
+    AllName = "output/hist_" + args.name +".root"
     preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     # HLT or PV 
     files = args.file
