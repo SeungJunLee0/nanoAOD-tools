@@ -45,11 +45,11 @@ class ExampleAnalysis(Module):
         self.addObject(self.h_hlt)
 
 ####################### Zero     
-        self.h_zeroleptonpt = ROOT.TH1F('Zerotag_leptonpt', 'Zerotag_leptonpt', 100, 0., 500.)
-        self.addObject(self.h_zeroleptonpt)
+        self.h_zeromuonspt = ROOT.TH1F('Zerotag_muonspt', 'Zerotag_muonspt', 100, 0., 500.)
+        self.addObject(self.h_zeromuonspt)
 
-        self.h_zeroleptoneta = ROOT.TH1F('Zerotag_leptoneta', 'Zerotag_leptoneta', 100, -6., 6.)
-        self.addObject(self.h_zeroleptoneta)
+        self.h_zeromuonseta = ROOT.TH1F('Zerotag_muonseta', 'Zerotag_muonseta', 100, -6., 6.)
+        self.addObject(self.h_zeromuonseta)
 
         self.h_zerojeteta = ROOT.TH1F('Zerotag_jeteta', 'Zerotag_jeteta', 100,-6., 6.)
         self.addObject(self.h_zerojeteta)
@@ -60,11 +60,11 @@ class ExampleAnalysis(Module):
         self.h_num_muon = ROOT.TH1F('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0., 10.)
         self.addObject(self.h_num_muon)
 
-        self.h_zerosubleptonpt = ROOT.TH1F('Zerotag_subleptonpt', 'Zerotag_subleptonpt', 100, 0., 500.)
-        self.addObject(self.h_zerosubleptonpt)
+        self.h_zerosubmuonspt = ROOT.TH1F('Zerotag_submuonspt', 'Zerotag_submuonspt', 100, 0., 500.)
+        self.addObject(self.h_zerosubmuonspt)
 
-        self.h_zerosubleptoneta = ROOT.TH1F('Zerotag_subleptoneta', 'Zerotag_subleptoneta', 100, -6., 6.)
-        self.addObject(self.h_zerosubleptoneta)
+        self.h_zerosubmuonseta = ROOT.TH1F('Zerotag_submuonseta', 'Zerotag_submuonseta', 100, -6., 6.)
+        self.addObject(self.h_zerosubmuonseta)
 
         self.h_zerosubjeteta = ROOT.TH1F('Zerotag_subjeteta', 'Zerotag_subjeteta', 100, -6., 6.)
         self.addObject(self.h_zerosubjeteta)
@@ -76,11 +76,11 @@ class ExampleAnalysis(Module):
         self.addObject(self.h_zeromll)
 
 ####################### One     
-        self.h_oneleptonpt = ROOT.TH1F('Onetag_leptonpt', 'Onetag_leptonpt', 100, 0., 500.)
-        self.addObject(self.h_oneleptonpt)
+        self.h_onemuonspt = ROOT.TH1F('Onetag_muonspt', 'Onetag_muonspt', 100, 0., 500.)
+        self.addObject(self.h_onemuonspt)
 
-        self.h_oneleptoneta = ROOT.TH1F('Onetag_leptoneta', 'Onetag_leptoneta', 100, -6., 6.)
-        self.addObject(self.h_oneleptoneta)
+        self.h_onemuonseta = ROOT.TH1F('Onetag_muonseta', 'Onetag_muonseta', 100, -6., 6.)
+        self.addObject(self.h_onemuonseta)
 
         self.h_onejeteta = ROOT.TH1F('Onetag_jeteta', 'Onetag_jeteta', 100, -6., 6.)
         self.addObject(self.h_onejeteta)
@@ -88,11 +88,11 @@ class ExampleAnalysis(Module):
         self.h_onejetpt = ROOT.TH1F('Onetag_jetpt', 'Onetag_jetpt', 100, 0., 500.)
         self.addObject(self.h_onejetpt)
 
-        self.h_onesubleptonpt = ROOT.TH1F('Onetag_subeptonpt', 'Onetag_subleptonpt', 100, 0., 500.)
-        self.addObject(self.h_onesubleptonpt)
+        self.h_onesubmuonspt = ROOT.TH1F('Onetag_subeptonpt', 'Onetag_submuonspt', 100, 0., 500.)
+        self.addObject(self.h_onesubmuonspt)
 
-        self.h_onesubleptoneta = ROOT.TH1F('Onetag_subleptoneta', 'Onetag_subleptoneta', 100, -6., 6.)
-        self.addObject(self.h_onesubleptoneta)
+        self.h_onesubmuonseta = ROOT.TH1F('Onetag_submuonseta', 'Onetag_submuonseta', 100, -6., 6.)
+        self.addObject(self.h_onesubmuonseta)
 
         self.h_onesubjeteta = ROOT.TH1F('Onetag_subjeteta', 'Onetag_subjeteta', 100, -6., 6.)
         self.addObject(self.h_onesubjeteta)
@@ -104,11 +104,11 @@ class ExampleAnalysis(Module):
         self.addObject(self.h_onemll)
 
 ####################### Two     
-        self.h_twoleptonpt = ROOT.TH1F('Twotag_leptonpt', 'Twotag_leptonpt', 100, 0., 500.)
-        self.addObject(self.h_twoleptonpt)                                                                                                 
+        self.h_twomuonspt = ROOT.TH1F('Twotag_muonspt', 'Twotag_muonspt', 100, 0., 500.)
+        self.addObject(self.h_twomuonspt)                                                                                                 
 
-        self.h_twoleptoneta = ROOT.TH1F('Twotag_leptoneta', 'Twotag_leptoneta', 100, -6., 6.)
-        self.addObject(self.h_twoleptoneta)
+        self.h_twomuonseta = ROOT.TH1F('Twotag_muonseta', 'Twotag_muonseta', 100, -6., 6.)
+        self.addObject(self.h_twomuonseta)
         
         self.h_twojeteta = ROOT.TH1F('Twotag_jeteta', 'Twotag_jeteta', 100, -6., 6.)
         self.addObject(self.h_twojeteta)
@@ -116,11 +116,11 @@ class ExampleAnalysis(Module):
         self.h_twojetpt = ROOT.TH1F('Twotag_jetpt', 'Twotag_jetpt', 100, 0., 500.)
         self.addObject(self.h_twojetpt)
     
-        self.h_twosubleptonpt = ROOT.TH1F('Twotag_subeptonpt', 'Twotag_subleptonpt', 100, 0., 500.)
-        self.addObject(self.h_twosubleptonpt)
+        self.h_twosubmuonspt = ROOT.TH1F('Twotag_subeptonpt', 'Twotag_submuonspt', 100, 0., 500.)
+        self.addObject(self.h_twosubmuonspt)
     
-        self.h_twosubleptoneta = ROOT.TH1F('Twotag_subleptoneta', 'Twotag_subleptoneta', 100, -6., 6.)
-        self.addObject(self.h_twosubleptoneta)
+        self.h_twosubmuonseta = ROOT.TH1F('Twotag_submuonseta', 'Twotag_submuonseta', 100, -6., 6.)
+        self.addObject(self.h_twosubmuonseta)
     
         self.h_twosubjeteta = ROOT.TH1F('Twotag_subjeteta', 'Twotag_subjeteta', 100, -6., 6.)
         self.addObject(self.h_twosubjeteta) 
@@ -182,28 +182,28 @@ class ExampleAnalysis(Module):
             hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_e_2018", True) and hlt_trigger_results.get("single_mu_2018", False):
             channel = "emu"
 
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable \
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_mu_2018", True) and hlt_trigger_results.get("single_e_2018", False):
             channel = "emu"
 
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable \
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("ee_2018", True) and  hlt_trigger_results.get("single_e_2018", False):
             channel = "ee"
 
-        elif "Data" in self.some_variable and "DoubleEG" in self.some_variable and "2018" in self.some_variable \
+        elif "Data" in self.some_variable and "DoubleEG" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("ee_2018", False):
             channel = "ee"
 
-        elif "Data" in self.some_variable and "MuonEG" in self.some_variable and "2018" in self.some_variable \
+        elif "Data" in self.some_variable and "MuonEG" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("emu_2018", False):
             channel = "emu"
 
 
-        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable \
+        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("ee_2018", False) or hlt_trigger_results.get("single_e_2018", False):
             channel = "ee"
 
-        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable \
+        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_mu_2018", True) and hlt_trigger_results.get("single_e_2018", False):
             channel = "emu"
 
@@ -211,17 +211,17 @@ class ExampleAnalysis(Module):
 
 
 
-        elif "MC" in self.some_variable and "2018" in self.some_variable \
+        elif "MC" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("ee_2018", False) or hlt_trigger_results.get("single_e_2018", False):
             channel = "ee"
 
 
 
-        elif "MC" in self.some_variable and "2018" in self.some_variable \
+        elif "MC" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("emu_2018", False) or hlt_trigger_results.get("single_e_2018", False) and hlt_trigger_results.get("single_mu_2018", False):
             channel = "emu"
 
-        elif "MC" in self.some_variable and "2018" in self.some_variable \
+        elif "MC" in self.some_variable and "2018" in self.some_variable and \
             hlt_trigger_results.get("mumu_2018", False) or hlt_trigger_results.get("single_mu_2018", False):
             channel = "mumu"
 
@@ -254,31 +254,45 @@ class ExampleAnalysis(Module):
         count_electrons =0
         electrons_index = []
         for index,l in enumerate(electrons):
-            if electrons[index].tightId and electrons[index].pt >20. and electrons[index].eta < 2.4:
+            if electrons[index].pt >20. and electrons[index].eta < 2.4:
                 count_electrons +=1 
                 electrons_index.append(index)
 
 
-
-        if channel == "mumu" and count_muons != 2 and muons[muons_index[0]].pt <= 25. and muons[muons_index[1]].pt <= 25 :
+        if channel == "mumu" and count_muons != 2:
             return False
+
+        if channel == "emu" and (count_muons + count_electrons) != 2:
+            return False
+
+        if channel == "ee" and count_electrons != 2:
+            return False
+
+
+        if channel == "mumu" and count_muons == 2:
+            if muons[muons_index[0]].pt <= 25. and muons[muons_index[1]].pt <= 25 :
+                return False
         
-        if channel == "emu" and (count_muons + count_electrons) != 2 and muons[muons_index[0]].pt <= 25. and electrons[electrons_index[0]].pt <= 25:
+        if channel == "emu" and (count_muons + count_electrons) == 2:
+            if muons[muons_index[0]].pt <= 25. and electrons[electrons_index[0]].pt <= 25:
+                return False
+
+        if channel == "ee" and count_electrons == 2:
+            if electrons[electrons_index[0]].pt <= 25. and electrons[electrons_index[1]].pt <= 25:
+                return False
+
+
+
+
+
+
+        if channel =="mumu" and ( (muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M() <= 20 or np.abs((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M() -91.19) <= 15.0):
             return False
 
-        if channel == "ee" and count_electrons != 2 and electrons[electrons_index[0]].pt <= 25. and electrons[electrons_index[1]].pt <= 25:
+        if channel == "ee" and ( (electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M() <= 20 or np.abs((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M() -91.19) <15.0):
             return False
 
-
-
-
-        if channel =="mumu" and ( (muons[muons_index[0]].p4 + muons[muons_index[1]].p4).M() <= 20 or np.abs((muons[muons_index[0]].p4 + muons[muons_index[1]].p4).M() -91.19) <= 15.0:
-            return False
-
-        if channel == "ee" and ( (electrons[electrons_index[0]].p4 + electrons[electrons_index[1]].p4).M() <= 20 or np.abs((electrons[electrons_index[0]].p4 + electrons[electrons_index[1]].p4).M() -91.19) <15.0:
-            return False
-
-        if channel == "emu" and (muons[muons_index[0]].p4 + electrons[electrons_index[0]].p4).M() <= 20:
+        if channel == "emu" and (muons[muons_index[0]].p4() + electrons[electrons_index[0]].p4()).M() <= 20:
             return False
 
 
@@ -286,46 +300,47 @@ class ExampleAnalysis(Module):
         nBtag =0
         nDeltaR =0
         jet_index = []
-        for index,j in enumerate(jets):
-            if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1:
-                if deltaR(j.eta,j.phi,muons[lepton_index[0]].eta,muons[lepton_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[lepton_index[1]].eta,muons[lepton_index[1]].phi) > 0.4:
-            #continue
-                    nDeltaR +=1
-                    jet_index.append(index) 
-                if deltaR(j.eta,j.phi,muons[lepton_index[0]].eta,muons[lepton_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[lepton_index[1]].eta,muons[lepton_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
-                    nBtag +=1
-        if nBtag ==0 and nDeltaR >=2:
-            self.h_zeroleptonpt.Fill(muons[lepton_index[0]].pt)
-            self.h_zeroleptoneta.Fill(muons[lepton_index[0]].eta)
-            self.h_zerojeteta.Fill(jets[jet_index[0]].eta)
-            self.h_zerojetpt.Fill(jets[jet_index[0]].pt)
+        if channel =="mumu":
+            for index,j in enumerate(jets):
+                if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1:
+                    if deltaR(j.eta,j.phi,muons[muons_index[0]].eta,muons[muons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[muons_index[1]].eta,muons[muons_index[1]].phi) > 0.4:
+                #continue
+                        nDeltaR +=1
+                        jet_index.append(index) 
+                    if deltaR(j.eta,j.phi,muons[muons_index[0]].eta,muons[muons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[muons_index[1]].eta,muons[muons_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
+                        nBtag +=1
+            if nBtag ==0 and nDeltaR >=2:
+                self.h_zeromuonspt.Fill(muons[muons_index[0]].pt)
+                self.h_zeromuonseta.Fill(muons[muons_index[0]].eta)
+                self.h_zerojeteta.Fill(jets[jet_index[0]].eta)
+                self.h_zerojetpt.Fill(jets[jet_index[0]].pt)
 
-            self.h_zerosubleptonpt.Fill(muons[lepton_index[1]].pt)
-            self.h_zerosubleptoneta.Fill(muons[lepton_index[1]].eta)
-            self.h_zerosubjeteta.Fill(jets[jet_index[1]].eta)
-            self.h_zerosubjetpt.Fill(jets[jet_index[1]].pt)
-            self.h_num_muon.Fill(len(muons))
-            self.h_zeromll.Fill((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M())
-        if nBtag ==1 and nDeltaR >= 2:
-            self.h_oneleptonpt.Fill(muons[lepton_index[0]].pt)
-            self.h_oneleptoneta.Fill(muons[lepton_index[0]].eta)
-            self.h_onejeteta.Fill(jets[jet_index[0]].eta)
-            self.h_onejetpt.Fill(jets[jet_index[0]].pt)
-            self.h_onesubleptonpt.Fill(muons[lepton_index[1]].pt)
-            self.h_onesubleptoneta.Fill(muons[lepton_index[1]].eta)
-            self.h_onesubjeteta.Fill(jets[jet_index[1]].eta)
-            self.h_onesubjetpt.Fill(jets[jet_index[1]].pt)
-            self.h_onemll.Fill((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M())
-        if nBtag ==2 and nDeltaR >= 2:    
-            self.h_twoleptonpt.Fill(muons[lepton_index[0]].pt)
-            self.h_twoleptoneta.Fill(muons[lepton_index[0]].eta)
-            self.h_twojeteta.Fill(jets[jet_index[0]].eta)
-            self.h_twojetpt.Fill(jets[jet_index[0]].pt)
-            self.h_twosubleptonpt.Fill(muons[lepton_index[1]].pt)
-            self.h_twosubleptoneta.Fill(muons[lepton_index[1]].eta)
-            self.h_twosubjeteta.Fill(jets[jet_index[1]].eta)
-            self.h_twosubjetpt.Fill(jets[jet_index[1]].pt)
-            self.h_twomll.Fill((muons[lepton_index[0]].p4() + muons[lepton_index[1]].p4()).M())
+                self.h_zerosubmuonspt.Fill(muons[muons_index[1]].pt)
+                self.h_zerosubmuonseta.Fill(muons[muons_index[1]].eta)
+                self.h_zerosubjeteta.Fill(jets[jet_index[1]].eta)
+                self.h_zerosubjetpt.Fill(jets[jet_index[1]].pt)
+                self.h_num_muon.Fill(len(muons))
+                self.h_zeromll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+            if nBtag ==1 and nDeltaR >= 2:
+                self.h_onemuonspt.Fill(muons[muons_index[0]].pt)
+                self.h_onemuonseta.Fill(muons[muons_index[0]].eta)
+                self.h_onejeteta.Fill(jets[jet_index[0]].eta)
+                self.h_onejetpt.Fill(jets[jet_index[0]].pt)
+                self.h_onesubmuonspt.Fill(muons[muons_index[1]].pt)
+                self.h_onesubmuonseta.Fill(muons[muons_index[1]].eta)
+                self.h_onesubjeteta.Fill(jets[jet_index[1]].eta)
+                self.h_onesubjetpt.Fill(jets[jet_index[1]].pt)
+                self.h_onemll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+            if nBtag ==2 and nDeltaR >= 2:    
+                self.h_twomuonspt.Fill(muons[muons_index[0]].pt)
+                self.h_twomuonseta.Fill(muons[muons_index[0]].eta)
+                self.h_twojeteta.Fill(jets[jet_index[0]].eta)
+                self.h_twojetpt.Fill(jets[jet_index[0]].pt)
+                self.h_twosubmuonspt.Fill(muons[muons_index[1]].pt)
+                self.h_twosubmuonseta.Fill(muons[muons_index[1]].eta)
+                self.h_twosubjeteta.Fill(jets[jet_index[1]].eta)
+                self.h_twosubjetpt.Fill(jets[jet_index[1]].pt)
+                self.h_twomll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
                 
           
 
