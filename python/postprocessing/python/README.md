@@ -11,6 +11,9 @@ mkdir output
 
 ## find some nanoAODv9
 
+
+dasgoclient --query="dataset dataset=/*/*UL18*NanoAODv9*/NANOAOD*"
+
 dasgoclient --query="dataset dataset=/*/*UL*NanoAODv9*/NANOAOD*"
 
 dasgoclient --query="dataset dataset=/DoubleMuon/*UL*NanoAODv9*/NANOAOD*"
