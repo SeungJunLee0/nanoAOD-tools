@@ -174,9 +174,9 @@ class ExampleAnalysis(Module):
 
 
     def analyze(self, event):
-        electrons = sorted(Collection(event, "Electron"),key=lambda: x:x.pt,reverse=True)
-        muons     = sorted(Collection(event, "Muon")    ,key=lambda: x:x.pt,reverse=True)
-        jets      = sorted(Collection(event, "Jet")     ,key=lambda: x:x.pt,reverse=True)
+        electrons = sorted(Collection(event, "Electron"),key=lambda x:x.pt,reverse=True)
+        muons     = sorted(Collection(event, "Muon")    ,key=lambda x:x.pt,reverse=True)
+        jets      = sorted(Collection(event, "Jet")     ,key=lambda x:x.pt,reverse=True)
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
@@ -190,89 +190,63 @@ class ExampleAnalysis(Module):
 
 
         hlt_conditions = {
-            "mumu_2018": [
-                 hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
-            ],
-            "single_mu_2018": [
-                 hlt.IsoMu24,
-            ],
-            "single_e_2018": [
-                 hlt.Ele32_WPTight_Gsf,
-            ],
-            "ee_2018": [
-                 hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL,
-                 hlt.DoubleEle25_CaloIdL_MW,
-            ],
-            "emu_2018": [
-                 hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ,
-                 hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
-            ],
+            "mumu_2018":        hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
+            "single_mu_2018":   hlt.IsoMu24,
+            "single_e_2018":    hlt.Ele32_WPTight_Gsf,
+            "ee_2018":          hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL or hlt.DoubleEle25_CaloIdL_MW,
+            "emu_2018":         hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ or hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
         }
 
         channel = "None"
-        condition_key = ""
-        hlt_trigger_results = {}
-        for key, triggers in hlt_conditions.items():
-            hlt_trigger_results[key] = any(trigger for trigger in triggers)
+        #condition_key = ""
+        #hlt_trigger_results = {}
+        #for key, triggers in hlt_conditions.items():
+        #    hlt_trigger_results[key] = any(trigger for trigger in triggers)
 
 
-        if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("mumu_2018", False):
+        if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable and hlt_conditions["mumu_2018"]:
             channel = "mumu"
 
-        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("mumu_2018", True) and hlt_trigger_results.get("single_mu_2018", False):
-            channel = "mumu"
-
-
-        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_e_2018", True) and hlt_trigger_results.get("single_mu_2018", False):
-            channel = "emu"
-
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_mu_2018", True) and hlt_trigger_results.get("single_e_2018", False):
-            channel = "emu"
-
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("ee_2018", True) and  hlt_trigger_results.get("single_e_2018", False):
-            channel = "ee"
-
-        elif "Data" in self.some_variable and "DoubleEG" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("ee_2018", False):
-            channel = "ee"
-
-        elif "Data" in self.some_variable and "MuonEG" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("emu_2018", False):
-            channel = "emu"
-
-
-        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("ee_2018", False) or hlt_trigger_results.get("single_e_2018", False):
-            channel = "ee"
-
-        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("emu_2018", True) and hlt_trigger_results.get("single_mu_2018", True) and hlt_trigger_results.get("single_e_2018", False):
-            channel = "emu"
-
-
-
-
-
-        elif "MC" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("ee_2018", False) or hlt_trigger_results.get("single_e_2018", False):
-            channel = "ee"
-
-
-
-        elif "MC" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("emu_2018", False) or hlt_trigger_results.get("single_e_2018", False) and hlt_trigger_results.get("single_mu_2018", False):
-            channel = "emu"
-
-        elif "MC" in self.some_variable and "2018" in self.some_variable and \
-            hlt_trigger_results.get("mumu_2018", False) or hlt_trigger_results.get("single_mu_2018", False):
+        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["mumu_2018"] and hlt_conditions["single_mu_2018"]:
             channel = "mumu"
 
 
+        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"] and hlt_conditions["single_mu_2018"]:
+            channel = "emu"
+
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
+            channel = "emu"
+
+        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["ee_2018"] and  hlt_conditions["single_e_2018"]:
+            channel = "ee"
+
+        elif "Data" in self.some_variable and "DoubleEG" in self.some_variable and "2018" in self.some_variable and hlt_conditions["ee_2018"]:
+            channel = "ee"
+
+        elif "Data" in self.some_variable and "MuonEG" in self.some_variable and "2018" in self.some_variable and hlt_conditions["emu_2018"]:
+            channel = "emu"
+
+
+        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
+            channel = "ee"
+
+        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
+            channel = "emu"
+
+
+
+
+
+        elif "MC" in self.some_variable and "2018" in self.some_variable and ( hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]):
+            channel = "ee"
+
+
+
+        elif "MC" in self.some_variable and "2018" in self.some_variable and ( hlt_conditions["emu_2018"] or hlt_conditions["single_e_2018"] or hlt_conditions["single_mu_2018"]):
+            channel = "emu"
+
+        elif "MC" in self.some_variable and "2018" in self.some_variable and ( hlt_conditions["mumu_2018"] or hlt_conditions["single_mu_2018"]):
+            channel = "mumu"
 
 
 
@@ -354,38 +328,247 @@ class ExampleAnalysis(Module):
                         nBtag +=1
             if nBtag ==0 and nDeltaR >=2:
                 self.mumu_Zerotag_lep1pt.Fill(muons[muons_index[0]].pt)
-                #self.zeromuonseta.Fill(muons[muons_index[0]].eta)
-                #self.zerojeteta.Fill(jets[jet_index[0]].eta)
-                #self.zerojetpt.Fill(jets[jet_index[0]].pt)
+                self.mumu_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.mumu_Zerotag_lep2pt.Fill(muons[muons_index[1]].pt)
+                self.mumu_Zerotag_lep2eta.Fill(muons[muons_index[1]].eta)
+                self.mumu_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.mumu_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.mumu_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.mumu_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.mumu_Zerotag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
 
-                #self.zerosubmuonspt.Fill(muons[muons_index[1]].pt)
-                #self.zerosubmuonseta.Fill(muons[muons_index[1]].eta)
-                #self.zerosubjeteta.Fill(jets[jet_index[1]].eta)
-                #self.zerosubjetpt.Fill(jets[jet_index[1]].pt)
-                #self.num_muon.Fill(len(muons))
-                #self.zeromll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
-            #if nBtag ==1 and nDeltaR >= 2:
-            #    self.h_onemuonspt.Fill(muons[muons_index[0]].pt)
-            #    self.h_onemuonseta.Fill(muons[muons_index[0]].eta)
-            #    self.h_onejeteta.Fill(jets[jet_index[0]].eta)
-            #    self.h_onejetpt.Fill(jets[jet_index[0]].pt)
-            #    self.h_onesubmuonspt.Fill(muons[muons_index[1]].pt)
-            #    self.h_onesubmuonseta.Fill(muons[muons_index[1]].eta)
-            #    self.h_onesubjeteta.Fill(jets[jet_index[1]].eta)
-            #    self.h_onesubjetpt.Fill(jets[jet_index[1]].pt)
-            #    self.h_onemll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
-            #if nBtag ==2 and nDeltaR >= 2:    
-            #    self.h_twomuonspt.Fill(muons[muons_index[0]].pt)
-            #    self.h_twomuonseta.Fill(muons[muons_index[0]].eta)
-            #    self.h_twojeteta.Fill(jets[jet_index[0]].eta)
-            #    self.h_twojetpt.Fill(jets[jet_index[0]].pt)
-            #    self.h_twosubmuonspt.Fill(muons[muons_index[1]].pt)
-            #    self.h_twosubmuonseta.Fill(muons[muons_index[1]].eta)
-            #    self.h_twosubjeteta.Fill(jets[jet_index[1]].eta)
-            #    self.h_twosubjetpt.Fill(jets[jet_index[1]].pt)
-            #    self.h_twomll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
-                
+                self.combine_Zerotag_lep1pt.Fill(muons[muons_index[0]].pt)
+                self.combine_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.combine_Zerotag_lep2pt.Fill(muons[muons_index[1]].pt)
+                self.combine_Zerotag_lep2eta.Fill(muons[muons_index[1]].eta)
+                self.combine_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Zerotag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+            if nBtag ==1 and nDeltaR >= 2:
+                self.mumu_Onetag_lep1pt.Fill(muons[muons_index[0]].pt)
+                self.mumu_Onetag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.mumu_Onetag_lep2pt.Fill(muons[muons_index[1]].pt)
+                self.mumu_Onetag_lep2eta.Fill(muons[muons_index[1]].eta)
+                self.mumu_Onetag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.mumu_Onetag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.mumu_Onetag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.mumu_Onetag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.mumu_Onetag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+
+                self.combine_Onetag_lep1pt.Fill(muons[muons_index[0]].pt)
+                self.combine_Onetag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.combine_Onetag_lep2pt.Fill(muons[muons_index[1]].pt)
+                self.combine_Onetag_lep2eta.Fill(muons[muons_index[1]].eta)
+                self.combine_Onetag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Onetag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Onetag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Onetag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Onetag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+            if nBtag ==2 and nDeltaR >= 2:    
+                self.mumu_Twotag_lep1pt.Fill(muons[muons_index[0]].pt)
+                self.mumu_Twotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.mumu_Twotag_lep2pt.Fill(muons[muons_index[1]].pt)
+                self.mumu_Twotag_lep2eta.Fill(muons[muons_index[1]].eta)
+                self.mumu_Twotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.mumu_Twotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.mumu_Twotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.mumu_Twotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.mumu_Twotag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+
+                self.combine_Twotag_lep1pt.Fill(muons[muons_index[0]].pt)
+                self.combine_Twotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.combine_Twotag_lep2pt.Fill(muons[muons_index[1]].pt)
+                self.combine_Twotag_lep2eta.Fill(muons[muons_index[1]].eta)
+                self.combine_Twotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Twotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Twotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Twotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Twotag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
           
+
+        if channel =="ee":
+            for index,j in enumerate(jets):
+                if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1:
+                    if deltaR(j.eta,j.phi,electrons[electrons_index[0]].eta,electrons[electrons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,electrons[electrons_index[1]].eta,electrons[electrons_index[1]].phi) > 0.4:
+                #continue
+                        nDeltaR +=1
+                        jet_index.append(index) 
+                    if deltaR(j.eta,j.phi,electrons[electrons_index[0]].eta,electrons[electrons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,electrons[electrons_index[1]].eta,electrons[electrons_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
+                        nBtag +=1
+            if nBtag ==0 and nDeltaR >=2:
+                self.ee_Zerotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                self.ee_Zerotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                self.ee_Zerotag_lep2pt.Fill(electrons[electrons_index[1]].pt)
+                self.ee_Zerotag_lep2eta.Fill(electrons[electrons_index[1]].eta)
+                self.ee_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.ee_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.ee_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.ee_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.ee_Zerotag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M())
+
+                self.combine_Zerotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                self.combine_Zerotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                self.combine_Zerotag_lep2pt.Fill(electrons[electrons_index[1]].pt)
+                self.combine_Zerotag_lep2eta.Fill(electrons[electrons_index[1]].eta)
+                self.combine_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Zerotag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M())
+            if nBtag ==1 and nDeltaR >= 2:
+                self.ee_Onetag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                self.ee_Onetag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                self.ee_Onetag_lep2pt.Fill(electrons[electrons_index[1]].pt)
+                self.ee_Onetag_lep2eta.Fill(electrons[electrons_index[1]].eta)
+                self.ee_Onetag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.ee_Onetag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.ee_Onetag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.ee_Onetag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.ee_Onetag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M())
+
+                self.combine_Onetag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                self.combine_Onetag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                self.combine_Onetag_lep2pt.Fill(electrons[electrons_index[1]].pt)
+                self.combine_Onetag_lep2eta.Fill(electrons[electrons_index[1]].eta)
+                self.combine_Onetag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Onetag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Onetag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Onetag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Onetag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M())
+            if nBtag ==2 and nDeltaR >= 2:    
+                self.ee_Twotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                self.ee_Twotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                self.ee_Twotag_lep2pt.Fill(electrons[electrons_index[1]].pt)
+                self.ee_Twotag_lep2eta.Fill(electrons[electrons_index[1]].eta)
+                self.ee_Twotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.ee_Twotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.ee_Twotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.ee_Twotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.ee_Twotag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M())
+
+                self.combine_Twotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                self.combine_Twotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                self.combine_Twotag_lep2pt.Fill(electrons[electrons_index[1]].pt)
+                self.combine_Twotag_lep2eta.Fill(electrons[electrons_index[1]].eta)
+                self.combine_Twotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Twotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Twotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Twotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Twotag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M())
+
+
+        if channel =="emu":
+            for index,j in enumerate(jets):
+                if j.pt >30 and np.abs(j.eta) <2.4 and j.jetId > 1:
+                    if deltaR(j.eta,j.phi,electrons[electrons_index[0]].eta,electrons[electrons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[muons_index[0]].eta,muons[muons_index[0]].phi) > 0.4:
+                #continue
+                        nDeltaR +=1
+                        jet_index.append(index) 
+                    if deltaR(j.eta,j.phi,electrons[electrons_index[0]].eta,electrons[electrons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[muons_index[0]].eta,muons[muons_index[0]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
+                        nBtag +=1
+            if nBtag ==0 and nDeltaR >=2:
+                if electrons[electrons_index[0]].pt >= muons[muons_index[0]].pt: 
+                    self.emu_Zerotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                    self.emu_Zerotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                    self.emu_Zerotag_lep2pt.Fill( muons[muons_index[0]].pt)
+                    self.emu_Zerotag_lep2eta.Fill(muons[muons_index[0]].eta)
+                else:
+                    self.emu_Zerotag_lep2pt.Fill(electrons[electrons_index[0]].pt)
+                    self.emu_Zerotag_lep2eta.Fill(electrons[electrons_index[0]].eta)
+                    self.emu_Zerotag_lep1pt.Fill( muons[muons_index[0]].pt)
+                    self.emu_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.emu_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.emu_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.emu_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.emu_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.emu_Zerotag_m_ll.Fill((electrons[electrons_index[0]].p4() + muons[muons_index[0]].p4()).M())
+
+                if electrons[electrons_index[0]].pt >= muons[muons_index[0]].pt: 
+                    self.combine_Zerotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                    self.combine_Zerotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                    self.combine_Zerotag_lep2pt.Fill( muons[muons_index[0]].pt)
+                    self.combine_Zerotag_lep2eta.Fill(muons[muons_index[0]].eta)
+                else:
+                    self.combine_Zerotag_lep2pt.Fill(electrons[electrons_index[0]].pt)
+                    self.combine_Zerotag_lep2eta.Fill(electrons[electrons_index[0]].eta)
+                    self.combine_Zerotag_lep1pt.Fill( muons[muons_index[0]].pt)
+                    self.combine_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta)
+
+                self.combine_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Zerotag_m_ll.Fill((electrons[electrons_index[0]].p4() + muons[muons_index[0]].p4()).M())
+            if nBtag ==1 and nDeltaR >= 2:
+                if electrons[electrons_index[0]].pt >= muons[muons_index[0]].pt: 
+                    self.emu_Onetag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                    self.emu_Onetag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                    self.emu_Onetag_lep2pt.Fill( muons[muons_index[0]].pt)
+                    self.emu_Onetag_lep2eta.Fill(muons[muons_index[0]].eta)
+                else:
+                    self.emu_Onetag_lep2pt.Fill(electrons[electrons_index[0]].pt)
+                    self.emu_Onetag_lep2eta.Fill(electrons[electrons_index[0]].eta)
+                    self.emu_Onetag_lep1pt.Fill( muons[muons_index[0]].pt)
+                    self.emu_Onetag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.emu_Onetag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.emu_Onetag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.emu_Onetag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.emu_Onetag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.emu_Onetag_m_ll.Fill((electrons[electrons_index[0]].p4() + muons[muons_index[0]].p4()).M())
+
+                if electrons[electrons_index[0]].pt >= muons[muons_index[0]].pt: 
+                    self.combine_Onetag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                    self.combine_Onetag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                    self.combine_Onetag_lep2pt.Fill( muons[muons_index[0]].pt)
+                    self.combine_Onetag_lep2eta.Fill(muons[muons_index[0]].eta)
+                else:
+                    self.combine_Onetag_lep2pt.Fill(electrons[electrons_index[0]].pt)
+                    self.combine_Onetag_lep2eta.Fill(electrons[electrons_index[0]].eta)
+                    self.combine_Onetag_lep1pt.Fill( muons[muons_index[0]].pt)
+                    self.combine_Onetag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.combine_Onetag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Onetag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Onetag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Onetag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Onetag_m_ll.Fill((electrons[electrons_index[0]].p4() + muons[muons_index[0]].p4()).M())
+            if nBtag ==2 and nDeltaR >= 2:    
+                if electrons[electrons_index[0]].pt >= muons[muons_index[0]].pt: 
+                    self.emu_Twotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                    self.emu_Twotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                    self.emu_Twotag_lep2pt.Fill( muons[muons_index[0]].pt)
+                    self.emu_Twotag_lep2eta.Fill(muons[muons_index[0]].eta)
+                else:
+                    self.emu_Twotag_lep2pt.Fill(electrons[electrons_index[0]].pt)
+                    self.emu_Twotag_lep2eta.Fill(electrons[electrons_index[0]].eta)
+                    self.emu_Twotag_lep1pt.Fill( muons[muons_index[0]].pt)
+                    self.emu_Twotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.emu_Twotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.emu_Twotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.emu_Twotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.emu_Twotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.emu_Twotag_m_ll.Fill((electrons[electrons_index[0]].p4() + muons[muons_index[0]].p4()).M())
+
+                if electrons[electrons_index[0]].pt >= muons[muons_index[0]].pt: 
+                    self.combine_Twotag_lep1pt.Fill(electrons[electrons_index[0]].pt)
+                    self.combine_Twotag_lep1eta.Fill(electrons[electrons_index[0]].eta)
+                    self.combine_Twotag_lep2pt.Fill( muons[muons_index[0]].pt)
+                    self.combine_Twotag_lep2eta.Fill(muons[muons_index[0]].eta)
+                else:
+                    self.combine_Twotag_lep2pt.Fill(electrons[electrons_index[0]].pt)
+                    self.combine_Twotag_lep2eta.Fill(electrons[electrons_index[0]].eta)
+                    self.combine_Twotag_lep1pt.Fill( muons[muons_index[0]].pt)
+                    self.combine_Twotag_lep1eta.Fill(muons[muons_index[0]].eta)
+                self.combine_Twotag_jet1pt.Fill( jets[jet_index[0]].pt)
+                self.combine_Twotag_jet1eta.Fill(jets[jet_index[0]].eta)
+                self.combine_Twotag_jet2pt.Fill( jets[jet_index[1]].pt)
+                self.combine_Twotag_jet2eta.Fill(jets[jet_index[1]].eta)
+                self.combine_Twotag_m_ll.Fill((electrons[electrons_index[0]].p4() + muons[muons_index[0]].p4()).M())
+
+
+
+
 
         return True
 
