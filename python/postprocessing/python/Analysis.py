@@ -178,12 +178,9 @@ class ExampleAnalysis(Module):
         muons     = sorted(Collection(event, "Muon")    ,key=lambda x:x.pt,reverse=True)
         jets      = sorted(Collection(event, "Jet")     ,key=lambda x:x.pt,reverse=True)
         gen_weight = getattr(event, 'Generator_weight', 1.0) if "MC" in self.some_variable else 1.0
-        print(gen_weight)
-        print(type(gen_weight))
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
-        #print(self.some_variable)
 
 
         if len(jets) <2 or pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
@@ -201,10 +198,6 @@ class ExampleAnalysis(Module):
         }
 
         channel = "None"
-        #condition_key = ""
-        #hlt_trigger_results = {}
-        #for key, triggers in hlt_conditions.items():
-        #    hlt_trigger_results[key] = any(trigger for trigger in triggers)
 
 
         if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable and hlt_conditions["mumu_2018"]:
@@ -588,7 +581,7 @@ def presel():
     AllName = "output/hist_" + args.name +".root"
     preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = args.file
-    some_variable = args.name#"My Example Variable"
+    some_variable = args.name
 
     if "Data" in args.name:
         print("It is data")
