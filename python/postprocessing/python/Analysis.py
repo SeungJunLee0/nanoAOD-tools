@@ -177,6 +177,9 @@ class ExampleAnalysis(Module):
         electrons = sorted(Collection(event, "Electron"),key=lambda x:x.pt,reverse=True)
         muons     = sorted(Collection(event, "Muon")    ,key=lambda x:x.pt,reverse=True)
         jets      = sorted(Collection(event, "Jet")     ,key=lambda x:x.pt,reverse=True)
+        gen_weight = getattr(event, 'Generator_weight', 1.0) if "MC" in self.some_variable else 1.0
+        print(gen_weight)
+        print(type(gen_weight))
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
