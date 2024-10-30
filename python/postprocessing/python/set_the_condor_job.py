@@ -91,7 +91,7 @@ def main(dir_name):
 
     setup_directories(work_dir, run_dir)
 
-    njob = count_text_file(f"data/{dir_name}")
+    njob = count_text_file(f"/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/data/{dir_name}")
     for job_id, dataset_name in enumerate(njob):
         dataset_name = dataset_name.strip()
         with open(f'{run_dir}/mc_generation_job_{job_id}.sh', 'w') as bash_file:
@@ -115,12 +115,15 @@ def mc_to_MC(dir_name):
 
 if __name__ == "__main__":
     os.system(f"voms-proxy-init --voms cms -valid 192:00 --out /cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/x509up")
-    directory_path = 'data/'
+    directory_path = '/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/data/'
     file_list = get_file_list(directory_path)
     data_title = file_list
 
-    dir_name = select_dir(data_title)
-    if dir_name:
+    #dir_name = select_dir(data_title)
+    #if dir_name:
+    #    main(dir_name)
+    #    mc_to_MC(dir_name)
+
+    for dir_name in data_title:
         main(dir_name)
         mc_to_MC(dir_name)
-
