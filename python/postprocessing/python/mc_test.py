@@ -7,8 +7,14 @@ import json
 import random
 from argparse import ArgumentParser
 
+def get_file_list(directory_path):
+    file_list = [file for file in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, file))]
+    return file_list
 
-data_title = ["DoubleMuon_Data_2018.txt" , "SingleMuon_Data_2018.txt" ,"EGamma_Data_2018.txt","MuonEG_Data_2018.txt" ,"TTTo2L2Nu_MC_2018.txt"]
+directory_path = 'data/'  # 파일을 읽어올 디렉토리 경로
+file_list = get_file_list(directory_path)
+
+data_title = file_list
 
 print("press the mode")
 for i in range(len(data_title)):
