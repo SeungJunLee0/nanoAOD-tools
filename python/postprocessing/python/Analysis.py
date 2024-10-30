@@ -24,112 +24,135 @@ class ExampleAnalysis(Module):
     def beginJob(self, histFile=None, histDirName=None):
         Module.beginJob(self, histFile, histDirName)
 
-        self.h_mbl = ROOT.TH1F('m_lb', 'm_{lb}', 100, 0, 500.)
-        self.h_mbl.GetXaxis().SetTitle("Mass GeV/c")
-        self.h_mbl.GetYaxis().SetTitle("Number of Events")
-        self.addObject(self.h_mbl)
 
-
-        self.h_mbl2 = ROOT.TH1F('m_lb2', 'm_{lb2}', 100, 0, 500.)
-        self.h_mbl2.GetXaxis().SetTitle("Mass GeV/c")
-        self.h_mbl2.GetYaxis().SetTitle("Number of Events")
-        self.addObject(self.h_mbl2)
-
-
-        self.h_step = ROOT.TH1F('Step', 'Selection Step', 21, 0, 20)
-        self.addObject(self.h_step)
-        self.h_mll = ROOT.TH1F('m_ll', 'm_{ll}', 300, 0, 100.)
-        self.addObject(self.h_mll)
-
-        self.h_hlt = ROOT.TH1F('m_muonptarry', 'Muon_{pt} array', 100, -25., 25.)
-        self.addObject(self.h_hlt)
-
-####################### Zero     
-        self.h_zeromuonspt = ROOT.TH1F('Zerotag_muonspt', 'Zerotag_muonspt', 100, 0., 500.)
-        self.addObject(self.h_zeromuonspt)
-
-        self.h_zeromuonseta = ROOT.TH1F('Zerotag_muonseta', 'Zerotag_muonseta', 100, -6., 6.)
-        self.addObject(self.h_zeromuonseta)
-
-        self.h_zerojeteta = ROOT.TH1F('Zerotag_jeteta', 'Zerotag_jeteta', 100,-6., 6.)
-        self.addObject(self.h_zerojeteta)
-
-        self.h_zerojetpt = ROOT.TH1F('Zerotag_jetpt', 'Zerotag_jetpt', 100, 0., 500.)
-        self.addObject(self.h_zerojetpt)
-
-        self.h_num_muon = ROOT.TH1F('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0., 10.)
-        self.addObject(self.h_num_muon)
-
-        self.h_zerosubmuonspt = ROOT.TH1F('Zerotag_submuonspt', 'Zerotag_submuonspt', 100, 0., 500.)
-        self.addObject(self.h_zerosubmuonspt)
-
-        self.h_zerosubmuonseta = ROOT.TH1F('Zerotag_submuonseta', 'Zerotag_submuonseta', 100, -6., 6.)
-        self.addObject(self.h_zerosubmuonseta)
-
-        self.h_zerosubjeteta = ROOT.TH1F('Zerotag_subjeteta', 'Zerotag_subjeteta', 100, -6., 6.)
-        self.addObject(self.h_zerosubjeteta)
-
-        self.h_zerosubjetpt = ROOT.TH1F('Zerotag_subjetpt', 'Zerotag_subjetpt', 100, 0., 500.)
-        self.addObject(self.h_zerosubjetpt)
-
-        self.h_zeromll = ROOT.TH1F('Zerotag_m_ll', 'Zerotagm_{ll}', 300, 0, 100.)
-        self.addObject(self.h_zeromll)
-
-####################### One     
-        self.h_onemuonspt = ROOT.TH1F('Onetag_muonspt', 'Onetag_muonspt', 100, 0., 500.)
-        self.addObject(self.h_onemuonspt)
-
-        self.h_onemuonseta = ROOT.TH1F('Onetag_muonseta', 'Onetag_muonseta', 100, -6., 6.)
-        self.addObject(self.h_onemuonseta)
-
-        self.h_onejeteta = ROOT.TH1F('Onetag_jeteta', 'Onetag_jeteta', 100, -6., 6.)
-        self.addObject(self.h_onejeteta)
-
-        self.h_onejetpt = ROOT.TH1F('Onetag_jetpt', 'Onetag_jetpt', 100, 0., 500.)
-        self.addObject(self.h_onejetpt)
-
-        self.h_onesubmuonspt = ROOT.TH1F('Onetag_subeptonpt', 'Onetag_submuonspt', 100, 0., 500.)
-        self.addObject(self.h_onesubmuonspt)
-
-        self.h_onesubmuonseta = ROOT.TH1F('Onetag_submuonseta', 'Onetag_submuonseta', 100, -6., 6.)
-        self.addObject(self.h_onesubmuonseta)
-
-        self.h_onesubjeteta = ROOT.TH1F('Onetag_subjeteta', 'Onetag_subjeteta', 100, -6., 6.)
-        self.addObject(self.h_onesubjeteta)
-
-        self.h_onesubjetpt = ROOT.TH1F('Onetag_subjetpt', 'Onetag_subjetpt', 100, 0., 500.)
-        self.addObject(self.h_onesubjetpt)
-
-        self.h_onemll = ROOT.TH1F('Onetag_m_ll', 'Onetagm_{ll}', 300, 0, 100.)
-        self.addObject(self.h_onemll)
-
-####################### Two     
-        self.h_twomuonspt = ROOT.TH1F('Twotag_muonspt', 'Twotag_muonspt', 100, 0., 500.)
-        self.addObject(self.h_twomuonspt)                                                                                                 
-
-        self.h_twomuonseta = ROOT.TH1F('Twotag_muonseta', 'Twotag_muonseta', 100, -6., 6.)
-        self.addObject(self.h_twomuonseta)
+    
+        hist_configs = {
+            'm_ll': ('m_ll', 'm_{ll}', 300, 0, 100, "", ""),
+            'm_muonptarry': ('m_muonptarry', 'Muon_{pt} array', 100, -25, 25, "", ""),
+            
+            # Zero
+            'Zerotag_lep1pt':  ('Zerotag_lep1pt' , 'Zerotag_lep1pt'  , 100, 0, 500, "", ""),
+            'Zerotag_lep1eta': ('Zerotag_lep1eta', 'Zerotag_lep1eta' , 100, -6, 6, "", ""),
+            'Zerotag_jet1eta': ('Zerotag_jet1eta', 'Zerotag_jet1eta' , 100, -6, 6, "", ""),
+            'Zerotag_jet1pt':  ('Zerotag_jet1pt' , 'Zerotag_jet1pt'  , 100, 0, 500, "", ""),
+            'Zerotag_m_ll':    ('Zerotag_m_ll'   , 'Zerotagm_{ll}'   , 300, 0, 100, "", ""),
+            'Zerotag_numberofmuon': ('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0, 10, "", ""),
+            
+            # Zeromumu
+            'mumu_Zerotag_lep1pt':  ('mumu_Zerotag_lep1pt' , 'mumu_Zerotag_lep1pt'  , 100, 0, 500, "", ""),
+            'mumu_Zerotag_lep2pt':  ('mumu_Zerotag_lep2pt' , 'mumu_Zerotag_lep2pt'  , 100, 0, 500, "", ""),
+            'mumu_Zerotag_lep1eta': ('mumu_Zerotag_lep1eta', 'mumu_Zerotag_lep1eta' , 100, -6, 6, "", ""),
+            'mumu_Zerotag_lep2eta': ('mumu_Zerotag_lep2eta', 'mumu_Zerotag_lep2eta' , 100, -6, 6, "", ""),
+            'mumu_Zerotag_jet1eta': ('mumu_Zerotag_jet1eta', 'mumu_Zerotag_jet1eta' , 100, -6, 6, "", ""),
+            'mumu_Zerotag_jet2eta': ('mumu_Zerotag_jet2eta', 'mumu_Zerotag_jet2eta' , 100, -6, 6, "", ""),
+            'mumu_Zerotag_jet1pt':  ('mumu_Zerotag_jet1pt' , 'mumu_Zerotag_jet1pt'  , 100, 0, 500, "", ""),
+            'mumu_Zerotag_jet2pt':  ('mumu_Zerotag_jet2pt' , 'mumu_Zerotag_jet2pt'  , 100, 0, 500, "", ""),
+            'mumu_Zerotag_m_ll':    ('mumu_Zerotag_m_ll'   , 'mumu_Zerotagm_{ll}'   , 300, 0, 100, "", ""),
+            # One
+            
+            # Two
+        }
         
-        self.h_twojeteta = ROOT.TH1F('Twotag_jeteta', 'Twotag_jeteta', 100, -6., 6.)
-        self.addObject(self.h_twojeteta)
-    
-        self.h_twojetpt = ROOT.TH1F('Twotag_jetpt', 'Twotag_jetpt', 100, 0., 500.)
-        self.addObject(self.h_twojetpt)
-    
-        self.h_twosubmuonspt = ROOT.TH1F('Twotag_subeptonpt', 'Twotag_submuonspt', 100, 0., 500.)
-        self.addObject(self.h_twosubmuonspt)
-    
-        self.h_twosubmuonseta = ROOT.TH1F('Twotag_submuonseta', 'Twotag_submuonseta', 100, -6., 6.)
-        self.addObject(self.h_twosubmuonseta)
-    
-        self.h_twosubjeteta = ROOT.TH1F('Twotag_subjeteta', 'Twotag_subjeteta', 100, -6., 6.)
-        self.addObject(self.h_twosubjeteta) 
-    
-        self.h_twosubjetpt = ROOT.TH1F('Twotag_subjetpt', 'Twotag_subjetpt', 100, 0, 500.)
-        self.addObject(self.h_twosubjetpt)                                   
+        for attr_name, (hist_name, title, bins, x_min, x_max, x_title, y_title) in hist_configs.items():
+            hist = ROOT.TH1F(hist_name, title, bins, x_min, x_max)
+            hist.GetXaxis().SetTitle(x_title)
+            hist.GetYaxis().SetTitle(y_title)
+            self.addObject(hist)
+            setattr(self, attr_name, hist)
 
-        self.h_twomll = ROOT.TH1F('Twotag_m_ll', 'Twotagm_{ll}', 300, 0, 100.)
-        self.addObject(self.h_twomll)
+
+        #self.h_mll = ROOT.TH1F('m_ll', 'm_{ll}', 300, 0, 100.)
+        #self.addObject(self.h_mll)
+
+        #self.h_hlt = ROOT.TH1F('m_muonptarry', 'Muon_{pt} array', 100, -25., 25.)
+        #self.addObject(self.h_hlt)
+
+######################## Zero     
+        #self.h_zeromuonspt = ROOT.TH1F('Zerotag_muonspt', 'Zerotag_muonspt', 100, 0., 500.)
+        #self.addObject(self.h_zeromuonspt)
+
+        #self.h_zeromuonseta = ROOT.TH1F('Zerotag_muonseta', 'Zerotag_muonseta', 100, -6., 6.)
+        #self.addObject(self.h_zeromuonseta)
+
+        #self.h_zerojeteta = ROOT.TH1F('Zerotag_jeteta', 'Zerotag_jeteta', 100,-6., 6.)
+        #self.addObject(self.h_zerojeteta)
+
+        #self.h_zerojetpt = ROOT.TH1F('Zerotag_jetpt', 'Zerotag_jetpt', 100, 0., 500.)
+        #self.addObject(self.h_zerojetpt)
+
+        #self.h_num_muon = ROOT.TH1F('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0., 10.)
+        #self.addObject(self.h_num_muon)
+
+        #self.h_zerosubmuonspt = ROOT.TH1F('Zerotag_submuonspt', 'Zerotag_submuonspt', 100, 0., 500.)
+        #self.addObject(self.h_zerosubmuonspt)
+
+        #self.h_zerosubmuonseta = ROOT.TH1F('Zerotag_submuonseta', 'Zerotag_submuonseta', 100, -6., 6.)
+        #self.addObject(self.h_zerosubmuonseta)
+
+        #self.h_zerosubjeteta = ROOT.TH1F('Zerotag_subjeteta', 'Zerotag_subjeteta', 100, -6., 6.)
+        #self.addObject(self.h_zerosubjeteta)
+
+        #self.h_zerosubjetpt = ROOT.TH1F('Zerotag_subjetpt', 'Zerotag_subjetpt', 100, 0., 500.)
+        #self.addObject(self.h_zerosubjetpt)
+
+        #self.h_zeromll = ROOT.TH1F('Zerotag_m_ll', 'Zerotagm_{ll}', 300, 0, 100.)
+        #self.addObject(self.h_zeromll)
+
+######################## One     
+        #self.h_onemuonspt = ROOT.TH1F('Onetag_muonspt', 'Onetag_muonspt', 100, 0., 500.)
+        #self.addObject(self.h_onemuonspt)
+
+        #self.h_onemuonseta = ROOT.TH1F('Onetag_muonseta', 'Onetag_muonseta', 100, -6., 6.)
+        #self.addObject(self.h_onemuonseta)
+
+        #self.h_onejeteta = ROOT.TH1F('Onetag_jeteta', 'Onetag_jeteta', 100, -6., 6.)
+        #self.addObject(self.h_onejeteta)
+
+        #self.h_onejetpt = ROOT.TH1F('Onetag_jetpt', 'Onetag_jetpt', 100, 0., 500.)
+        #self.addObject(self.h_onejetpt)
+
+        #self.h_onesubmuonspt = ROOT.TH1F('Onetag_subeptonpt', 'Onetag_submuonspt', 100, 0., 500.)
+        #self.addObject(self.h_onesubmuonspt)
+
+        #self.h_onesubmuonseta = ROOT.TH1F('Onetag_submuonseta', 'Onetag_submuonseta', 100, -6., 6.)
+        #self.addObject(self.h_onesubmuonseta)
+
+        #self.h_onesubjeteta = ROOT.TH1F('Onetag_subjeteta', 'Onetag_subjeteta', 100, -6., 6.)
+        #self.addObject(self.h_onesubjeteta)
+
+        #self.h_onesubjetpt = ROOT.TH1F('Onetag_subjetpt', 'Onetag_subjetpt', 100, 0., 500.)
+        #self.addObject(self.h_onesubjetpt)
+
+        #self.h_onemll = ROOT.TH1F('Onetag_m_ll', 'Onetagm_{ll}', 300, 0, 100.)
+        #self.addObject(self.h_onemll)
+
+######################## Two     
+        #self.h_twomuonspt = ROOT.TH1F('Twotag_muonspt', 'Twotag_muonspt', 100, 0., 500.)
+        #self.addObject(self.h_twomuonspt)                                                                                                 
+
+        #self.h_twomuonseta = ROOT.TH1F('Twotag_muonseta', 'Twotag_muonseta', 100, -6., 6.)
+        #self.addObject(self.h_twomuonseta)
+        #
+        #self.h_twojeteta = ROOT.TH1F('Twotag_jeteta', 'Twotag_jeteta', 100, -6., 6.)
+        #self.addObject(self.h_twojeteta)
+    
+        #self.h_twojetpt = ROOT.TH1F('Twotag_jetpt', 'Twotag_jetpt', 100, 0., 500.)
+        #self.addObject(self.h_twojetpt)
+    
+        #self.h_twosubmuonspt = ROOT.TH1F('Twotag_subeptonpt', 'Twotag_submuonspt', 100, 0., 500.)
+        #self.addObject(self.h_twosubmuonspt)
+    
+        #self.h_twosubmuonseta = ROOT.TH1F('Twotag_submuonseta', 'Twotag_submuonseta', 100, -6., 6.)
+        #self.addObject(self.h_twosubmuonseta)
+    
+        #self.h_twosubjeteta = ROOT.TH1F('Twotag_subjeteta', 'Twotag_subjeteta', 100, -6., 6.)
+        #self.addObject(self.h_twosubjeteta) 
+    
+        #self.h_twosubjetpt = ROOT.TH1F('Twotag_subjetpt', 'Twotag_subjetpt', 100, 0, 500.)
+        #self.addObject(self.h_twosubjetpt)                                   
+
+        #self.h_twomll = ROOT.TH1F('Twotag_m_ll', 'Twotagm_{ll}', 300, 0, 100.)
+        #self.addObject(self.h_twomll)
 
 
     def analyze(self, event):
@@ -140,6 +163,14 @@ class ExampleAnalysis(Module):
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
         #print(self.some_variable)
+
+
+        if len(jets) < 2:
+            return False
+        if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
+            return False
+
+
 
 
         hlt_conditions = {
@@ -235,10 +266,6 @@ class ExampleAnalysis(Module):
             return False
 
 
-        if len(jets) < 2:
-            return False
-        if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
-            return False
         if channel != "emu" and met.pt <=40.0:
             return False
 
@@ -310,37 +337,37 @@ class ExampleAnalysis(Module):
                     if deltaR(j.eta,j.phi,muons[muons_index[0]].eta,muons[muons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[muons_index[1]].eta,muons[muons_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
                         nBtag +=1
             if nBtag ==0 and nDeltaR >=2:
-                self.h_zeromuonspt.Fill(muons[muons_index[0]].pt)
-                self.h_zeromuonseta.Fill(muons[muons_index[0]].eta)
-                self.h_zerojeteta.Fill(jets[jet_index[0]].eta)
-                self.h_zerojetpt.Fill(jets[jet_index[0]].pt)
+                self.mumu_Zerotag_lep1pt.Fill(muons[muons_index[0]].pt)
+                #self.zeromuonseta.Fill(muons[muons_index[0]].eta)
+                #self.zerojeteta.Fill(jets[jet_index[0]].eta)
+                #self.zerojetpt.Fill(jets[jet_index[0]].pt)
 
-                self.h_zerosubmuonspt.Fill(muons[muons_index[1]].pt)
-                self.h_zerosubmuonseta.Fill(muons[muons_index[1]].eta)
-                self.h_zerosubjeteta.Fill(jets[jet_index[1]].eta)
-                self.h_zerosubjetpt.Fill(jets[jet_index[1]].pt)
-                self.h_num_muon.Fill(len(muons))
-                self.h_zeromll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
-            if nBtag ==1 and nDeltaR >= 2:
-                self.h_onemuonspt.Fill(muons[muons_index[0]].pt)
-                self.h_onemuonseta.Fill(muons[muons_index[0]].eta)
-                self.h_onejeteta.Fill(jets[jet_index[0]].eta)
-                self.h_onejetpt.Fill(jets[jet_index[0]].pt)
-                self.h_onesubmuonspt.Fill(muons[muons_index[1]].pt)
-                self.h_onesubmuonseta.Fill(muons[muons_index[1]].eta)
-                self.h_onesubjeteta.Fill(jets[jet_index[1]].eta)
-                self.h_onesubjetpt.Fill(jets[jet_index[1]].pt)
-                self.h_onemll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
-            if nBtag ==2 and nDeltaR >= 2:    
-                self.h_twomuonspt.Fill(muons[muons_index[0]].pt)
-                self.h_twomuonseta.Fill(muons[muons_index[0]].eta)
-                self.h_twojeteta.Fill(jets[jet_index[0]].eta)
-                self.h_twojetpt.Fill(jets[jet_index[0]].pt)
-                self.h_twosubmuonspt.Fill(muons[muons_index[1]].pt)
-                self.h_twosubmuonseta.Fill(muons[muons_index[1]].eta)
-                self.h_twosubjeteta.Fill(jets[jet_index[1]].eta)
-                self.h_twosubjetpt.Fill(jets[jet_index[1]].pt)
-                self.h_twomll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+                #self.zerosubmuonspt.Fill(muons[muons_index[1]].pt)
+                #self.zerosubmuonseta.Fill(muons[muons_index[1]].eta)
+                #self.zerosubjeteta.Fill(jets[jet_index[1]].eta)
+                #self.zerosubjetpt.Fill(jets[jet_index[1]].pt)
+                #self.num_muon.Fill(len(muons))
+                #self.zeromll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+            #if nBtag ==1 and nDeltaR >= 2:
+            #    self.h_onemuonspt.Fill(muons[muons_index[0]].pt)
+            #    self.h_onemuonseta.Fill(muons[muons_index[0]].eta)
+            #    self.h_onejeteta.Fill(jets[jet_index[0]].eta)
+            #    self.h_onejetpt.Fill(jets[jet_index[0]].pt)
+            #    self.h_onesubmuonspt.Fill(muons[muons_index[1]].pt)
+            #    self.h_onesubmuonseta.Fill(muons[muons_index[1]].eta)
+            #    self.h_onesubjeteta.Fill(jets[jet_index[1]].eta)
+            #    self.h_onesubjetpt.Fill(jets[jet_index[1]].pt)
+            #    self.h_onemll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
+            #if nBtag ==2 and nDeltaR >= 2:    
+            #    self.h_twomuonspt.Fill(muons[muons_index[0]].pt)
+            #    self.h_twomuonseta.Fill(muons[muons_index[0]].eta)
+            #    self.h_twojeteta.Fill(jets[jet_index[0]].eta)
+            #    self.h_twojetpt.Fill(jets[jet_index[0]].pt)
+            #    self.h_twosubmuonspt.Fill(muons[muons_index[1]].pt)
+            #    self.h_twosubmuonseta.Fill(muons[muons_index[1]].eta)
+            #    self.h_twosubjeteta.Fill(jets[jet_index[1]].eta)
+            #    self.h_twosubjetpt.Fill(jets[jet_index[1]].pt)
+            #    self.h_twomll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M())
                 
           
 
