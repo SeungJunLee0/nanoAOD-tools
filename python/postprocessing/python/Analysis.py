@@ -61,98 +61,6 @@ class ExampleAnalysis(Module):
             setattr(self, attr_name, hist)
 
 
-        #self.h_mll = ROOT.TH1F('m_ll', 'm_{ll}', 300, 0, 100.)
-        #self.addObject(self.h_mll)
-
-        #self.h_hlt = ROOT.TH1F('m_muonptarry', 'Muon_{pt} array', 100, -25., 25.)
-        #self.addObject(self.h_hlt)
-
-######################## Zero     
-        #self.h_zeromuonspt = ROOT.TH1F('Zerotag_muonspt', 'Zerotag_muonspt', 100, 0., 500.)
-        #self.addObject(self.h_zeromuonspt)
-
-        #self.h_zeromuonseta = ROOT.TH1F('Zerotag_muonseta', 'Zerotag_muonseta', 100, -6., 6.)
-        #self.addObject(self.h_zeromuonseta)
-
-        #self.h_zerojeteta = ROOT.TH1F('Zerotag_jeteta', 'Zerotag_jeteta', 100,-6., 6.)
-        #self.addObject(self.h_zerojeteta)
-
-        #self.h_zerojetpt = ROOT.TH1F('Zerotag_jetpt', 'Zerotag_jetpt', 100, 0., 500.)
-        #self.addObject(self.h_zerojetpt)
-
-        #self.h_num_muon = ROOT.TH1F('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0., 10.)
-        #self.addObject(self.h_num_muon)
-
-        #self.h_zerosubmuonspt = ROOT.TH1F('Zerotag_submuonspt', 'Zerotag_submuonspt', 100, 0., 500.)
-        #self.addObject(self.h_zerosubmuonspt)
-
-        #self.h_zerosubmuonseta = ROOT.TH1F('Zerotag_submuonseta', 'Zerotag_submuonseta', 100, -6., 6.)
-        #self.addObject(self.h_zerosubmuonseta)
-
-        #self.h_zerosubjeteta = ROOT.TH1F('Zerotag_subjeteta', 'Zerotag_subjeteta', 100, -6., 6.)
-        #self.addObject(self.h_zerosubjeteta)
-
-        #self.h_zerosubjetpt = ROOT.TH1F('Zerotag_subjetpt', 'Zerotag_subjetpt', 100, 0., 500.)
-        #self.addObject(self.h_zerosubjetpt)
-
-        #self.h_zeromll = ROOT.TH1F('Zerotag_m_ll', 'Zerotagm_{ll}', 300, 0, 100.)
-        #self.addObject(self.h_zeromll)
-
-######################## One     
-        #self.h_onemuonspt = ROOT.TH1F('Onetag_muonspt', 'Onetag_muonspt', 100, 0., 500.)
-        #self.addObject(self.h_onemuonspt)
-
-        #self.h_onemuonseta = ROOT.TH1F('Onetag_muonseta', 'Onetag_muonseta', 100, -6., 6.)
-        #self.addObject(self.h_onemuonseta)
-
-        #self.h_onejeteta = ROOT.TH1F('Onetag_jeteta', 'Onetag_jeteta', 100, -6., 6.)
-        #self.addObject(self.h_onejeteta)
-
-        #self.h_onejetpt = ROOT.TH1F('Onetag_jetpt', 'Onetag_jetpt', 100, 0., 500.)
-        #self.addObject(self.h_onejetpt)
-
-        #self.h_onesubmuonspt = ROOT.TH1F('Onetag_subeptonpt', 'Onetag_submuonspt', 100, 0., 500.)
-        #self.addObject(self.h_onesubmuonspt)
-
-        #self.h_onesubmuonseta = ROOT.TH1F('Onetag_submuonseta', 'Onetag_submuonseta', 100, -6., 6.)
-        #self.addObject(self.h_onesubmuonseta)
-
-        #self.h_onesubjeteta = ROOT.TH1F('Onetag_subjeteta', 'Onetag_subjeteta', 100, -6., 6.)
-        #self.addObject(self.h_onesubjeteta)
-
-        #self.h_onesubjetpt = ROOT.TH1F('Onetag_subjetpt', 'Onetag_subjetpt', 100, 0., 500.)
-        #self.addObject(self.h_onesubjetpt)
-
-        #self.h_onemll = ROOT.TH1F('Onetag_m_ll', 'Onetagm_{ll}', 300, 0, 100.)
-        #self.addObject(self.h_onemll)
-
-######################## Two     
-        #self.h_twomuonspt = ROOT.TH1F('Twotag_muonspt', 'Twotag_muonspt', 100, 0., 500.)
-        #self.addObject(self.h_twomuonspt)                                                                                                 
-
-        #self.h_twomuonseta = ROOT.TH1F('Twotag_muonseta', 'Twotag_muonseta', 100, -6., 6.)
-        #self.addObject(self.h_twomuonseta)
-        #
-        #self.h_twojeteta = ROOT.TH1F('Twotag_jeteta', 'Twotag_jeteta', 100, -6., 6.)
-        #self.addObject(self.h_twojeteta)
-    
-        #self.h_twojetpt = ROOT.TH1F('Twotag_jetpt', 'Twotag_jetpt', 100, 0., 500.)
-        #self.addObject(self.h_twojetpt)
-    
-        #self.h_twosubmuonspt = ROOT.TH1F('Twotag_subeptonpt', 'Twotag_submuonspt', 100, 0., 500.)
-        #self.addObject(self.h_twosubmuonspt)
-    
-        #self.h_twosubmuonseta = ROOT.TH1F('Twotag_submuonseta', 'Twotag_submuonseta', 100, -6., 6.)
-        #self.addObject(self.h_twosubmuonseta)
-    
-        #self.h_twosubjeteta = ROOT.TH1F('Twotag_subjeteta', 'Twotag_subjeteta', 100, -6., 6.)
-        #self.addObject(self.h_twosubjeteta) 
-    
-        #self.h_twosubjetpt = ROOT.TH1F('Twotag_subjetpt', 'Twotag_subjetpt', 100, 0, 500.)
-        #self.addObject(self.h_twosubjetpt)                                   
-
-        #self.h_twomll = ROOT.TH1F('Twotag_m_ll', 'Twotagm_{ll}', 300, 0, 100.)
-        #self.addObject(self.h_twomll)
 
 
     def analyze(self, event):
@@ -165,9 +73,7 @@ class ExampleAnalysis(Module):
         #print(self.some_variable)
 
 
-        if len(jets) < 2:
-            return False
-        if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
+        if len(jets) <2 or pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
             return False
 
 
