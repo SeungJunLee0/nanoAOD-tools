@@ -262,7 +262,7 @@ class ExampleAnalysis(Module):
         if channel == "mumu" and count_muons != 2:
             return False
 
-        if channel == "emu" and count_muons ==1 and  count_electrons == 1:
+        if channel == "emu" and ( count_muons !=1 or  count_electrons != 1):
             return False
 
         if channel == "ee" and count_electrons != 2:
