@@ -39,6 +39,7 @@ class ExampleAnalysis(Module):
             'Zerotag_numberofmuon': ('Zerotag_numberofmuon', 'Zerotag_numberofmuon', 10, 0, 10, "", ""),
             # Zero 
             # Zeromumu
+            'mumu_Zerotag_MET':     ('mumu_Zerotag_MET'    , 'mumu_Zerotag_MET'     , 100, 0, 500, "", ""),
             'mumu_Zerotag_lep1pt':  ('mumu_Zerotag_lep1pt' , 'mumu_Zerotag_lep1pt'  , 100, 0, 500, "", ""),
             'mumu_Zerotag_lep2pt':  ('mumu_Zerotag_lep2pt' , 'mumu_Zerotag_lep2pt'  , 100, 0, 500, "", ""),
             'mumu_Zerotag_lep1eta': ('mumu_Zerotag_lep1eta', 'mumu_Zerotag_lep1eta' , 100, -6, 6, "", ""),
@@ -49,6 +50,7 @@ class ExampleAnalysis(Module):
             'mumu_Zerotag_jet2pt':  ('mumu_Zerotag_jet2pt' , 'mumu_Zerotag_jet2pt'  , 100, 0, 500, "", ""),
             'mumu_Zerotag_m_ll':    ('mumu_Zerotag_m_ll'   , 'mumu_Zerotagm_{ll}'   , 300, 0, 100, "", ""),
             # Zeroemu
+            'emu_Zerotag_MET':  ('emu_Zerotag_MET' , 'emu_Zerotag_MET'  , 100, 0, 500, "", ""),
             'emu_Zerotag_lep1pt':  ('emu_Zerotag_lep1pt' , 'emu_Zerotag_lep1pt'  , 100, 0, 500, "", ""),
             'emu_Zerotag_lep2pt':  ('emu_Zerotag_lep2pt' , 'emu_Zerotag_lep2pt'  , 100, 0, 500, "", ""),
             'emu_Zerotag_lep1eta': ('emu_Zerotag_lep1eta', 'emu_Zerotag_lep1eta' , 100, -6, 6, "", ""),
@@ -59,6 +61,7 @@ class ExampleAnalysis(Module):
             'emu_Zerotag_jet2pt':  ('emu_Zerotag_jet2pt' , 'emu_Zerotag_jet2pt'  , 100, 0, 500, "", ""),
             'emu_Zerotag_m_ll':    ('emu_Zerotag_m_ll'   , 'emu_Zerotagm_{ll}'   , 300, 0, 100, "", ""),
             # Zeroee
+            'ee_Zerotag_MET':  ('ee_Zerotag_MET' , 'ee_Zerotag_MET'  , 100, 0, 500, "", ""),
             'ee_Zerotag_lep1pt':  ('ee_Zerotag_lep1pt' , 'ee_Zerotag_lep1pt'  , 100, 0, 500, "", ""),
             'ee_Zerotag_lep2pt':  ('ee_Zerotag_lep2pt' , 'ee_Zerotag_lep2pt'  , 100, 0, 500, "", ""),
             'ee_Zerotag_lep1eta': ('ee_Zerotag_lep1eta', 'ee_Zerotag_lep1eta' , 100, -6, 6, "", ""),
@@ -69,6 +72,7 @@ class ExampleAnalysis(Module):
             'ee_Zerotag_jet2pt':  ('ee_Zerotag_jet2pt' , 'ee_Zerotag_jet2pt'  , 100, 0, 500, "", ""),
             'ee_Zerotag_m_ll':    ('ee_Zerotag_m_ll'   , 'ee_Zerotagm_{ll}'   , 300, 0, 100, "", ""),
             # Zerocombine
+            'combine_Zerotag_MET':  ('combine_Zerotag_MET' , 'combine_Zerotag_MET'  , 100, 0, 500, "", ""),
             'combine_Zerotag_lep1pt':  ('combine_Zerotag_lep1pt' , 'combine_Zerotag_lep1pt'  , 100, 0, 500, "", ""),
             'combine_Zerotag_lep2pt':  ('combine_Zerotag_lep2pt' , 'combine_Zerotag_lep2pt'  , 100, 0, 500, "", ""),
             'combine_Zerotag_lep1eta': ('combine_Zerotag_lep1eta', 'combine_Zerotag_lep1eta' , 100, -6, 6, "", ""),
@@ -80,6 +84,7 @@ class ExampleAnalysis(Module):
             'combine_Zerotag_m_ll':    ('combine_Zerotag_m_ll'   , 'combine_Zerotagm_{ll}'   , 300, 0, 100, "", ""),
             # One
             # Onemumu
+            'mumu_Onetag_MET':  ('mumu_Onetag_MET' , 'mumu_Onetag_MET'  , 100, 0, 500, "", ""),
             'mumu_Onetag_lep1pt':  ('mumu_Onetag_lep1pt' , 'mumu_Onetag_lep1pt'  , 100, 0, 500, "", ""),
             'mumu_Onetag_lep2pt':  ('mumu_Onetag_lep2pt' , 'mumu_Onetag_lep2pt'  , 100, 0, 500, "", ""),
             'mumu_Onetag_lep1eta': ('mumu_Onetag_lep1eta', 'mumu_Onetag_lep1eta' , 100, -6, 6, "", ""),
@@ -90,6 +95,7 @@ class ExampleAnalysis(Module):
             'mumu_Onetag_jet2pt':  ('mumu_Onetag_jet2pt' , 'mumu_Onetag_jet2pt'  , 100, 0, 500, "", ""),
             'mumu_Onetag_m_ll':    ('mumu_Onetag_m_ll'   , 'mumu_Onetagm_{ll}'   , 300, 0, 100, "", ""),
             # Oneemu
+            'emu_Onetag_MET':  ('emu_Onetag_MET' , 'emu_Onetag_MET'  , 100, 0, 500, "", ""),
             'emu_Onetag_lep1pt':  ('emu_Onetag_lep1pt' , 'emu_Onetag_lep1pt'  , 100, 0, 500, "", ""),
             'emu_Onetag_lep2pt':  ('emu_Onetag_lep2pt' , 'emu_Onetag_lep2pt'  , 100, 0, 500, "", ""),
             'emu_Onetag_lep1eta': ('emu_Onetag_lep1eta', 'emu_Onetag_lep1eta' , 100, -6, 6, "", ""),
@@ -100,6 +106,7 @@ class ExampleAnalysis(Module):
             'emu_Onetag_jet2pt':  ('emu_Onetag_jet2pt' , 'emu_Onetag_jet2pt'  , 100, 0, 500, "", ""),
             'emu_Onetag_m_ll':    ('emu_Onetag_m_ll'   , 'emu_Onetagm_{ll}'   , 300, 0, 100, "", ""),
             # Oneee
+            'ee_Onetag_MET':  ('ee_Onetag_MET' , 'ee_Onetag_MET'  , 100, 0, 500, "", ""),
             'ee_Onetag_lep1pt':  ('ee_Onetag_lep1pt' , 'ee_Onetag_lep1pt'  , 100, 0, 500, "", ""),
             'ee_Onetag_lep2pt':  ('ee_Onetag_lep2pt' , 'ee_Onetag_lep2pt'  , 100, 0, 500, "", ""),
             'ee_Onetag_lep1eta': ('ee_Onetag_lep1eta', 'ee_Onetag_lep1eta' , 100, -6, 6, "", ""),
@@ -110,6 +117,7 @@ class ExampleAnalysis(Module):
             'ee_Onetag_jet2pt':  ('ee_Onetag_jet2pt' , 'ee_Onetag_jet2pt'  , 100, 0, 500, "", ""),
             'ee_Onetag_m_ll':    ('ee_Onetag_m_ll'   , 'ee_Onetagm_{ll}'   , 300, 0, 100, "", ""),
             # Onecombine
+            'combine_Onetag_MET':  ('combine_Onetag_MET' , 'combine_Onetag_MET'  , 100, 0, 500, "", ""),
             'combine_Onetag_lep1pt':  ('combine_Onetag_lep1pt' , 'combine_Onetag_lep1pt'  , 100, 0, 500, "", ""),
             'combine_Onetag_lep2pt':  ('combine_Onetag_lep2pt' , 'combine_Onetag_lep2pt'  , 100, 0, 500, "", ""),
             'combine_Onetag_lep1eta': ('combine_Onetag_lep1eta', 'combine_Onetag_lep1eta' , 100, -6, 6, "", ""),
@@ -122,6 +130,7 @@ class ExampleAnalysis(Module):
             
             # Two
             # Towmumu
+            'mumu_Twotag_MET':  ('mumu_Twotag_MET' , 'mumu_Twotag_MET'  , 100, 0, 500, "", ""),
             'mumu_Twotag_lep1pt':  ('mumu_Twotag_lep1pt' , 'mumu_Twotag_lep1pt'  , 100, 0, 500, "", ""),
             'mumu_Twotag_lep2pt':  ('mumu_Twotag_lep2pt' , 'mumu_Twotag_lep2pt'  , 100, 0, 500, "", ""),
             'mumu_Twotag_lep1eta': ('mumu_Twotag_lep1eta', 'mumu_Twotag_lep1eta' , 100, -6, 6, "", ""),
@@ -132,6 +141,7 @@ class ExampleAnalysis(Module):
             'mumu_Twotag_jet2pt':  ('mumu_Twotag_jet2pt' , 'mumu_Twotag_jet2pt'  , 100, 0, 500, "", ""),
             'mumu_Twotag_m_ll':    ('mumu_Twotag_m_ll'   , 'mumu_Twotagm_{ll}'   , 300, 0, 100, "", ""),
             # Twoemu
+            'emu_Twotag_MET':  ('emu_Twotag_MET' , 'emu_Twotag_MET'  , 100, 0, 500, "", ""),
             'emu_Twotag_lep1pt':  ('emu_Twotag_lep1pt' , 'emu_Twotag_lep1pt'  , 100, 0, 500, "", ""),
             'emu_Twotag_lep2pt':  ('emu_Twotag_lep2pt' , 'emu_Twotag_lep2pt'  , 100, 0, 500, "", ""),
             'emu_Twotag_lep1eta': ('emu_Twotag_lep1eta', 'emu_Twotag_lep1eta' , 100, -6, 6, "", ""),
@@ -142,6 +152,7 @@ class ExampleAnalysis(Module):
             'emu_Twotag_jet2pt':  ('emu_Twotag_jet2pt' , 'emu_Twotag_jet2pt'  , 100, 0, 500, "", ""),
             'emu_Twotag_m_ll':    ('emu_Twotag_m_ll'   , 'emu_Twotagm_{ll}'   , 300, 0, 100, "", ""),
             # Twoee
+            'ee_Twotag_MET':  ('ee_Twotag_MET' , 'ee_Twotag_MET'  , 100, 0, 500, "", ""),
             'ee_Twotag_lep1pt':  ('ee_Twotag_lep1pt' , 'ee_Twotag_lep1pt'  , 100, 0, 500, "", ""),
             'ee_Twotag_lep2pt':  ('ee_Twotag_lep2pt' , 'ee_Twotag_lep2pt'  , 100, 0, 500, "", ""),
             'ee_Twotag_lep1eta': ('ee_Twotag_lep1eta', 'ee_Twotag_lep1eta' , 100, -6, 6, "", ""),
@@ -152,6 +163,7 @@ class ExampleAnalysis(Module):
             'ee_Twotag_jet2pt':  ('ee_Twotag_jet2pt' , 'ee_Twotag_jet2pt'  , 100, 0, 500, "", ""),
             'ee_Twotag_m_ll':    ('ee_Twotag_m_ll'   , 'ee_Twotagm_{ll}'   , 300, 0, 100, "", ""),
             # Twocombine
+            'combine_Twotag_MET':  ('combine_Twotag_MET' , 'combine_Twotag_MET'  , 100, 0, 500, "", ""),
             'combine_Twotag_lep1pt':  ('combine_Twotag_lep1pt' , 'combine_Twotag_lep1pt'  , 100, 0, 500, "", ""),
             'combine_Twotag_lep2pt':  ('combine_Twotag_lep2pt' , 'combine_Twotag_lep2pt'  , 100, 0, 500, "", ""),
             'combine_Twotag_lep1eta': ('combine_Twotag_lep1eta', 'combine_Twotag_lep1eta' , 100, -6, 6, "", ""),
@@ -323,6 +335,7 @@ class ExampleAnalysis(Module):
                     if deltaR(j.eta,j.phi,muons[muons_index[0]].eta,muons[muons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,muons[muons_index[1]].eta,muons[muons_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
                         nBtag +=1
             if nBtag ==0 and nDeltaR >=2:
+                self.mumu_Zerotag_MET.Fill(met.pt,gen_weight)
                 self.mumu_Zerotag_lep1pt.Fill(muons[muons_index[0]].pt,gen_weight)
                 self.mumu_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
                 self.mumu_Zerotag_lep2pt.Fill(muons[muons_index[1]].pt,gen_weight)
@@ -343,6 +356,7 @@ class ExampleAnalysis(Module):
                 self.combine_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta,gen_weight)
                 self.combine_Zerotag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M(),gen_weight)
             if nBtag ==1 and nDeltaR >= 2:
+                self.mumu_Onetag_MET.Fill(met.pt,gen_weight)
                 self.mumu_Onetag_lep1pt.Fill(muons[muons_index[0]].pt,gen_weight)
                 self.mumu_Onetag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
                 self.mumu_Onetag_lep2pt.Fill(muons[muons_index[1]].pt,gen_weight)
@@ -363,6 +377,7 @@ class ExampleAnalysis(Module):
                 self.combine_Onetag_jet2eta.Fill(jets[jet_index[1]].eta,gen_weight)
                 self.combine_Onetag_m_ll.Fill((muons[muons_index[0]].p4() + muons[muons_index[1]].p4()).M(),gen_weight)
             if nBtag ==2 and nDeltaR >= 2:    
+                self.mumu_Twotag_MET.Fill(met.pt,gen_weight)
                 self.mumu_Twotag_lep1pt.Fill(muons[muons_index[0]].pt,gen_weight)
                 self.mumu_Twotag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
                 self.mumu_Twotag_lep2pt.Fill(muons[muons_index[1]].pt,gen_weight)
@@ -394,6 +409,7 @@ class ExampleAnalysis(Module):
                     if deltaR(j.eta,j.phi,electrons[electrons_index[0]].eta,electrons[electrons_index[0]].phi) > 0.4 and deltaR(j.eta,j.phi,electrons[electrons_index[1]].eta,electrons[electrons_index[1]].phi) > 0.4 and j.btagDeepFlavB > 0.2770:
                         nBtag +=1
             if nBtag ==0 and nDeltaR >=2:
+                self.ee_Zerotag_MET.Fill(met.pt,gen_weight)
                 self.ee_Zerotag_lep1pt.Fill(electrons[electrons_index[0]].pt,gen_weight)
                 self.ee_Zerotag_lep1eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                 self.ee_Zerotag_lep2pt.Fill(electrons[electrons_index[1]].pt,gen_weight)
@@ -414,6 +430,7 @@ class ExampleAnalysis(Module):
                 self.combine_Zerotag_jet2eta.Fill(jets[jet_index[1]].eta,gen_weight)
                 self.combine_Zerotag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M(),gen_weight)
             if nBtag ==1 and nDeltaR >= 2:
+                self.ee_Onetag_MET.Fill(met.pt,gen_weight)
                 self.ee_Onetag_lep1pt.Fill(electrons[electrons_index[0]].pt,gen_weight)
                 self.ee_Onetag_lep1eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                 self.ee_Onetag_lep2pt.Fill(electrons[electrons_index[1]].pt,gen_weight)
@@ -434,6 +451,7 @@ class ExampleAnalysis(Module):
                 self.combine_Onetag_jet2eta.Fill(jets[jet_index[1]].eta,gen_weight)
                 self.combine_Onetag_m_ll.Fill((electrons[electrons_index[0]].p4() + electrons[electrons_index[1]].p4()).M(),gen_weight)
             if nBtag ==2 and nDeltaR >= 2:    
+                self.ee_Twotag_MET.Fill(met.pt,gen_weight)
                 self.ee_Twotag_lep1pt.Fill(electrons[electrons_index[0]].pt,gen_weight)
                 self.ee_Twotag_lep1eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                 self.ee_Twotag_lep2pt.Fill(electrons[electrons_index[1]].pt,gen_weight)
@@ -475,6 +493,7 @@ class ExampleAnalysis(Module):
                     self.emu_Zerotag_lep2eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                     self.emu_Zerotag_lep1pt.Fill( muons[muons_index[0]].pt,gen_weight)
                     self.emu_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
+                self.emu_Zerotag_MET.Fill( met.pt,gen_weight)
                 self.emu_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt,gen_weight)
                 self.emu_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta,gen_weight)
                 self.emu_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt,gen_weight)
@@ -492,6 +511,7 @@ class ExampleAnalysis(Module):
                     self.combine_Zerotag_lep1pt.Fill( muons[muons_index[0]].pt,gen_weight)
                     self.combine_Zerotag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
 
+                self.combine_Zerotag_MET.Fill( met.pt,gen_weight)
                 self.combine_Zerotag_jet1pt.Fill( jets[jet_index[0]].pt,gen_weight)
                 self.combine_Zerotag_jet1eta.Fill(jets[jet_index[0]].eta,gen_weight)
                 self.combine_Zerotag_jet2pt.Fill( jets[jet_index[1]].pt,gen_weight)
@@ -508,6 +528,7 @@ class ExampleAnalysis(Module):
                     self.emu_Onetag_lep2eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                     self.emu_Onetag_lep1pt.Fill( muons[muons_index[0]].pt,gen_weight)
                     self.emu_Onetag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
+                self.emu_Onetag_MET.Fill( met.pt,gen_weight)
                 self.emu_Onetag_jet1pt.Fill( jets[jet_index[0]].pt,gen_weight)
                 self.emu_Onetag_jet1eta.Fill(jets[jet_index[0]].eta,gen_weight)
                 self.emu_Onetag_jet2pt.Fill( jets[jet_index[1]].pt,gen_weight)
@@ -524,6 +545,7 @@ class ExampleAnalysis(Module):
                     self.combine_Onetag_lep2eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                     self.combine_Onetag_lep1pt.Fill( muons[muons_index[0]].pt,gen_weight)
                     self.combine_Onetag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
+                self.combine_Onetag_MET.Fill( met.pt,gen_weight)
                 self.combine_Onetag_jet1pt.Fill( jets[jet_index[0]].pt,gen_weight)
                 self.combine_Onetag_jet1eta.Fill(jets[jet_index[0]].eta,gen_weight)
                 self.combine_Onetag_jet2pt.Fill( jets[jet_index[1]].pt,gen_weight)
@@ -540,6 +562,7 @@ class ExampleAnalysis(Module):
                     self.emu_Twotag_lep2eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                     self.emu_Twotag_lep1pt.Fill( muons[muons_index[0]].pt,gen_weight)
                     self.emu_Twotag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
+                self.emu_Twotag_MET.Fill( met.pt,gen_weight)
                 self.emu_Twotag_jet1pt.Fill( jets[jet_index[0]].pt,gen_weight)
                 self.emu_Twotag_jet1eta.Fill(jets[jet_index[0]].eta,gen_weight)
                 self.emu_Twotag_jet2pt.Fill( jets[jet_index[1]].pt,gen_weight)
@@ -556,6 +579,7 @@ class ExampleAnalysis(Module):
                     self.combine_Twotag_lep2eta.Fill(electrons[electrons_index[0]].eta,gen_weight)
                     self.combine_Twotag_lep1pt.Fill( muons[muons_index[0]].pt,gen_weight)
                     self.combine_Twotag_lep1eta.Fill(muons[muons_index[0]].eta,gen_weight)
+                self.combine_Twotag_MET.Fill( met.pt,gen_weight)
                 self.combine_Twotag_jet1pt.Fill( jets[jet_index[0]].pt,gen_weight)
                 self.combine_Twotag_jet1eta.Fill(jets[jet_index[0]].eta,gen_weight)
                 self.combine_Twotag_jet2pt.Fill( jets[jet_index[1]].pt,gen_weight)
