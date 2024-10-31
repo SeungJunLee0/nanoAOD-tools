@@ -19,6 +19,10 @@ cd run_~~~~/HTCondor/
 
 bash dashgo.sh
 
+## After condor job Merge the output
+
+python3 merge_result.py
+
 
 ## find some nanoAODv9
 
