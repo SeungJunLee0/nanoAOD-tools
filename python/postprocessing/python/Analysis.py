@@ -29,6 +29,7 @@ class ExampleAnalysis(Module):
         hist_configs = {
             'm_ll': ('m_ll', 'm_{ll}', 300, 0, 100, "", ""),
             'm_muonptarry': ('m_muonptarry', 'Muon_{pt} array', 100, -25, 25, "", ""),
+            'count' :  ('count', 'count', 10, 0, 2, "", ""),
             
             # Zero
             'Zerotag_lep1pt':  ('Zerotag_lep1pt' , 'Zerotag_lep1pt'  , 100, 0, 500, "", ""),
@@ -193,6 +194,8 @@ class ExampleAnalysis(Module):
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
+        print(gen_weight)
+        self.count.Fill(1.0,gen_weight)
 
 
         if len(jets) <2 or pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
@@ -603,20 +606,24 @@ def presel():
     print(str(args.file))
     json ="../data/JSON/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
     AllName = "output/hist_" + args.name +".root"
-    preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
+    #preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = args.file
     some_variable = args.name
 
     if "Data" in args.name:
         print("It is data")
-        p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
-                          ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
+        #p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
+        #                  ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
+        p = PostProcessor(".", files, branchsel=None, modules=[
+                          ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots" )
         p.run()
 
     else:
         print("It is MC")
-        p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
-                          ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots")
+        #p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
+        #                  ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots")
+        p = PostProcessor(".", files, branchsel=None, modules=[
+                          ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots" )
         p.run()
 
 
