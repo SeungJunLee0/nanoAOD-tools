@@ -194,11 +194,10 @@ class ExampleAnalysis(Module):
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
-        print(gen_weight)
         self.count.Fill(1.0,gen_weight)
 
 
-        if len(jets) <2 or pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
+        if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
             return False
 
 
