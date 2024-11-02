@@ -207,57 +207,44 @@ class ExampleAnalysis(Module):
             "mumu_2018":        hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
             "single_mu_2018":   hlt.IsoMu24,
             "single_e_2018":    hlt.Ele32_WPTight_Gsf,
-            "ee_2018":          hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL or hlt.DoubleEle25_CaloIdL_MW,
-            "emu_2018":         hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ or hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL,
+            "ee_2018":          ( hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL or hlt.DoubleEle25_CaloIdL_MW ),
+            "emu_2018":         ( hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ or hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL),
         }
 
         channel = "None"
 
 
-        if "Data" in self.some_variable and "DoubleMuon" in self.some_variable and "2018" in self.some_variable and hlt_conditions["mumu_2018"]:
-            channel = "mumu"
-
-        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["mumu_2018"] and hlt_conditions["single_mu_2018"]:
-            channel = "mumu"
-
-
-        elif "Data" in self.some_variable and "SingleMuon" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"] and hlt_conditions["single_mu_2018"]:
-            channel = "emu"
-
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-            channel = "emu"
-
-        elif "Data" in self.some_variable and "SingleElectron" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["ee_2018"] and  hlt_conditions["single_e_2018"]:
-            channel = "ee"
-
-        elif "Data" in self.some_variable and "DoubleEG" in self.some_variable and "2018" in self.some_variable and hlt_conditions["ee_2018"]:
-            channel = "ee"
-
-        elif "Data" in self.some_variable and "MuonEG" in self.some_variable and "2018" in self.some_variable and hlt_conditions["emu_2018"]:
-            channel = "emu"
-
-
-        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
-            channel = "ee"
-
-        elif "Data" in self.some_variable and "EGamma" in self.some_variable and "2018" in self.some_variable and not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-            channel = "emu"
-
-
-
-
-
-        elif "MC" in self.some_variable and "2018" in self.some_variable and ( hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]):
-            channel = "ee"
-
-
-
-        elif "MC" in self.some_variable and "2018" in self.some_variable and ( hlt_conditions["emu_2018"] or hlt_conditions["single_e_2018"] or hlt_conditions["single_mu_2018"]):
-            channel = "emu"
-
-        elif "MC" in self.some_variable and "2018" in self.some_variable and ( hlt_conditions["mumu_2018"] or hlt_conditions["single_mu_2018"]):
-            channel = "mumu"
-
+        if "Data" in self.some_variable and "2018" in self.some_variable:
+            if "DoubleMuon" in self.some_variable and hlt_conditions["mumu_2018"]:
+                channel = "mumu"
+            elif "SingleMuon" in self.some_variable:
+                if not hlt_conditions["mumu_2018"] and hlt_conditions["single_mu_2018"]:
+                    channel = "mumu"
+                elif not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"] and hlt_conditions["single_mu_2018"]:
+                    channel = "emu"
+            elif "SingleElectron" in self.some_variable:
+                if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
+                    channel = "emu"
+                elif not hlt_conditions["ee_2018"] and hlt_conditions["single_e_2018"]:
+                    channel = "ee"
+            elif "DoubleEG" in self.some_variable and hlt_conditions["ee_2018"]:
+                channel = "ee"
+            elif "MuonEG" in self.some_variable and hlt_conditions["emu_2018"]:
+                channel = "emu"
+            elif "EGamma" in self.some_variable:
+                if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
+                    channel = "ee"
+                elif not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
+                    channel = "emu"
+        
+        # MC 채널 결정
+        elif "MC" in self.some_variable and "2018" in self.some_variable:
+            if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
+                channel = "ee"
+            elif hlt_conditions["emu_2018"] or hlt_conditions["single_e_2018"] or hlt_conditions["single_mu_2018"]:
+                channel = "emu"
+            elif hlt_conditions["mumu_2018"] or hlt_conditions["single_mu_2018"]:
+                channel = "mumu"
 
 
 
