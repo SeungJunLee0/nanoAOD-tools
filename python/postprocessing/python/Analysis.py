@@ -211,49 +211,49 @@ class ExampleAnalysis(Module):
             "emu_2018":         ( hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ or hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL),
         }
 
-        channel = "None"
+        channel = []
 
 
         if "Data" in self.some_variable and "2018" in self.some_variable:
             if "DoubleMuon" in self.some_variable and hlt_conditions["mumu_2018"]:
-                channel = "mumu"
+                channel.append("mumu")
             elif "SingleMuon" in self.some_variable:
                 if not hlt_conditions["mumu_2018"] and hlt_conditions["single_mu_2018"]:
-                    channel = "mumu"
+                    channel.append("mumu")
                 elif not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"] and hlt_conditions["single_mu_2018"]:
-                    channel = "emu"
+                    channel.append("emu")
             elif "SingleElectron" in self.some_variable:
                 if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-                    channel = "emu"
+                    channel.append("emu")
                 elif not hlt_conditions["ee_2018"] and hlt_conditions["single_e_2018"]:
-                    channel = "ee"
+                    channel.append("ee")
             elif "DoubleEG" in self.some_variable and hlt_conditions["ee_2018"]:
-                channel = "ee"
+                channel.append("ee")
             elif "MuonEG" in self.some_variable and hlt_conditions["emu_2018"]:
-                channel = "emu"
+                channel.append("emu")
             elif "EGamma" in self.some_variable:
                 if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
-                    channel = "ee"
+                    channel.append("ee")
                 elif not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-                    channel = "emu"
+                    channel.append("emu")
         
         # MC 채널 결정
         elif "MC" in self.some_variable and "2018" in self.some_variable:
             if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
-                channel = "ee"
+                channel.append("ee")
             elif hlt_conditions["emu_2018"] or hlt_conditions["single_e_2018"] or hlt_conditions["single_mu_2018"]:
-                channel = "emu"
+                channel.append("emu")
             elif hlt_conditions["mumu_2018"] or hlt_conditions["single_mu_2018"]:
-                channel = "mumu"
+                channel.append("mumu")
 
 
 
 
-        if channel == "None":
+        if len(channel) == 0:
             return False
 
 
-        if channel != "emu" and met.pt <=40.0:
+        if not "emu" in channel and met.pt <=40.0:
             return False
 
 
@@ -264,40 +264,48 @@ class ExampleAnalysis(Module):
         count_electrons = len(electrons)
         
         # Channel conditions
-        if channel == "mumu" and count_muons != 2:
-            return False
+        if "mumu" in channel and count_muons != 2:
+            channel.remove("mumu")
         
-        if channel == "emu" and (count_muons != 1 or count_electrons != 1):
-            return False
+        if "emu" in channel and (count_muons != 1 or count_electrons != 1):
+            channel.remove("emu")
         
-        if channel == "ee" and count_electrons != 2:
+        if "ee" in channel and count_electrons != 2:
+            channel.remove("ee")
+
+        if len(channel) == 0:
             return False
         
         # pt threshold conditions
-        if channel == "mumu" and count_muons == 2:
+        if "mumu" in channel and count_muons == 2:
             if muons[0].pt <= 25 and muons[1].pt <= 25:
-                return False
+                channel.remove("mumu")
         
-        if channel == "emu" and count_muons == 1 and count_electrons == 1:
+        if "emu" in channel and count_muons == 1 and count_electrons == 1:
             if muons[0].pt <= 25 and electrons[0].pt <= 25:
-                return False
+                channel.remove("emu")
         
-        if channel == "ee" and count_electrons == 2:
+        if "ee" in channel and count_electrons == 2:
             if electrons[0].pt <= 25 and electrons[1].pt <= 25:
-                return False
+                channel.remove("ee")
+
+        if len(channel) == 0:
+            return False
         
         # Mass conditions
-        if channel == "mumu" and ((muons[0].p4() + muons[1].p4()).M() <= 20 or abs((muons[0].p4() + muons[1].p4()).M() - 91.19) <= 15.0):
-            return False
+        if "mumu" in channel and ((muons[0].p4() + muons[1].p4()).M() <= 20 or abs((muons[0].p4() + muons[1].p4()).M() - 91.19) <= 15.0):
+            channel.remove("mumu")
         
-        if channel == "ee" and ((electrons[0].p4() + electrons[1].p4()).M() <= 20 or abs((electrons[0].p4() + electrons[1].p4()).M() - 91.19) <= 15.0):
-            return False
+        if "ee" in channel and ((electrons[0].p4() + electrons[1].p4()).M() <= 20 or abs((electrons[0].p4() + electrons[1].p4()).M() - 91.19) <= 15.0):
+            channel.remove("ee")
         
-        if channel == "emu" and (muons[0].p4() + electrons[0].p4()).M() <= 20:
+        if "emu" in channel and (muons[0].p4() + electrons[0].p4()).M() <= 20:
+            channel.remove("emu")
+
+        if len(channel) == 0:
             return False
 
-
-        if channel == "mumu":
+        if "mumu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jet_index = [index for index, j in enumerate(jets)
                          if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
@@ -376,7 +384,7 @@ class ExampleAnalysis(Module):
 
 
 
-        if channel == "ee":
+        if "ee" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jet_index = [index for index, j in enumerate(jets)
                          if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
@@ -453,7 +461,7 @@ class ExampleAnalysis(Module):
                 self.combine_Twotag_jet2eta.Fill(jets[jet_index[1]].eta, gen_weight)
                 self.combine_Twotag_m_ll.Fill((electrons[0].p4() + electrons[1].p4()).M(), gen_weight)
         
-        if channel == "emu":
+        if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jet_index = [index for index, j in enumerate(jets)
                          if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
