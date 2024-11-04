@@ -206,7 +206,6 @@ class ExampleAnalysis(Module):
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
         self.count.Fill(1.0,gen_weight)
-        print(gen_weight)
 
 
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
