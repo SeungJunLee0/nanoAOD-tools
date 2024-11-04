@@ -278,7 +278,6 @@ class ExampleAnalysis(Module):
 
 
 
-
         if len(channel) == 0:
             return False
 
@@ -411,10 +410,6 @@ class ExampleAnalysis(Module):
             if nBtag == 2 and nDeltaR >= 2:
                 self.fill_histograms_for_emu("emu_Twotag", jets, jet_index, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Twotag", jets, jet_index, electrons,muons, met, gen_weight)
-
-
-
-
 
 
 
