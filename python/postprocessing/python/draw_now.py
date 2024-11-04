@@ -18,7 +18,7 @@ mc_files = {
     "TTbar signal"    : "TTbar_signal.root",
     "W/Z+Jets"        : "WZJets.root"
 }
-hist_path = "ee_Twotag_lep1pt"
+hist_path = "ee_Zerotag_lep1pt"
 
 # 히스토그램 읽기 및 Clone
 def read_and_clone_histogram(file_path, hist_name):
