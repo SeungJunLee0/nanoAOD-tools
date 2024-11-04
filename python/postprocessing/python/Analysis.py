@@ -210,7 +210,7 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_jet1eta").Fill(jets[jet_index[0]].eta, gen_weight)
         getattr(self, f"{prefix}_jet2pt").Fill(jets[jet_index[1]].pt, gen_weight)
         getattr(self, f"{prefix}_jet2eta").Fill(jets[jet_index[1]].eta, gen_weight)
-        getattr(self, f"{prefix}_m_ll").Fill((leptons[0].p4() + leptons[1].p4()).M(), gen_weight)
+        getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
 
     def analyze(self, event):
@@ -395,15 +395,15 @@ class ExampleAnalysis(Module):
         
             if nBtag == 0 and nDeltaR >= 2:
                 self.fill_histograms_for_emu("emu_Zerotag", jets, jet_index, electrons,muons, met, gen_weight)
-                self.fill_histograms_for_emu("combine_Zerotag", jets, jet_index, electrons,muons met, gen_weight)
+                self.fill_histograms_for_emu("combine_Zerotag", jets, jet_index, electrons,muons, met, gen_weight)
 
             if nBtag == 1 and nDeltaR >= 2:
                 self.fill_histograms_for_emu("emu_Onetag", jets, jet_index, electrons,muons, met, gen_weight)
-                self.fill_histograms_for_emu("combine_Onetag", jets, jet_index, electrons,muons met, gen_weight)
+                self.fill_histograms_for_emu("combine_Onetag", jets, jet_index, electrons,muons, met, gen_weight)
         
             if nBtag == 2 and nDeltaR >= 2:
                 self.fill_histograms_for_emu("emu_Twotag", jets, jet_index, electrons,muons, met, gen_weight)
-                self.fill_histograms_for_emu("combine_Twotag", jets, jet_index, electrons,muons met, gen_weight)
+                self.fill_histograms_for_emu("combine_Twotag", jets, jet_index, electrons,muons, met, gen_weight)
 
 
 
