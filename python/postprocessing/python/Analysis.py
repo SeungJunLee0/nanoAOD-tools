@@ -183,7 +183,7 @@ class ExampleAnalysis(Module):
             self.addObject(hist)
             setattr(self, attr_name, hist)
 
-    def fill_histograms(prefix, jets, jet_index, leptons, met, gen_weight):
+    def fill_histograms(self, prefix, jets, jet_index, leptons, met, gen_weight):
         getattr(self, f"{prefix}_MET").Fill(met.pt, gen_weight)
         getattr(self, f"{prefix}_lep1pt").Fill(leptons[0].pt, gen_weight)
         getattr(self, f"{prefix}_lep1eta").Fill(leptons[0].eta, gen_weight)
@@ -206,6 +206,7 @@ class ExampleAnalysis(Module):
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
         self.count.Fill(1.0,gen_weight)
+        print(gen_weight)
 
 
         if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
@@ -277,13 +278,13 @@ class ExampleAnalysis(Module):
         count_electrons = len(electrons)
         
         # Channel conditions
-        if "mumu" in channel and count_muons != 2:
+        if "mumu" in channel and count_muons != 2 and count_electrons > 0:
             channel.remove("mumu")
         
         if "emu" in channel and (count_muons != 1 or count_electrons != 1):
             channel.remove("emu")
         
-        if "ee" in channel and count_electrons != 2:
+        if "ee" in channel and count_electrons != 2 and count_muons > 0:
             channel.remove("ee")
 
         if len(channel) == 0:
@@ -330,16 +331,16 @@ class ExampleAnalysis(Module):
                         and j.btagDeepFlavB > 0.2783)
         
             if nBtag == 0 and nDeltaR >= 2:
-                fill_histograms("mumu_Zerotag", jets, jet_index, muons, met, gen_weight)
-                fill_histograms("combine_Zerotag", jets, jet_index, muons, met, gen_weight)
+                self.fill_histograms("mumu_Zerotag", jets, jet_index, muons, met, gen_weight)
+                self.fill_histograms("combine_Zerotag", jets, jet_index, muons, met, gen_weight)
             
             if nBtag == 1 and nDeltaR >= 2:
-                fill_histograms("mumu_Onetag", jets, jet_index, muons, met, gen_weight)
-                fill_histograms("combine_Onetag", jets, jet_index, muons, met, gen_weight)
+                self.fill_histograms("mumu_Onetag", jets, jet_index, muons, met, gen_weight)
+                self.fill_histograms("combine_Onetag", jets, jet_index, muons, met, gen_weight)
             
             if nBtag == 2 and nDeltaR >= 2:
-                fill_histograms("mumu_Twotag", jets, jet_index, muons, met, gen_weight)
-                fill_histograms("combine_Twotag", jets, jet_index, muons, met, gen_weight)
+                self.fill_histograms("mumu_Twotag", jets, jet_index, muons, met, gen_weight)
+                self.fill_histograms("combine_Twotag", jets, jet_index, muons, met, gen_weight)
         
 
 
@@ -355,16 +356,16 @@ class ExampleAnalysis(Module):
                         and j.btagDeepFlavB > 0.2783)
         
             if nBtag == 0 and nDeltaR >= 2:
-                fill_histograms("ee_Zerotag", jets, jet_index, electrons, met, gen_weight)
-                fill_histograms("combine_Zerotag", jets, jet_index, electrons, met, gen_weight)
+                self.fill_histograms("ee_Zerotag", jets, jet_index, electrons, met, gen_weight)
+                self.fill_histograms("combine_Zerotag", jets, jet_index, electrons, met, gen_weight)
             
             if nBtag == 1 and nDeltaR >= 2:
-                fill_histograms("ee_Onetag", jets, jet_index, electrons, met, gen_weight)
-                fill_histograms("combine_Onetag", jets, jet_index, electrons, met, gen_weight)
+                self.fill_histograms("ee_Onetag", jets, jet_index, electrons, met, gen_weight)
+                self.fill_histograms("combine_Onetag", jets, jet_index, electrons, met, gen_weight)
             
             if nBtag == 2 and nDeltaR >= 2:
-                fill_histograms("ee_Twotag", jets, jet_index, electrons, met, gen_weight)
-                fill_histograms("combine_Twotag", jets, jet_index, electrons, met, gen_weight)
+                self.fill_histograms("ee_Twotag", jets, jet_index, electrons, met, gen_weight)
+                self.fill_histograms("combine_Twotag", jets, jet_index, electrons, met, gen_weight)
         
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
