@@ -278,13 +278,13 @@ class ExampleAnalysis(Module):
         count_electrons = len(electrons)
         
         # Channel conditions
-        if "mumu" in channel and count_muons != 2 and count_electrons > 0:
+        if "mumu" in channel and ( count_muons != 2 or count_electrons > 0 ):
             channel.remove("mumu")
         
-        if "emu" in channel and (count_muons != 1 or count_electrons != 1):
+        if "emu" in channel and ( count_muons != 1 or count_electrons != 1):
             channel.remove("emu")
         
-        if "ee" in channel and count_electrons != 2 and count_muons > 0:
+        if "ee" in channel and ( count_electrons != 2 or count_muons > 0):
             channel.remove("ee")
 
         if len(channel) == 0:
