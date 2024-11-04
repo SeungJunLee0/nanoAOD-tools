@@ -221,6 +221,7 @@ class ExampleAnalysis(Module):
         muons     = Collection(event, "Muon")    
         jets      = Collection(event, "Jet")     
         gen_weight = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
+        # get the genWeight value if that is data, genWeight = 1
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
@@ -228,7 +229,9 @@ class ExampleAnalysis(Module):
 
 
         if pv.npvs == 0 or pv.ndof < 4 or abs(pv.z) >= 24.:
+        #primary vertex selection
             return False
+
 
 
 
@@ -240,6 +243,7 @@ class ExampleAnalysis(Module):
             "ee_2018":          ( hlt.Ele23_Ele12_CaloIdL_TrackIdL_IsoVL or hlt.DoubleEle25_CaloIdL_MW ),
             "emu_2018":         ( hlt.Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ or hlt.Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL),
         }
+        # HLT conditions
 
         channel = []
 
