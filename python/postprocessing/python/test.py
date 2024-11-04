@@ -1,10 +1,8 @@
 import ROOT
 import mplhep as hep
 
-# CMS 스타일 설정
 hep.style.use("CMS")
 
-# 파일 목록과 각각의 크로스 섹션 값 (fb 단위)
 file_info = {
     "hist_DoubleMuon_Data_2018.root": 1,
     "hist_EGamma_Data_2018.root": 1,
@@ -26,10 +24,10 @@ file_info = {
     "hist_ZZ_MC_2018.root": 16.523
 }
 
-# 루미노시티 값 (fb^-1)
 luminosity = 59.6
+hist_path = "plots/ee_Twotag_lep1pt"
 
-# 총 엔트리 수 가져오기
+output_file = ROOT.TFile("output_histograms.root", "RECREATE")
 def get_total_entries(file_path):
     file = ROOT.TFile.Open(file_path)
     if not file or file.IsZombie():
@@ -37,11 +35,11 @@ def get_total_entries(file_path):
     hist = file.Get("plots/count")
     if not hist or not isinstance(hist, ROOT.TH1):
         raise RuntimeError(f"Error: 'plots/count' histogram not found or is not a TH1 in file: {file_path}")
-    total_entries = hist.GetEntries()
+    total_entries = hist.Integral()
+    #total_entries = hist.GetEntries()
     file.Close()
     return total_entries
 
-# 히스토그램 스케일링 함수
 def scale_histograms_in_file(file_path, cross_section):
     file = ROOT.TFile.Open(file_path)
     if not file or file.IsZombie():
@@ -49,64 +47,57 @@ def scale_histograms_in_file(file_path, cross_section):
         return None
 
     scale_factor = luminosity * 1000 * cross_section if cross_section >= 2 else 1
-    plots_dir = file.Get("plots")
-    if not plots_dir or not isinstance(plots_dir, ROOT.TDirectory):
-        print(f"Error: 'plots' directory not found in the file: {file_path}")
+    hist = file.Get(hist_path)
+    if not hist or not isinstance(hist, ROOT.TH1):
+        print(f"Error: Histogram {hist_path} not found in file {file_path}")
         file.Close()
         return None
 
-    histograms = []
-    for key in plots_dir.GetListOfKeys():
-        obj = key.ReadObj()
-        if isinstance(obj, ROOT.TH1):
-            if cross_section >= 2:
-                obj.Scale(scale_factor / get_total_entries(file_path))
-                obj.Sumw2()  # 오류 계산 활성화
-                total_content = obj.Integral()  # 스케일링된 빈 내용의 합
-                obj.SetEntries(total_content)  # 엔트리 수 설정
-            # 디버깅: 히스토그램 내용 출력
-            print(f"Histogram {key.GetName()} - Integral: {obj.Integral()}")
-            cloned_hist = obj.Clone()
-            cloned_hist.SetDirectory(0)
-            histograms.append(cloned_hist)
-
+    if cross_section >= 2:
+        hist.Sumw2()  # 오류 계산 활성화
+        print(f"Scaled Histogram {hist_path} in {file_path} - Integral: {hist.Integral()}")
+        hist.Scale(scale_factor / get_total_entries(file_path))
+        print( scale_factor/get_total_entries(file_path))
+        print(f"Scaled Histogram {hist_path} in {file_path} - Integral: {hist.Integral()}")
+    
+    hist.SetDirectory(0)  # 메모리에 유지
     file.Close()
-    return histograms
+    return hist
 
-# 데이터 및 MC 히스토그램 읽기 및 스케일링
 data_hist = None
 mc_histograms = {}
 mc_total_hist = None
 colors = [ROOT.kGreen, ROOT.kOrange, ROOT.kYellow, ROOT.kRed, ROOT.kMagenta]
 
 for file_name, cross_section in file_info.items():
-    histograms = scale_histograms_in_file(file_name, cross_section)
-    if histograms is None:
+    hist = scale_histograms_in_file(file_name, cross_section)
+    if hist is None:
         continue
 
-    # 데이터 히스토그램 병합
-    if cross_section == 1:  # 데이터 파일의 경우
+    if cross_section == 1:  
         if data_hist is None:
-            data_hist = histograms[0]
+            data_hist = hist
+            data_hist.SetDirectory(0)
         else:
-            for hist in histograms:
-                data_hist.Add(hist)
-    else:  # MC 파일의 경우
+            data_hist.Add(hist)
+            data_hist.SetDirectory(0)
+    else:
+        hist.SetDirectory(0)
         label = file_name.split(".root")[0]
-        mc_histograms[label] = histograms[0]
+        mc_histograms[label] = hist
         if mc_total_hist is None:
-            mc_total_hist = histograms[0].Clone("mc_total_hist")
+            mc_total_hist = hist.Clone("mc_total_hist")
+            mc_total_hist.SetDirectory(0)
         else:
-            mc_total_hist.Add(histograms[0])
+            mc_total_hist.Add(hist)
+            mc_total_hist.SetDirectory(0)
 
-# 디버깅: 데이터 및 MC 히스토그램 내용 확인
 if data_hist:
     print(f"Data histogram - Integral: {data_hist.Integral()}")
 if mc_total_hist:
     print(f"MC total histogram - Integral: {mc_total_hist.Integral()}")
 
-# 나머지 코드 (THStack 및 캔버스 설정)은 이전 코드와 동일합니다...
-
+# 캔버스 생성 및 히스토그램 그리기 (이전 코드와 동일)
 canvas = ROOT.TCanvas("canvas", "Control Plot", 800, 800)
 canvas.Divide(1, 2)
 
@@ -159,7 +150,8 @@ ratio_hist.Draw("E")
 
 # CMS 스타일 레이블 추가
 hep.cms.label("Private Work", data=True, lumi=59.8, loc=0)
-
 # 캔버스 출력 및 저장
 canvas.Draw()
-canvas.SaveAs("control_plot.png")
+output_file.Close()
+canvas.SaveAs("control_plot.pdf")
+
