@@ -183,18 +183,18 @@ class ExampleAnalysis(Module):
             self.addObject(hist)
             setattr(self, attr_name, hist)
 
-    #def fill_histograms(prefix, jets, jet_index, leptons, met, gen_weight):
-    #    getattr(self, f"{prefix}_MET").Fill(met.pt, gen_weight)
-    #    getattr(self, f"{prefix}_lep1pt").Fill(leptons[0].pt, gen_weight)
-    #    getattr(self, f"{prefix}_lep1eta").Fill(leptons[0].eta, gen_weight)
-    #    getattr(self, f"{prefix}_lep2pt").Fill(leptons[1].pt, gen_weight)
-    #    getattr(self, f"{prefix}_lep2eta").Fill(leptons[1].eta, gen_weight)
-    #    getattr(self, f"{prefix}_jet1pt").Fill(jets[jet_index[0]].pt, gen_weight)
-    #    getattr(self, f"{prefix}_jet1eta").Fill(jets[jet_index[0]].eta, gen_weight)
-    #    getattr(self, f"{prefix}_jet2pt").Fill(jets[jet_index[1]].pt, gen_weight)
-    #    getattr(self, f"{prefix}_jet2eta").Fill(jets[jet_index[1]].eta, gen_weight)
-    #    getattr(self, f"{prefix}_m_ll").Fill((leptons[0].p4() + leptons[1].p4()).M(), gen_weight)
-    #
+    def fill_histograms(prefix, jets, jet_index, leptons, met, gen_weight):
+        getattr(self, f"{prefix}_MET").Fill(met.pt, gen_weight)
+        getattr(self, f"{prefix}_lep1pt").Fill(leptons[0].pt, gen_weight)
+        getattr(self, f"{prefix}_lep1eta").Fill(leptons[0].eta, gen_weight)
+        getattr(self, f"{prefix}_lep2pt").Fill(leptons[1].pt, gen_weight)
+        getattr(self, f"{prefix}_lep2eta").Fill(leptons[1].eta, gen_weight)
+        getattr(self, f"{prefix}_jet1pt").Fill(jets[jet_index[0]].pt, gen_weight)
+        getattr(self, f"{prefix}_jet1eta").Fill(jets[jet_index[0]].eta, gen_weight)
+        getattr(self, f"{prefix}_jet2pt").Fill(jets[jet_index[1]].pt, gen_weight)
+        getattr(self, f"{prefix}_jet2eta").Fill(jets[jet_index[1]].eta, gen_weight)
+        getattr(self, f"{prefix}_m_ll").Fill((leptons[0].p4() + leptons[1].p4()).M(), gen_weight)
+    
     ## Usage
     #if nBtag == 0 and nDeltaR >= 2:
     #    fill_histograms("mumu_Zerotag", jets, jet_index, muons, met, gen_weight)
@@ -277,8 +277,10 @@ class ExampleAnalysis(Module):
             return False
 
 
-        if not "emu" in channel and met.pt <=40.0:
-            channel.remove("emu")
+        if "ee" in channel and met.pt <=40.0:
+            channel.remove("ee")
+        if "mumu" in channel and met.pt <=40.0:
+            channel.remove("mumu")
 
 
         muons = [m for m in muons if m.pfRelIso04_all < 0.15 and m.tightId and m.pt > 20 and abs(m.eta) < 2.4]
@@ -340,6 +342,17 @@ class ExampleAnalysis(Module):
                         and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
         
+            if nBtag == 0 and nDeltaR >= 2:
+                fill_histograms("mumu_Zerotag", jets, jet_index, muons, met, gen_weight)
+                fill_histograms("combine_Zerotag", jets, jet_index, muons, met, gen_weight)
+            
+            if nBtag == 1 and nDeltaR >= 2:
+                fill_histograms("mumu_Onetag", jets, jet_index, muons, met, gen_weight)
+                fill_histograms("combine_Onetag", jets, jet_index, muons, met, gen_weight)
+            
+            if nBtag == 2 and nDeltaR >= 2:
+                fill_histograms("mumu_Twotag", jets, jet_index, muons, met, gen_weight)
+                fill_histograms("combine_Twotag", jets, jet_index, muons, met, gen_weight)
             if nBtag == 0 and nDeltaR >= 2:
                 self.mumu_Zerotag_MET.Fill(met.pt, gen_weight)
                 self.mumu_Zerotag_lep1pt.Fill(muons[0].pt, gen_weight)
@@ -620,7 +633,6 @@ def presel():
     print(str(args.file))
     json ="../data/JSON/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
     AllName = "output/hist_" + args.name +".root"
-    #preselection = "PV_ndof >=4 && PV_npvs != 0 "#"Muon_pt[0] > 25"# && Muon_pt[1] >20" #, "Muon_pt[1] >20" 
     files = args.file
     some_variable = args.name
 
