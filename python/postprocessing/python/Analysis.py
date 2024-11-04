@@ -214,9 +214,12 @@ class ExampleAnalysis(Module):
 
 
     def analyze(self, event):
-        electrons = sorted(Collection(event, "Electron"),key=lambda x:x.pt,reverse=True)
-        muons     = sorted(Collection(event, "Muon")    ,key=lambda x:x.pt,reverse=True)
-        jets      = sorted(Collection(event, "Jet")     ,key=lambda x:x.pt,reverse=True)
+        #electrons = sorted(Collection(event, "Electron"),key=lambda x:x.pt,reverse=True)
+        #muons     = sorted(Collection(event, "Muon")    ,key=lambda x:x.pt,reverse=True)
+        #jets      = sorted(Collection(event, "Jet")     ,key=lambda x:x.pt,reverse=True)
+        electrons = Collection(event, "Electron")
+        muons     = Collection(event, "Muon")    
+        jets      = Collection(event, "Jet")     
         gen_weight = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
@@ -285,10 +288,12 @@ class ExampleAnalysis(Module):
         if "mumu" in channel and met.pt <=40.0:
             channel.remove("mumu")
 
+        if len(channel) == 0:
+            return False
 
         muons = [m for m in muons if m.pfRelIso04_all < 0.15 and m.tightId and m.pt > 20 and abs(m.eta) < 2.4]
         electrons = [e for e in electrons if e.pt > 20 and abs(e.eta) < 2.4 and e.cutBased >= 4]
-        
+
         count_muons = len(muons)
         count_electrons = len(electrons)
         
@@ -333,6 +338,8 @@ class ExampleAnalysis(Module):
 
         if len(channel) == 0:
             return False
+        muons = sorted(muons, key=lambda x: x.pt, reverse=True)
+        electrons = sorted(electrons, key=lambda x: x.pt, reverse=True)
 
         if "mumu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
@@ -417,32 +424,24 @@ class ExampleAnalysis(Module):
 def presel():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file',type=str, nargs='+', default='root://cmsxrootd.fnal.gov//store/data/Run2018A/DoubleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/270000/C489C20E-FD93-8B42-9F63-0AB2FB0F5C39.root')
-    #parser.add_argument('-f', '--file',type=str, default=['/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/test.root'])
     #parser.add_argument('-f', '--file',type=str, default=['/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/data.root'])
     parser.add_argument('-n', '--name',type=str, default='what')
     args = parser.parse_args()
     print(str(args.file))
-    json ="../data/JSON/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" 
+    some_variable = args.name
+    json ="../data/JSON/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt" if "Data" in some_variable else None 
     AllName = "output/hist_" + args.name +".root"
     files = args.file
-    some_variable = args.name
 
     if "Data" in args.name:
         print("It is data")
-        #p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
-        #                  ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots")
-        p = PostProcessor(".", files, branchsel=None, modules=[
-                          ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots" )
-        p.run()
 
     else:
         print("It is MC")
-        #p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
-        #                  ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots")
-        p = PostProcessor(".", files, branchsel=None, modules=[
-                          ExampleAnalysis(some_variable)], noOut=True, histFileName= AllName, histDirName="plots" )
-        p.run()
 
+    p = PostProcessor(".", files, branchsel=None, modules=[
+                      ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots" )
+    p.run()
 
 
 if __name__=="__main__":
