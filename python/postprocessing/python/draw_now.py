@@ -19,6 +19,7 @@ mc_files = {
     "W/Z+Jets"        : "WZJets.root"
 }
 hist_path = "ee_Zerotag_lep1pt"
+rebin = 4
 
 # 히스토그램 읽기 및 Clone
 def read_and_clone_histogram(file_path, hist_name):
@@ -43,7 +44,7 @@ def read_and_clone_histogram(file_path, hist_name):
 data_hist = read_and_clone_histogram(data_file, hist_path)
 if data_hist is None:
     raise RuntimeError("Data histogram could not be loaded. Check the file path and histogram name.")
-
+data_hist.Rebin(rebin)
 # MC 히스토그램 병합
 mc_histograms = {}
 mc_total_hist = None
@@ -52,6 +53,7 @@ for label, file_path in mc_files.items():
     if hist is None:
         print(f"Skipping {label} because histogram could not be loaded.")
         continue  # 히스토그램이 없으면 건너뛰기
+    hist.Rebin(rebin)
     mc_histograms[label] = hist
     if mc_total_hist is None:
         mc_total_hist = hist.Clone("mc_total_hist")
@@ -61,7 +63,7 @@ for label, file_path in mc_files.items():
 # 오류 처리: MC 히스토그램 병합본이 None일 경우
 if mc_total_hist is None:
     raise RuntimeError("MC histograms could not be loaded. Check the file paths and histogram names.")
-
+mc_total_hist.Rebin(rebin)
 # 캔버스 생성
 canvas = ROOT.TCanvas("canvas", "Control Plot", 800, 800)
 canvas.Divide(1, 2)
