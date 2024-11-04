@@ -224,7 +224,7 @@ class ExampleAnalysis(Module):
         self.count.Fill(1.0,gen_weight)
 
 
-        if pv.npvs == 0 or pv.ndof < 4 or np.abs(pv.z) >= 24.:
+        if pv.npvs == 0 or pv.ndof < 4 or abs(pv.z) >= 24.:
             return False
 
 
