@@ -220,7 +220,9 @@ class ExampleAnalysis(Module):
         electrons = Collection(event, "Electron")
         muons     = Collection(event, "Muon")    
         jets      = Collection(event, "Jet")     
-        gen_weight = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
+        gen_weight2 = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
+        gen_weight1 = abs(gen_weight2)
+        gen_weight = gen_weight2/gen_weight1
         # get the genWeight value if that is data, genWeight = 1
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
