@@ -267,29 +267,6 @@ class ExampleAnalysis(Module):
                 if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
                     channel.append("emu")
 
-        #if "Data" in self.some_variable and "2018" in self.some_variable:
-        #    if "DoubleMuon" in self.some_variable and hlt_conditions["mumu_2018"]:
-        #        channel.append("mumu")
-        #    elif "SingleMuon" in self.some_variable:
-        #        if not hlt_conditions["mumu_2018"] and hlt_conditions["single_mu_2018"]:
-        #            channel.append("mumu")
-        #        elif not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"] and hlt_conditions["single_mu_2018"]:
-        #            channel.append("emu")
-        #    elif "SingleElectron" in self.some_variable:
-        #        if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-        #            channel.append("emu")
-        #        elif not hlt_conditions["ee_2018"] and hlt_conditions["single_e_2018"]:
-        #            channel.append("ee")
-        #    elif "DoubleEG" in self.some_variable and hlt_conditions["ee_2018"]:
-        #        channel.append("ee")
-        #    elif "MuonEG" in self.some_variable and hlt_conditions["emu_2018"]:
-        #        channel.append("emu")
-        #    elif "EGamma" in self.some_variable:
-        #        if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
-        #            channel.append("ee")
-        #        elif not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-        #            channel.append("emu")
-        #
         # MC 채널 결정
         elif "MC" in self.some_variable and "2018" in self.some_variable:
             if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
