@@ -184,7 +184,7 @@ class ExampleAnalysis(Module):
             self.addObject(hist)
             setattr(self, attr_name, hist)
 
-    def fill_histograms(self, prefix, jets, jet_index, leptons, met, gen_weight, lep1_corr =1.0, le2_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
+    def fill_histograms(self, prefix, jets, jet_index, leptons, met, gen_weight, lep1_corr =1.0, lep2_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
         getattr(self, f"{prefix}_MET").Fill(met.pt, gen_weight)
         getattr(self, f"{prefix}_lep1pt").Fill(leptons[0].pt, gen_weight*lep1_corr)
         getattr(self, f"{prefix}_lep1eta").Fill(leptons[0].eta, gen_weight*lep1_corr)
@@ -223,15 +223,20 @@ class ExampleAnalysis(Module):
         jets      = Collection(event, "Jet")     
         gen_weight2 = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
         gen_weight1 = abs(gen_weight2)
-        gen_weight = gen_weight2/gen_weight1
         # get the genWeight value if that is data, genWeight = 1
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
+        pileup = Object(event,"Pileup")
         self.count.Fill(1.0,gen_weight)
 
         evaluator_ele = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/EGM/2018_UL/electron.json.gz')
         evaluator_muo = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz')
+        evaluator_pu = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/LUM/MUO/2018_UL/puWeights.json.gz')
+
+
+        
+        gen_weight = gen_weight2/gen_weight1 * evaluator_pu["Collisions18_UltraLegacy_goldenJSON"].evaluate(pileup.nTrueInt, "nominal")
 
         if pv.npvs == 0 or pv.ndof < 4 or abs(pv.z) >= 24.:
         #primary vertex selection
@@ -359,16 +364,16 @@ class ExampleAnalysis(Module):
             valsf_mu2 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[1].eta, muons[1].pt, "nominal") * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[1].eta, muons[1].pt, "nominal")  
         
             if nBtag == 0 and nDeltaR >= 2:
-                self.fill_histograms("mumu_Zerotag",    jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, le2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Zerotag", jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, le2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("mumu_Zerotag",    jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Zerotag", jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 1 and nDeltaR >= 2:
-                self.fill_histograms("mumu_Onetag",    jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, le2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Onetag", jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, le2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("mumu_Onetag",    jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Onetag", jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 2 and nDeltaR >= 2:
-                self.fill_histograms("mumu_Twotag",    jets, jet_index, muons, met, gen_weight,  lep1_corr =valsf_mu1, le2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Twotag", jets, jet_index, muons, met, gen_weight,  lep1_corr =valsf_mu1, le2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("mumu_Twotag",    jets, jet_index, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Twotag", jets, jet_index, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
         
 
 
@@ -387,16 +392,16 @@ class ExampleAnalysis(Module):
 
         
             if nBtag == 0 and nDeltaR >= 2:
-                self.fill_histograms("ee_Zerotag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, le2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Zerotag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, le2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("ee_Zerotag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Zerotag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 1 and nDeltaR >= 2:
-                self.fill_histograms("ee_Onetag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, le2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Onetag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, le2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("ee_Onetag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Onetag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 2 and nDeltaR >= 2:
-                self.fill_histograms("ee_Twotag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, le2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Twotag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, le2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("ee_Twotag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Twotag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
         
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
