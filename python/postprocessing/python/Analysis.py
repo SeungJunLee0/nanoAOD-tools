@@ -215,9 +215,6 @@ class ExampleAnalysis(Module):
 
 
     def analyze(self, event):
-        #electrons = sorted(Collection(event, "Electron"),key=lambda x:x.pt,reverse=True)
-        #muons     = sorted(Collection(event, "Muon")    ,key=lambda x:x.pt,reverse=True)
-        #jets      = sorted(Collection(event, "Jet")     ,key=lambda x:x.pt,reverse=True)
         electrons = Collection(event, "Electron")
         muons     = Collection(event, "Muon")    
         jets      = Collection(event, "Jet")     
@@ -278,7 +275,7 @@ class ExampleAnalysis(Module):
                     channel.append("emu")
 
         # MC 채널 결정
-        elif "MC" in self.some_variable and "2018" in self.some_variable:
+        if "MC" in self.some_variable and "2018" in self.some_variable:
             if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
                 channel.append("ee")
             if hlt_conditions["emu_2018"] or hlt_conditions["single_e_2018"] or hlt_conditions["single_mu_2018"]:
