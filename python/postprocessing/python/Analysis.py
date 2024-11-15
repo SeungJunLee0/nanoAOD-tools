@@ -12,6 +12,7 @@ import sys
 import ROOT
 import glob
 import argparse
+import math
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 
@@ -184,19 +185,48 @@ class ExampleAnalysis(Module):
             self.addObject(hist)
             setattr(self, attr_name, hist)
 
-    def fill_histograms(self, prefix, jets, jet_index, leptons, met, gen_weight, lep1_corr =1.0, lep2_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
+    def fill_histograms(self, prefix, jets, genjets,rho, leptons, met, gen_weight, lep1_corr =1.0, lep2_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
         getattr(self, f"{prefix}_MET").Fill(met.pt, gen_weight)
         getattr(self, f"{prefix}_lep1pt").Fill(leptons[0].pt, gen_weight*lep1_corr)
         getattr(self, f"{prefix}_lep1eta").Fill(leptons[0].eta, gen_weight*lep1_corr)
         getattr(self, f"{prefix}_lep2pt").Fill(leptons[1].pt, gen_weight*lep2_corr)
         getattr(self, f"{prefix}_lep2eta").Fill(leptons[1].eta, gen_weight*lep2_corr)
-        getattr(self, f"{prefix}_jet1pt").Fill(jets[jet_index[0]].pt, gen_weight*jet1_corr)
-        getattr(self, f"{prefix}_jet1eta").Fill(jets[jet_index[0]].eta, gen_weight*jet1_corr)
-        getattr(self, f"{prefix}_jet2pt").Fill(jets[jet_index[1]].pt, gen_weight*jet2_corr)
-        getattr(self, f"{prefix}_jet2eta").Fill(jets[jet_index[1]].eta, gen_weight*jet2_corr)
+        genjets1 = genjets
+        genjets2 = genjets
+
+        evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
+
+        genjets1 = [j for j in genjets1 if deltaR(jets[0].eta, jets[0].phi, j.eta, j.phi) < 0.2 
+                and abs(jets[0].pt - j.pt)/3.0/jets[0].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)]
+
+        jet_jer = 0
+        if len(genjets) >= 1:
+            jet_jer = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom") - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
+            jet_jer = jet_jer if jet_jer >= 0.0 else 0.0  
+        if len(genjets) == 0:
+            random_generator = ROOT.TRandom3()
+            mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom")**2 - 1, 0)) 
+       
+        getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr*jet_jer)
+        getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr*jet_jer)
+
+        genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
+                and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)]
+
+        jet_jer = 0
+        if len(genjets) >= 1:
+            jet_jer = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom") - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
+            jet_jer = jet_jer if jet_jer >= 0.0 else 0.0  
+        if len(genjets) == 0:
+            random_generator = ROOT.TRandom3()
+            mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom")**2 - 1, 0)) 
+        getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr*jet_jer)
+        getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr*jet_jer)
         getattr(self, f"{prefix}_m_ll").Fill((leptons[0].p4() + leptons[1].p4()).M(), gen_weight*lep1_corr*lep2_corr)
     
-    def fill_histograms_for_emu(self, prefix, jets, jet_index, electrons, muons, met, gen_weight,ele_corr =1.0, muo_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
+    def fill_histograms_for_emu(self, prefix, jets, genjets,rho, electrons, muons, met, gen_weight,ele_corr =1.0, muo_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
         if electrons[0].pt >= muons[0].pt:
             lep1, lep2 ,sf_lep1 ,sf_lep2 = electrons[0], muons[0],ele_corr,muo_corr
         else:
@@ -207,10 +237,39 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_lep1eta").Fill(lep1.eta, gen_weight*sf_lep1)
         getattr(self, f"{prefix}_lep2pt").Fill(lep2.pt, gen_weight*sf_lep2)
         getattr(self, f"{prefix}_lep2eta").Fill(lep2.eta, gen_weight*sf_lep2)
-        getattr(self, f"{prefix}_jet1pt").Fill(jets[jet_index[0]].pt, gen_weight*jet1_corr)
-        getattr(self, f"{prefix}_jet1eta").Fill(jets[jet_index[0]].eta, gen_weight*jet1_corr)
-        getattr(self, f"{prefix}_jet2pt").Fill(jets[jet_index[1]].pt, gen_weight*jet2_corr)
-        getattr(self, f"{prefix}_jet2eta").Fill(jets[jet_index[1]].eta, gen_weight*jet2_corr)
+
+        genjets1 = genjets
+        genjets2 = genjets
+
+        evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
+
+        genjets1 = [j for j in genjets1 if deltaR(jets[0].eta, jets[0].phi, j.eta, j.phi) < 0.2 
+                and abs(jets[0].pt - j.pt)/3.0/jets[0].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)]
+
+        jet_jer = 0
+        if len(genjets) >= 1:
+            jet_jer = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom") - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
+            jet_jer = jet_jer if jet_jer >= 0.0 else 0.0  
+        if len(genjets) == 0:
+            random_generator = ROOT.TRandom3()
+            mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom")**2 - 1, 0)) 
+        getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr*jet_jer)
+        getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr*jet_jer)
+
+        genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
+                and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)]
+
+        jet_jer = 0
+        if len(genjets) >= 1:
+            jet_jer = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom") - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
+            jet_jer = jet_jer if jet_jer >= 0.0 else 0.0  
+        if len(genjets) == 0:
+            random_generator = ROOT.TRandom3()
+            mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom")**2 - 1, 0)) 
+        getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr*jet_jer)
+        getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr*jet_jer)
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
 
@@ -218,6 +277,7 @@ class ExampleAnalysis(Module):
         electrons = Collection(event, "Electron")
         muons     = Collection(event, "Muon")    
         jets      = Collection(event, "Jet")     
+        genjets      = Collection(event, "GenJet")     
         gen_weight2 = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
         gen_weight1 = abs(gen_weight2)
         # get the genWeight value if that is data, genWeight = 1
@@ -225,6 +285,7 @@ class ExampleAnalysis(Module):
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
         pileup = Object(event,"Pileup")
+        rho = getattr(event, "fixedGridRhoFastjetAll",1.0) if "MC" in self.some_variable else 1.0
         self.count.Fill(1.0,gen_weight)
 
         evaluator_ele = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/EGM/2018_UL/electron.json.gz')
@@ -348,11 +409,10 @@ class ExampleAnalysis(Module):
 
         if "mumu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
-            jet_index = [index for index, j in enumerate(jets)
-                         if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
-                         and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
+            jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
+                    and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
         
-            nDeltaR = len(jet_index)
+            nDeltaR = len(jets)
             nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
                         and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
@@ -360,70 +420,76 @@ class ExampleAnalysis(Module):
             valsf_mu1 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, "nominal") * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, "nominal")  
             valsf_mu2 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[1].eta, muons[1].pt, "nominal") * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[1].eta, muons[1].pt, "nominal")  
         
+            if nDeltaR < = 2:
+                return False
+
             if nBtag == 0 and nDeltaR >= 2:
-                self.fill_histograms("mumu_Zerotag",    jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Zerotag", jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("mumu_Zerotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Zerotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 1 and nDeltaR >= 2:
-                self.fill_histograms("mumu_Onetag",    jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Onetag", jets, jet_index, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("mumu_Onetag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Onetag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 2 and nDeltaR >= 2:
-                self.fill_histograms("mumu_Twotag",    jets, jet_index, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Twotag", jets, jet_index, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = 1.0,jet2_corr = 1.0)
         
 
 
         if "ee" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
-            jet_index = [index for index, j in enumerate(jets)
-                         if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
-                         and deltaR(j.eta, j.phi, electrons[1].eta, electrons[1].phi) > 0.4]
- 
-            nDeltaR = len(jet_index)
+            jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
+                    and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
+        
+            nDeltaR = len(jets)
             nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
                         and deltaR(j.eta, j.phi, electrons[1].eta, electrons[1].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
             valsf_ele1 = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018","sf","RecoAbove20",electrons[0].eta, electrons[0].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018","sf","Tight",electrons[0].eta, electrons[0].pt) 
             valsf_ele2 = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018","sf","RecoAbove20",electrons[1].eta, electrons[1].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018","sf","Tight",electrons[1].eta, electrons[1].pt)
 
+            if nDeltaR < = 2:
+                return False
         
             if nBtag == 0 and nDeltaR >= 2:
-                self.fill_histograms("ee_Zerotag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Zerotag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("ee_Zerotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Zerotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 1 and nDeltaR >= 2:
-                self.fill_histograms("ee_Onetag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Onetag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("ee_Onetag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Onetag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
             
             if nBtag == 2 and nDeltaR >= 2:
-                self.fill_histograms("ee_Twotag",      jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms("combine_Twotag", jets, jet_index, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = 1.0,jet2_corr = 1.0)
         
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
-            jet_index = [index for index, j in enumerate(jets)
-                         if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
-                         and deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4]
+            jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
+                    and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
         
-            nDeltaR = len(jet_index)
+            nDeltaR = len(jets)
             nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
                         and deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
             valsf_ele = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018","sf","RecoAbove20",electrons[0].eta, electrons[0].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018","sf","Tight",electrons[0].eta, electrons[0].pt) 
             valsf_mu = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, "nominal") * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, "nominal")  
         
+            if nDeltaR < = 2:
+                return False
+
             if nBtag == 0 and nDeltaR >= 2:
-                self.fill_histograms_for_emu("emu_Zerotag",     jets, jet_index, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms_for_emu("combine_Zerotag", jets, jet_index, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms_for_emu("emu_Zerotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms_for_emu("combine_Zerotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
 
             if nBtag == 1 and nDeltaR >= 2:
-                self.fill_histograms_for_emu("emu_Onetag",     jets, jet_index, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms_for_emu("combine_Onetag", jets, jet_index, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms_for_emu("emu_Onetag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms_for_emu("combine_Onetag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
         
             if nBtag == 2 and nDeltaR >= 2:
-                self.fill_histograms_for_emu("emu_Twotag",     jets, jet_index, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
-                self.fill_histograms_for_emu("combine_Twotag", jets, jet_index, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
+                self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = 1.0,jet2_corr = 1.0)
 
 
 
