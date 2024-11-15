@@ -12,22 +12,24 @@ cd PhysicsTools/NanoAODTools/python/postprocessing/python
 mkdir output
 
 ```
-## run the code 
+### run the code 
+```
 python3 set_the_condor_job.py
 
 python3 excute_all.py 
-
-## if you want specific dir(specific mc or data)
+```
+### if you want specific dir(specific mc or data)
+```
 python3 mc_test.py
 
 cd run_~~~~/HTCondor/
 
 bash dashgo.sh
-
-## After condor job Merge the output
-
+```
+### After condor job Merge the output
+```
 python3 merge_result.py
-
+```
 
 ## find some nanoAODv9
 
