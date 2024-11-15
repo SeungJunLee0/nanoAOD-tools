@@ -1,12 +1,15 @@
 # DeepTopwidth
 ## Useful Links:
+
+## Quickstart
+'''
 git clone https://github.com/SeungJunLee0/nanoAOD-tools.git  PhysicsTools/NanoAODTools 
 
 
 cd PhysicsTools/NanoAODTools/python/postprocessing/python
 
 mkdir output
-
+'''
 ## run the code 
 python3 set_the_condor_job.py
 
