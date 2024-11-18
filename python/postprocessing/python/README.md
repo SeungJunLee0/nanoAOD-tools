@@ -1,8 +1,6 @@
 # DeepTopwidth
 ## Useful Links:
-| Type | Link | 
-| :--: | :--: | 
-|azh_coffe | https://github.com/GageDeZoort/azh_coffea/blob/main/README.md |
+-[azh_coffe](https://github.com/GageDeZoort/azh_coffea/blob/main/README.md)
 
 
 ## Quickstart
