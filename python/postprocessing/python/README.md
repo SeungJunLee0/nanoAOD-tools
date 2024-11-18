@@ -4,7 +4,7 @@
 - [CMS Physics Object](https://cms-opendata-workshop.github.io/workshop2024-lesson-physics-objects/instructor/06-jecjer.html) : Electron, Muon, Jets, MET, Tagging, Jet correction etc
 - [Jet Energy Corrections](https://cms-jerc.web.cern.ch/JEC/#factorized-approach) : Jet Energy Corrections
 - [jsonPOG-integration]( https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME) : All of json file
-
+- [B-Tagging eff](https://btv-wiki.docs.cern.ch/PerformanceCalibration/fixedWPSFRecommendations/) : how to calculate the b_eff
 ## Quickstart
 ```
 
