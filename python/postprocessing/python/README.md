@@ -5,6 +5,7 @@
 - [Jet Energy Corrections](https://cms-jerc.web.cern.ch/JEC/#factorized-approach) : Jet Energy Corrections
 - [jsonPOG-integration]( https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME) : All of json file
 - [B-Tagging eff](https://btv-wiki.docs.cern.ch/PerformanceCalibration/fixedWPSFRecommendations/) : how to calculate the b_eff
+- [Jet energy resolution](https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Run2_JER_uncertainty_correlation) : how to calculate the JER
 ## Quickstart
 ```
 
