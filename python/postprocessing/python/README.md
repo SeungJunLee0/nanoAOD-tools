@@ -1,7 +1,7 @@
 # DeepTopwidth
 ## Useful Links:
 - [azh_coffe](https://github.com/GageDeZoort/azh_coffea/blob/main/README.md) : markdowon example
-- [CMS Physics Object](https://cms-opendata-workshop.github.io/workshop2024-lesson-physics-objects/instructor/06-jecjer.html)
+- [CMS Physics Object](https://cms-opendata-workshop.github.io/workshop2024-lesson-physics-objects/instructor/06-jecjer.html) : Electron, Muon, Jets, MET, Tagging, Jet correction etc
 
 
 ## Quickstart
