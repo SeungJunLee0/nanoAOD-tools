@@ -12,7 +12,7 @@ cd PhysicsTools/NanoAODTools/python/postprocessing/python
 mkdir output
 
 ```
-### run the code 
+### Run the code 
 ```
 python3 set_the_condor_job.py
 
@@ -31,7 +31,7 @@ bash dashgo.sh
 python3 merge_result.py
 ```
 
-## find some nanoAODv9
+### Find some nanoAODv9
 
 ```
 dasgoclient --query="dataset dataset=/*/*UL18*NanoAODv9*/NANOAOD*"
