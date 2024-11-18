@@ -206,7 +206,7 @@ class ExampleAnalysis(Module):
         if len(genjets) == 0:
             random_generator = ROOT.TRandom3()
             mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom")**2 - 1, 0)) 
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom")**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
        
         getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr*jet_jer)
         getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr*jet_jer)
@@ -221,7 +221,7 @@ class ExampleAnalysis(Module):
         if len(genjets) == 0:
             random_generator = ROOT.TRandom3()
             mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom")**2 - 1, 0)) 
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom")**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
         getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr*jet_jer)
         getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr*jet_jer)
         getattr(self, f"{prefix}_m_ll").Fill((leptons[0].p4() + leptons[1].p4()).M(), gen_weight*lep1_corr*lep2_corr)
@@ -253,7 +253,7 @@ class ExampleAnalysis(Module):
         if len(genjets) == 0:
             random_generator = ROOT.TRandom3()
             mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom")**2 - 1, 0)) 
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,"nom")**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
         getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr*jet_jer)
         getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr*jet_jer)
 
@@ -267,7 +267,7 @@ class ExampleAnalysis(Module):
         if len(genjets) == 0:
             random_generator = ROOT.TRandom3()
             mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom")**2 - 1, 0)) 
+            jet_jer = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,"nom")**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
         getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr*jet_jer)
         getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr*jet_jer)
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
