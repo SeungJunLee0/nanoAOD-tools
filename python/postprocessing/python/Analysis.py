@@ -19,9 +19,10 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 
 class ExampleAnalysis(Module):
-    def __init__(self,  some_variable=None):
+    def __init__(self,  some_variable=None, mode_dict=None):
         self.writeHistFile = True
         self.some_variable = some_variable  # 전달된 변수 저장
+        self.mode_dict = mode_dict
 
     def beginJob(self, histFile=None, histDirName=None):
         Module.beginJob(self, histFile, histDirName)
@@ -513,11 +514,29 @@ def presel():
 
     else:
         print("It is MC")
+    correction_sets = ["muon_id", "muon_iso", "electron_id", "electron_reco", "jet_jer"]
+    modes = ["up", "down"]
+    for target_switch in correction_sets:
+        for mode in modes:
+            # 모든 스위치를 "nominal"로 설정
+            mode_dict = {key: "nominal" for key in correction_sets}
+            # 특정 스위치만 현재 mode로 설정
+            mode_dict[target_switch] = mode
+            
+            # 출력 파일 이름에 현재 스위치 상태를 반영
+            output_name = f"output/hist_{args.name}_{target_switch}_{mode}.root"
 
+            print(f"Running for {target_switch} in {mode} mode.")
+            print(f"Mode configuration: {mode_dict}")
+            p = PostProcessor(".", files, branchsel=None, modules=[
+                              ExampleAnalysis(some_variable , mode_dict)],jsonInput=json, noOut=True, histFileName= output_name, histDirName="plots" )
+            p.run()
+    output_name = f"output/hist_{args.name}_nominal.root"
+    print(f"Running for all nominal modes.")
+    mode_dict = {key: "nominal" for key in correction_sets}
     p = PostProcessor(".", files, branchsel=None, modules=[
-                      ExampleAnalysis(some_variable)],jsonInput=json, noOut=True, histFileName= AllName, histDirName="plots" )
+                      ExampleAnalysis(some_variable, mode_dict)],jsonInput=json, noOut=True, histFileName= output_name, histDirName="plots" )
     p.run()
-
 
 if __name__=="__main__":
     presel()
