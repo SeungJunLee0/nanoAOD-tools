@@ -220,14 +220,15 @@ class ExampleAnalysis(Module):
         electrons = Collection(event, "Electron")
         muons     = Collection(event, "Muon")    
         jets      = Collection(event, "Jet")     
-        genjets      = Collection(event, "GenJet")     
+        genjets      = Collection(event, "GenJet")  if "MC" in self.some_variable else 1.0 
         gen_weight2 = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
-        gen_weight1 = abs(gen_weight2)
+        gen_weight1 = abs(gen_weight2) if "MC" in self.some_variable else 1.0
         # get the genWeight value if that is data, genWeight = 1
+        gen_weight = gen_weight2/gen_weight1
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
-        pileup = Object(event,"Pileup")
+        pileup = Object(event,"Pileup") if "MC" in self.some_variable else 1.0
         rho = getattr(event, "fixedGridRhoFastjetAll",1.0) if "MC" in self.some_variable else 1.0
         self.count.Fill(1.0,gen_weight)
 
@@ -253,12 +254,12 @@ class ExampleAnalysis(Module):
 
         evaluator_ele = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/EGM/2018_UL/electron.json.gz')
         evaluator_muo = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz')
-        evaluator_pu = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/LUM/MUO/2018_UL/puWeights.json.gz')
+        evaluator_pu = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz')
         evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
 
 
         
-        gen_weight = gen_weight2/gen_weight1 * evaluator_pu["Collisions18_UltraLegacy_goldenJSON"].evaluate(pileup.nTrueInt, plieup_mode)
+        gen_weight = gen_weight2/gen_weight1 * evaluator_pu["Collisions18_UltraLegacy_goldenJSON"].evaluate(pileup.nTrueInt, plieup_mode) if "MC" in self.some_variable else 1.0
 
         if pv.npvs == 0 or pv.ndof < 4 or abs(pv.z) >= 24.:
         #primary vertex selection
@@ -381,10 +382,10 @@ class ExampleAnalysis(Module):
                         and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
 
-            valsf_mu1 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, muon_id_mode) * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, muon_iso_mode)  
-            valsf_mu2 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[1].eta, muons[1].pt, muon_id_mode) * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[1].eta, muons[1].pt, muon_iso_mode)  
+            valsf_mu1 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, muon_id_mode) * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, muon_iso_mode) if "MC" in self.some_variable else 1.0 
+            valsf_mu2 = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[1].eta, muons[1].pt, muon_id_mode) * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[1].eta, muons[1].pt, muon_iso_mode)  if "MC" in self.some_variable else 1.0
         
-            if nDeltaR < = 2:
+            if nDeltaR <= 2:
                 return False
             genjets1 = genjets
             genjets2 = genjets
@@ -396,11 +397,11 @@ class ExampleAnalysis(Module):
             jet_jer1 = 0
             if len(genjets) >= 1:
                 jet_jer1 = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
-                jet_jer1 = jet_jer if jet_jer >= 0.0 else 0.0  
+                jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
+                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer1 >= 0.0 else 0.0
 
             genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)]
@@ -408,11 +409,15 @@ class ExampleAnalysis(Module):
             jet_jer2 = 0
             if len(genjets) >= 1:
                 jet_jer2 = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
-                jet_jer2 = jet_jer if jet_jer >= 0.0 else 0.0  
+                jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
+                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer2 >= 0.0 else 0.0
+            if "MC" not in self.some_variable:
+                jet_jer1 = 1
+                jet_jer2 = 1
+
 
             if nBtag == 0 and nDeltaR >= 2:
                 self.fill_histograms("mumu_Zerotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
@@ -437,10 +442,10 @@ class ExampleAnalysis(Module):
             nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
                         and deltaR(j.eta, j.phi, electrons[1].eta, electrons[1].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
-            valsf_ele1 = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) 
-            valsf_ele2 = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[1].eta, electrons[1].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[1].eta, electrons[1].pt)
+            valsf_ele1 = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) if "MC" in self.some_variable else 1.0 
+            valsf_ele2 = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[1].eta, electrons[1].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[1].eta, electrons[1].pt) if "MC" in self.some_variable else 1.0
 
-            if nDeltaR < = 2:
+            if nDeltaR <= 2:
                 return False
             genjets1 = genjets
             genjets2 = genjets
@@ -451,11 +456,11 @@ class ExampleAnalysis(Module):
             jet_jer1 = 0
             if len(genjets) >= 1:
                 jet_jer1 = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
-                jet_jer1 = jet_jer if jet_jer >= 0.0 else 0.0  
+                jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
+                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer1 >= 0.0 else 0.0
 
             genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)]
@@ -463,11 +468,14 @@ class ExampleAnalysis(Module):
             jet_jer2 = 0
             if len(genjets) >= 1:
                 jet_jer2 = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
-                jet_jer2 = jet_jer if jet_jer >= 0.0 else 0.0  
+                jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
+                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer2 >= 0.0 else 0.0
+            if "MC" not in self.some_variable:
+                jet_jer1 = 1
+                jet_jer2 = 1
         
             if nBtag == 0 and nDeltaR >= 2:
                 self.fill_histograms("ee_Zerotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
@@ -484,16 +492,16 @@ class ExampleAnalysis(Module):
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
-                    and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
+                    and deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4]
         
             nDeltaR = len(jets)
             nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
                         and deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
                         and j.btagDeepFlavB > 0.2783)
-            valsf_ele = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) 
-            valsf_mu = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, muon_id_mode) * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, muon_iso_mode)  
+            valsf_ele = evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) if "MC" in self.some_variable else 1.0 
+            valsf_mu = evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, muon_id_mode) * evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, muon_iso_mode)  if "MC" in self.some_variable else 1.0
         
-            if nDeltaR < = 2:
+            if nDeltaR <= 2:
                 return False
             genjets1 = genjets
             genjets2 = genjets
@@ -506,11 +514,11 @@ class ExampleAnalysis(Module):
             jet_jer1 = 0
             if len(genjets) >= 1:
                 jet_jer1 = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
-                jet_jer1 = jet_jer if jet_jer >= 0.0 else 0.0  
+                jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
+                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer1 >= 0.0 else 0.0
 
             genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)]
@@ -518,11 +526,14 @@ class ExampleAnalysis(Module):
             jet_jer2 = 0
             if len(genjets) >= 1:
                 jet_jer2 = 1.0 + ( evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
-                jet_jer2 = jet_jer if jet_jer >= 0.0 else 0.0  
+                jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer >= 0.0 else 0.0
+                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer2 >= 0.0 else 0.0
+            if "MC" not in self.some_variable:
+                jet_jer1 = 1
+                jet_jer2 = 1
         
 
             if nBtag == 0 and nDeltaR >= 2:
@@ -561,21 +572,22 @@ def presel():
         print("It is MC")
     correction_sets = ["muon_id", "muon_iso", "electron_id", "electron_reco", "jet_jer","plieup"]
     modes = ["up", "down"]
-    for target_switch in correction_sets:
-        for mode in modes:
-            # 모든 스위치를 "nominal"로 설정
-            mode_dict = {key: "nominal" for key in correction_sets}
-            # 특정 스위치만 현재 mode로 설정
-            mode_dict[target_switch] = mode
-            
-            # 출력 파일 이름에 현재 스위치 상태를 반영
-            output_name = f"output/hist_{args.name}_{target_switch}_{mode}.root"
+    if "MC" in args.name:
+        for target_switch in correction_sets:
+            for mode in modes:
+                # 모든 스위치를 "nominal"로 설정
+                mode_dict = {key: "nominal" for key in correction_sets}
+                # 특정 스위치만 현재 mode로 설정
+                mode_dict[target_switch] = mode
+                
+                # 출력 파일 이름에 현재 스위치 상태를 반영
+                output_name = f"output/hist_{args.name}_{target_switch}_{mode}.root"
 
-            print(f"Running for {target_switch} in {mode} mode.")
-            print(f"Mode configuration: {mode_dict}")
-            p = PostProcessor(".", files, branchsel=None, modules=[
-                              ExampleAnalysis(some_variable , mode_dict)],jsonInput=json, noOut=True, histFileName= output_name, histDirName="plots" )
-            p.run()
+                print(f"Running for {target_switch} in {mode} mode.")
+                print(f"Mode configuration: {mode_dict}")
+                p = PostProcessor(".", files, branchsel=None, modules=[
+                                  ExampleAnalysis(some_variable , mode_dict)],jsonInput=json, noOut=True, histFileName= output_name, histDirName="plots" )
+                p.run()
     output_name = f"output/hist_{args.name}_nominal.root"
     print(f"Running for all nominal modes.")
     mode_dict = {key: "nominal" for key in correction_sets}
