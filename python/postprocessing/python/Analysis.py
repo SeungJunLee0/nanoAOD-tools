@@ -192,10 +192,10 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_lep1eta").Fill(leptons[0].eta, gen_weight*lep1_corr)
         getattr(self, f"{prefix}_lep2pt").Fill(leptons[1].pt, gen_weight*lep2_corr)
         getattr(self, f"{prefix}_lep2eta").Fill(leptons[1].eta, gen_weight*lep2_corr)
-        getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr*jet_jer)
-        getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr*jet_jer)
-        getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr*jet_jer)
-        getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr*jet_jer)
+        getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr)
+        getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr)
+        getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr)
+        getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr)
         getattr(self, f"{prefix}_m_ll").Fill((leptons[0].p4() + leptons[1].p4()).M(), gen_weight*lep1_corr*lep2_corr)
     
     def fill_histograms_for_emu(self, prefix, jets, genjets,rho, electrons, muons, met, gen_weight,ele_corr =1.0, muo_corr =1.0, jet1_corr = 1.0,jet2_corr = 1.0):
@@ -209,10 +209,10 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_lep1eta").Fill(lep1.eta, gen_weight*sf_lep1)
         getattr(self, f"{prefix}_lep2pt").Fill(lep2.pt, gen_weight*sf_lep2)
         getattr(self, f"{prefix}_lep2eta").Fill(lep2.eta, gen_weight*sf_lep2)
-        getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr*jet_jer)
-        getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr*jet_jer)
-        getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr*jet_jer)
-        getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr*jet_jer)
+        getattr(self, f"{prefix}_jet1pt").Fill( jets[0].pt,  gen_weight*jet1_corr)
+        getattr(self, f"{prefix}_jet1eta").Fill(jets[0].eta, gen_weight*jet1_corr)
+        getattr(self, f"{prefix}_jet2pt").Fill( jets[1].pt,  gen_weight*jet2_corr)
+        getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr)
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
 
@@ -435,8 +435,8 @@ class ExampleAnalysis(Module):
 
         if "ee" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
-            jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
-                    and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
+            jets = [j for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4 
+                    and deltaR(j.eta, j.phi, electrons[1].eta, electrons[1].phi) > 0.4]
         
             nDeltaR = len(jets)
             nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
