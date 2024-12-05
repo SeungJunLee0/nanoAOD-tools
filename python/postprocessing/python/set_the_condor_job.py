@@ -56,7 +56,7 @@ scram b
 cd /cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python
 
 python3 Analysis.py -f {dataset_name} -n {dir_name}_{job_id} -c nominal -t nominal
-xrdcp -f output/hist_{dir_name}_{job_id}_nominal_nominal.root {output_dir}/
+xrdcp -f output_nominal/hist_{dir_name}_{job_id}_nominal_nominal.root {output_dir}/
 EndOfMCGenerationFile
 
 chmod +x MC_Generation_Script_{job_id}.sh
@@ -84,7 +84,7 @@ scram b
 cd /cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python
 
 python3 Analysis.py -f {dataset_name} -n {dir_name}_{job_id} -c {correction} -t {target} 
-xrdcp -f output/hist_{dir_name}_{job_id}_{correction}_{target}.root {output_dir}/
+xrdcp -f output_correction/hist_{dir_name}_{job_id}_{correction}_{target}.root {output_dir}/
 EndOfMCGenerationFile
 
 chmod +x MC_Generation_Script_{job_id}.sh
@@ -118,15 +118,19 @@ def main(dir_name, choice,correction="nominal",target="nominal"):
     """메인 함수로 작업을 설정하고 작업 스크립트와 제출 파일을 생성합니다."""
     work_dir = f"/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/run_analysis_{dir_name[:-4]}"
     if choice == "1": # Data
-        work_dir = work_dir
+        pass
     if choice == "2": # MC
-        work_dir = work_dir
+        pass
     if choice == "3": # Correction
-        work_dir += "_{correction}_{target}" 
+        work_dir += f"_{correction}_{target}" 
     if choice == "4": # B-Tagging
         work_dir += "_B-Tagging" 
     run_dir = f"{work_dir}/HTCondor_run"
     output_dir = f"root://cms-xrdr.private.lo:2094//xrd/store/user/seungjun/TMW/{dir_name[:-4]}"
+    if choice == "3": # Correction
+        output_dir += f"_{correction}_{target}" 
+    if choice == "4": # B-Tagging
+        output_dir += "_B-Tagging" 
 
     setup_directories(work_dir, run_dir)
 
@@ -145,9 +149,12 @@ def main(dir_name, choice,correction="nominal",target="nominal"):
         with open(f'{run_dir}/mc_generation_jobs_{job_name}.submit', 'w') as file_out:
             file_out.write(get_condor_submit_file(script_name, work_dir, job_id))
 
-def mc_to_MC(dir_name):
+def mc_to_MC(dir_name,correction="nominal",target="nominal"):
     """생성된 모든 셸 스크립트를 순차적으로 실행합니다."""
-    run_dir = f"/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/run_analysis_{dir_name[:-4]}/HTCondor_run"
+    if correction == "nominal" and target== "nominal":
+        run_dir = f"/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/run_analysis_{dir_name[:-4]}/HTCondor_run"
+    if correction != "nominal" or target != "nominal":
+        run_dir = f"/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/run_analysis_{dir_name[:-4]}_{correction}_{target}/HTCondor_run"
     os.chdir(run_dir)
     all_scripts = sorted([f for f in glob.glob('mc*.sh') if os.path.isfile(f)])
     
@@ -175,6 +182,7 @@ if __name__ == "__main__":
     for dir_name in data_title:
         if choice != "3":
             main(dir_name,choice)
+            mc_to_MC(dir_name)
         if choice == "3":
             for target_switch in correction_sets:
                 for mode in modes:
@@ -183,4 +191,4 @@ if __name__ == "__main__":
                     # 특정 스위치만 현재 mode로 설정
                     mode_dict[target_switch] = mode
                     main(dir_name, choice,correction=target_switch,target=mode)
-        mc_to_MC(dir_name)
+                    mc_to_MC(dir_name,correction=target_switch,target=mode)
