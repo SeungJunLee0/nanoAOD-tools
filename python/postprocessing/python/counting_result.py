@@ -26,7 +26,8 @@ for run_dir in run_analysis_dirs:
     total_mc_files += mc_count
 
     # output 디렉토리 탐색
-    output_dir = os.path.join(base_dir, "output_correction")
+    output_dir = os.path.join(base_dir, "output_nominal")
+    #output_dir = os.path.join(base_dir, "output_correction")
 
     # 조건 구성
     keyword_upto_2018 = "_2018".join(keyword.split("_2018")[:1]) + "_2018"
@@ -36,7 +37,8 @@ for run_dir in run_analysis_dirs:
     # `ls | grep` 방식으로 파일 리스트 가져오기
     #cmd = f"ls {output_dir} | grep '{keyword_upto_2018}' | grep '{correction}_{target}' | wc -l"
     #file_count = int(subprocess.check_output(cmd, shell=True, text=True).strip())
-    cmd = f"ls {output_dir} | grep '{keyword_upto_2018}' | grep '{correction}_{target}' | uniq | wc -l"
+    #cmd = f"ls {output_dir} | grep '{keyword_upto_2018}' | grep '{correction}_{target}' | uniq | wc -l"
+    cmd = f"find {output_dir} -type f -name '*{keyword_upto_2018}*{correction}_{target}*' | wc -l"
     file_count = int(os.popen(cmd).read().strip())
 
     matching_files_count = int(file_count)
