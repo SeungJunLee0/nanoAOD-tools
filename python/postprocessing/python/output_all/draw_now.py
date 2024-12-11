@@ -1,6 +1,5 @@
 import ROOT
 import mplhep as hep
-
 # CMS 스타일 설정
 hep.style.use("CMS")
 
