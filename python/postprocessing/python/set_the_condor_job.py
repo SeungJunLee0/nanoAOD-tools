@@ -5,7 +5,7 @@ import random
 
 def get_file_list(directory_path):
     """주어진 디렉토리에서 파일 리스트를 반환합니다."""
-    return [file for file in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, file)) and "Data" in file]
+    return [file for file in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, file))]
 
 def get_file_list_MC(directory_path):
     """주어진 디렉토리에서 파일 리스트를 반환합니다."""
@@ -56,7 +56,7 @@ scram b
 cd /cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python
 
 python3 Analysis.py -f {dataset_name} -n {dir_name}_{job_id} -c nominal -t nominal
-xrdcp -f output_nominal/hist_{dir_name}_{job_id}_nominal_nominal.root {output_dir}/
+#xrdcp -f output_nominal/hist_{dir_name}_{job_id}_nominal_nominal.root {output_dir}/
 EndOfMCGenerationFile
 
 chmod +x MC_Generation_Script_{job_id}.sh
@@ -84,7 +84,7 @@ scram b
 cd /cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python
 
 python3 Analysis.py -f {dataset_name} -n {dir_name}_{job_id} -c {correction} -t {target} 
-xrdcp -f output_correction/hist_{dir_name}_{job_id}_{correction}_{target}.root {output_dir}/
+#xrdcp -f output_correction/hist_{dir_name}_{job_id}_{correction}_{target}.root {output_dir}/
 EndOfMCGenerationFile
 
 chmod +x MC_Generation_Script_{job_id}.sh
@@ -164,7 +164,7 @@ def mc_to_MC(dir_name,correction="nominal",target="nominal"):
 
 if __name__ == "__main__":
     print("원하는 작업을 선택하세요:")
-    print("1: Data")
+    print("1: Data & MC")
     print("2: MC")
     print("3: Correction")
     print("4: B-Tagging Efficiency")
