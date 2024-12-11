@@ -1,5 +1,4 @@
 import os
-
 def count_total_lines_in_txt_files(directory):
     total_lines = 0
     # 디렉토리 내 모든 파일을 순회
