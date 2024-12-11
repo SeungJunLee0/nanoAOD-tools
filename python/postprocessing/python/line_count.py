@@ -4,7 +4,7 @@ def count_total_lines_in_txt_files_MC(directory):
     total_lines = 0
     # 디렉토리 내 모든 파일을 순회
     for filename in os.listdir(directory):
-        if filename.endswith("*MC*.txt"):  # .txt 파일만 선택
+        if  "MC" in filename and filename.endswith(".txt"):  # .txt 파일만 선택
             file_path = os.path.join(directory, filename)
             try:
                 with open(file_path, 'r', encoding='utf-8') as file:
@@ -13,7 +13,7 @@ def count_total_lines_in_txt_files_MC(directory):
             except Exception as e:
                 print(f"Error reading {file_path}: {e}")
     
-    print(f"Total number of lines in all .txt files: {total_lines}")
+    print(f"Total number of MC lines in all .txt files: {total_lines}")
 
 def count_total_lines_in_txt_files(directory):
     total_lines = 0
