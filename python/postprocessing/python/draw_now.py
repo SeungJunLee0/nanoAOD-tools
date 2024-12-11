@@ -7,18 +7,13 @@ hep.style.use("CMS")
 # 파일 및 히스토그램 경로 설정
 data_file = "Data.root"
 mc_files = {
-#    "Diboson"         : "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/Diboson.root",
-#    "Single top"      : "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/SingleTop.root",
-#    "TTbar background": "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/TTbar_bkg.root",
-#    "TTbar signal"    : "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/TTbar_signal.root",
-#    "W/Z+Jets"        : "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/WZJets.root"
     "Diboson"         : "Diboson.root",
     "Single top"      : "SingleTop.root",
     "TTbar background": "TTbar_bkg.root",
     "TTbar signal"    : "TTbar_signal.root",
     "W/Z+Jets"        : "WZJets.root"
 }
-hist_path = "ee_Zerotag_lep1pt"
+hist_path = "ee_Onetag_lep1pt"
 rebin = 4
 
 # 히스토그램 읽기 및 Clone
