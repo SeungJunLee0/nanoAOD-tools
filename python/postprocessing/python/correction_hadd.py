@@ -120,39 +120,54 @@ def get_scale_factor(filename):
     # 매칭되는 패턴이 없으면 1.0 반환
     return 1.0
 
+os.system("rm -rf output_mid_correction/*")
 # 파일 합치기
 for pattern in scale_factors.keys():
     for correction in corrections:
         for target in targets:
-            output_file = f"{output_dir}/{pattern}_{correction}_{target}.root"
+            output_file = f"{output_dir}/Notscale_{pattern}_{correction}_{target}.root"
             input_pattern = f"{base_dir}/*{pattern}*{correction}_{target}.root"
     
             # glob으로 입력 파일 리스트 얻기
+            print(    f"hadd {output_file} {input_pattern}")
+            os.system(f"hadd {output_file} {input_pattern}")
+    
+    
+for pattern in scale_factors.keys():
+    for correction in corrections:
+        for target in targets:
+            output_file = f"{output_dir}/{pattern}_{correction}_{target}.root"
+            input_pattern = f"{output_dir}/Notscale_{pattern}_{correction}_{target}.root"
+    
+            # glob으로 입력 파일 리스트 얻기
             input_files = glob.glob(input_pattern)
+            scale = get_scale_factor(input_files) / get_total_entries(input_files)
+            print(    f"hadd {output_file} {input_pattern} {scale}")
+            os.system(f"hadd {output_file} {input_pattern} {scale}")
     
             if not input_files:
                 print(f"No files matched for pattern: {input_pattern}")
                 continue
+
     
-            # hadd 명령어 준비
-            cmd = ["hadd", output_file]
-            cms.append(input_pattern)
-    #        for f in input_files:
-    #            cmd.append(f)
-    #            #scale = get_scale_factor(f) / get_total_entries(f) 
-    #            #if scale != 1.0:
-    #            #    # 파일 뒤에 스케일값 추가
-    #            #    cmd.extend([f, str(scale)])
-    #            #    #print(cmd.extend([f, str(scale)]))
-    #            #    print("CMD after extending:", cmd)
-    #            #else:
-    #            #    cmd.append(f)
-    #
-            print("Running command:", " ".join(cmd))
-            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            ## hadd 명령어 준비
+            #cmd = ["hadd", output_file]
+            #for f in input_files:
+            #    cmd.append(f)
+            #    #scale = get_scale_factor(f) / get_total_entries(f) 
+            #    #if scale != 1.0:
+            #    #    # 파일 뒤에 스케일값 추가
+            #    #    cmd.extend([f, str(scale)])
+            #    #    #print(cmd.extend([f, str(scale)]))
+            #    #    print("CMD after extending:", cmd)
+            #    #else:
+            #    #    cmd.append(f)
     
-            if result.returncode != 0:
-                print(f"Error: {result.stderr}")
-            else:
-                print(f"Successfully created {output_file}")
+            #print("Running command:", " ".join(cmd))
+            #result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+            #if result.returncode != 0:
+            #    print(f"Error: {result.stderr}")
+            #else:
+            #    print(f"Successfully created {output_file}")
     
