@@ -1,6 +1,7 @@
 import ROOT
 import mplhep as hep
 import os
+from collections import defaultdict
 
 # CMS 스타일 설정
 hep.style.use("CMS")
@@ -48,7 +49,6 @@ def read_and_clone_histogram(file_path, hist_name):
     return cloned_hist
 
 def get_all_histogram_names(file_path):
-    """파일에서 모든 히스토그램 이름을 가져오는 함수"""
     file = ROOT.TFile.Open(file_path)
     if not file or file.IsZombie():
         raise RuntimeError(f"Cannot open file: {file_path}")
@@ -94,6 +94,51 @@ for hist_name in hist_names:
         print(f"No MC histograms loaded for {hist_name}, skipping.")
         continue
     
+    # Ratio 히스토그램 계산 (Data/MC)
+    ratio_hist = data_hist.Clone(f"ratio_hist_{hist_name}")
+    ratio_hist.Divide(mc_total_hist)
+
+    # 여기서 correction_files를 이용해 up/down 불확실성을 계산하는 로직 추가
+    # correction_files 안의 히스토그램도 모두 이 히스토그램과 같은 hist_name을 갖는다고 가정
+    # systematics_by_type: { "electron_id": {"up": hist_up, "down": hist_down}, ... }
+    systematics_by_type = defaultdict(dict)
+    for corr_key, corr_file in correction_files.items():
+        parts = corr_key.split('_')
+        sys_type = '_'.join(parts[:-1]) # ex: "electron_id"
+        sys_dir = parts[-1]             # "up" 혹은 "down"
+
+        corr_hist = read_and_clone_histogram(corr_file, hist_name)
+        if corr_hist:
+            corr_hist.Rebin(rebin)
+            # corr_hist는 이 systematic 적용 시의 MC 총합 히스토그램이어야 한다고 가정
+            # 만약 correction_files가 이미 합쳐진 MC 히스토그램을 제공한다면 이대로 사용 가능
+            # 아니라면 별도의 합산 작업이 필요
+            systematics_by_type[sys_type][sys_dir] = corr_hist
+
+    # 시스템 불확실성 합 계산
+    # bin 별로 (up - down)/2 를 이용하여 불확실성 추산, Nominal MC 대비 상대 에러 반영
+    systematic_unc_sq = [0.0]*(ratio_hist.GetNbinsX()+1)
+    for sys_type, variants in systematics_by_type.items():
+        if "up" in variants and "down" in variants:
+            up_hist = variants["up"]
+            down_hist = variants["down"]
+            for bin_idx in range(1, ratio_hist.GetNbinsX()+1):
+                nominal_mc = mc_total_hist.GetBinContent(bin_idx)
+                if nominal_mc == 0:
+                    continue
+                up_val = up_hist.GetBinContent(bin_idx)
+                down_val = down_hist.GetBinContent(bin_idx)
+                sys_diff = abs(up_val - down_val) / 2.0
+                rel_unc = sys_diff / nominal_mc
+                systematic_unc_sq[bin_idx] += rel_unc**2
+
+    # 시스템 불확실성 + 통계 불확실성 결합
+    for bin_idx in range(1, ratio_hist.GetNbinsX()+1):
+        stat_err = ratio_hist.GetBinError(bin_idx)
+        sys_err = (systematic_unc_sq[bin_idx]**0.5)
+        total_err = (stat_err**2 + sys_err**2)**0.5
+        ratio_hist.SetBinError(bin_idx, total_err)
+
     # 캔버스 생성
     canvas = ROOT.TCanvas(f"canvas_{hist_name}", f"Control Plot - {hist_name}", 800, 800)
     canvas.Divide(1, 2)
@@ -131,11 +176,8 @@ for hist_name in hist_names:
     ratio_pad.SetTopMargin(0.02)
     ratio_pad.SetBottomMargin(0.3)
 
-    # 비율 계산
-    ratio_hist = data_hist.Clone(f"ratio_hist_{hist_name}")
-    ratio_hist.Divide(mc_total_hist)
     ratio_hist.SetMarkerStyle(20)
-    ratio_hist.GetXaxis().SetTitle(hist_name) # X축 레이블에 hist_name 사용 (원하는 대로 수정 가능)
+    ratio_hist.GetXaxis().SetTitle(hist_name)
     ratio_hist.GetYaxis().SetTitle("Data / MC")
     ratio_hist.GetYaxis().SetNdivisions(505)
     ratio_hist.GetYaxis().SetRangeUser(0.4, 1.6)
@@ -155,4 +197,5 @@ for hist_name in hist_names:
     canvas.Write()
 
 output_root_file.Close()
+print("All histograms processed and saved to control_plot.root.")
 
