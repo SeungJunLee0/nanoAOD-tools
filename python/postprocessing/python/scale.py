@@ -37,7 +37,8 @@ def get_total_entries(file_path):
         raise RuntimeError(f"Error: 'plots/count' histogram not found or is not a TH1 in file: {file_path}")
 
     # 총 엔트리 수 가져오기
-    total_entries = hist.GetEntries()
+    total_entries = hist.Integral()
+    #total_entries = hist.GetEntries()
     file.Close()
     return total_entries
 
