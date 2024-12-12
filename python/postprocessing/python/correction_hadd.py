@@ -33,6 +33,7 @@
 import os
 import glob
 import subprocess
+import ROOT
 
 # 기준 디렉토리 및 출력 디렉토리 설정
 base_dir = "output_correction1"
@@ -124,7 +125,7 @@ for pattern in scale_factors.keys():
     for correction in corrections:
         for target in targets:
             output_file = f"{output_dir}/{pattern}_{correction}_{target}.root"
-            input_pattern = f"{base_dir}/{pattern}*{correction}_{target}.root"
+            input_pattern = f"{base_dir}/*{pattern}*{correction}_{target}.root"
     
             # glob으로 입력 파일 리스트 얻기
             input_files = glob.glob(input_pattern)
