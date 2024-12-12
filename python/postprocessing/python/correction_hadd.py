@@ -59,7 +59,57 @@ scale_factors = {
     "WZ_MC_2018": setting * 47.13,
     "ZZ_MC_2018": setting * 16.523
 }
+def get_total_entries(file_path):
+    # ROOT 파일 열기
+    file = ROOT.TFile.Open(file_path)
+    if not file or file.IsZombie():
+        raise RuntimeError(f"Error: Cannot open file: {file_path}")
 
+    # 'plots/count' 히스토그램 가져오기
+    hist = file.Get("plots/count")
+    if not hist or not isinstance(hist, ROOT.TH1):
+        raise RuntimeError(f"Error: 'plots/count' histogram not found or is not a TH1 in file: {file_path}")
+
+    # 총 엔트리 수 가져오기
+    total_entries = hist.Integral()
+    #total_entries = hist.GetEntries()
+    file.Close()
+    return total_entries
+
+def scale_histograms_in_file(file_path, cross_section):
+    file = ROOT.TFile.Open(file_path)
+
+    if not file or file.IsZombie():
+        print(f"Error: Cannot open file: {file_path}")
+        return None
+
+    # 스케일 팩터 계산 (데이터 파일의 경우 None)
+    scale_factor = None
+    if cross_section is not None:
+        scale_factor = luminosity * 1000 * cross_section
+
+    plots_dir = file.Get("plots")
+    if not plots_dir or not isinstance(plots_dir, ROOT.TDirectory):
+        print(f"Error: 'plots' directory not found in the file: {file_path}")
+        file.Close()
+        return None
+
+    # 새 파일에 저장할 히스토그램 목록
+    histograms = []
+    for key in plots_dir.GetListOfKeys():
+        obj = key.ReadObj()
+        if isinstance(obj, ROOT.TH1):  # 히스토그램일 경우만 처리
+            if scale_factor and cross_section >= 2:
+                obj.Scale(scale_factor / get_total_entries(file_path) )
+                new_entries = obj.Integral()
+                obj.SetEntries(new_entries)
+                #obj.Scale(scale_factor / obj.GetEntries() if obj.GetEntries() > 0 else 1)
+            cloned_hist = obj.Clone()
+            cloned_hist.SetDirectory(0)  # 히스토그램을 메모리에 유지
+            histograms.append(cloned_hist)
+
+    file.Close()
+    return histograms
 
 # 스케일 팩터를 결정하는 함수 (파일 이름에 따라 스케일 결정)
 def get_scale_factor(filename):
@@ -70,34 +120,35 @@ def get_scale_factor(filename):
     return 1.0
 
 # 파일 합치기
-for correction in corrections:
-    for target in targets:
-        output_file = f"{output_dir}/{correction}_{target}.root"
-        input_pattern = f"{base_dir}/*{correction}_{target}.root"
-
-        # glob으로 입력 파일 리스트 얻기
-        input_files = glob.glob(input_pattern)
-
-        if not input_files:
-            print(f"No files matched for pattern: {input_pattern}")
-            continue
-
-        # hadd 명령어 준비
-        cmd = ["hadd", output_file]
-        for f in input_files:
-            scale = get_scale_factor(f)
-            if scale != 1.0:
-                # 파일 뒤에 스케일값 추가
-                cmd.extend([f, str(scale)])
-                print(cmd.extend([f, str(scale)]))
+for pattern in scale_factors.keys():
+    for correction in corrections:
+        for target in targets:
+            output_file = f"{output_dir}/{pattern}_{correction}_{target}.root"
+            input_pattern = f"{base_dir}/{pattern}*{correction}_{target}.root"
+    
+            # glob으로 입력 파일 리스트 얻기
+            input_files = glob.glob(input_pattern)
+    
+            if not input_files:
+                print(f"No files matched for pattern: {input_pattern}")
+                continue
+    
+            # hadd 명령어 준비
+            cmd = ["hadd", output_file]
+            for f in input_files:
+                scale = get_scale_factor(f) / get_total_entries(f) 
+                if scale != 1.0:
+                    # 파일 뒤에 스케일값 추가
+                    cmd.extend([f, str(scale)])
+                    print(cmd.extend([f, str(scale)]))
+                else:
+                    cmd.append(f)
+    
+            print("Running command:", " ".join(cmd))
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+            if result.returncode != 0:
+                print(f"Error: {result.stderr}")
             else:
-                cmd.append(f)
-
-        print("Running command:", " ".join(cmd))
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-        if result.returncode != 0:
-            print(f"Error: {result.stderr}")
-        else:
-            print(f"Successfully created {output_file}")
-
+                print(f"Successfully created {output_file}")
+    
