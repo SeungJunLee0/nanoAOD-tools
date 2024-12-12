@@ -137,13 +137,15 @@ for pattern in scale_factors.keys():
             # hadd 명령어 준비
             cmd = ["hadd", output_file]
             for f in input_files:
-                scale = get_scale_factor(f) / get_total_entries(f) 
-                if scale != 1.0:
-                    # 파일 뒤에 스케일값 추가
-                    cmd.extend([f, str(scale)])
-                    print(cmd.extend([f, str(scale)]))
-                else:
-                    cmd.append(f)
+                cmd.append(f)
+                #scale = get_scale_factor(f) / get_total_entries(f) 
+                #if scale != 1.0:
+                #    # 파일 뒤에 스케일값 추가
+                #    cmd.extend([f, str(scale)])
+                #    #print(cmd.extend([f, str(scale)]))
+                #    print("CMD after extending:", cmd)
+                #else:
+                #    cmd.append(f)
     
             print("Running command:", " ".join(cmd))
             result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
