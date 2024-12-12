@@ -120,19 +120,19 @@ def get_scale_factor(filename):
     # 매칭되는 패턴이 없으면 1.0 반환
     return 1.0
 
-os.system("rm -rf output_mid_correction/*")
-# 파일 합치기
-for pattern in scale_factors.keys():
-    for correction in corrections:
-        for target in targets:
-            output_file = f"{output_dir}/Notscale_{pattern}_{correction}_{target}.root"
-            input_pattern = f"{base_dir}/*{pattern}*{correction}_{target}.root"
-    
-            # glob으로 입력 파일 리스트 얻기
-            print(    f"hadd {output_file} {input_pattern}")
-            os.system(f"hadd {output_file} {input_pattern}")
-    
-    
+#os.system("rm -rf output_mid_correction/*")
+## 파일 합치기
+#for pattern in scale_factors.keys():
+#    for correction in corrections:
+#        for target in targets:
+#            output_file = f"{output_dir}/Notscale_{pattern}_{correction}_{target}.root"
+#            input_pattern = f"{base_dir}/*{pattern}*{correction}_{target}.root"
+#    
+#            # glob으로 입력 파일 리스트 얻기
+#            print(    f"hadd {output_file} {input_pattern}")
+#            os.system(f"hadd {output_file} {input_pattern}")
+#    
+#    
 for pattern in scale_factors.keys():
     for correction in corrections:
         for target in targets:
