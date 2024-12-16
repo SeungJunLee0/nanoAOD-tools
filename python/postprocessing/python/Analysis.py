@@ -423,15 +423,15 @@ class ExampleAnalysis(Module):
                 jet_jer2 = 1
 
 
-            if nBtag == 0 and nDeltaR >= 2:
+            if nBtag == 0 and nDeltaR == 2:
                 self.fill_histograms("mumu_Zerotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Zerotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
-            if nBtag == 1 and nDeltaR >= 2:
+            if nBtag == 1 and nDeltaR == 2:
                 self.fill_histograms("mumu_Onetag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
-            if nBtag == 2 and nDeltaR >= 2:
+            if nBtag == 2 and nDeltaR == 2:
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
@@ -481,15 +481,15 @@ class ExampleAnalysis(Module):
                 jet_jer1 = 1
                 jet_jer2 = 1
         
-            if nBtag == 0 and nDeltaR >= 2:
+            if nBtag == 0 and nDeltaR == 2:
                 self.fill_histograms("ee_Zerotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Zerotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
-            if nBtag == 1 and nDeltaR >= 2:
+            if nBtag == 1 and nDeltaR == 2:
                 self.fill_histograms("ee_Onetag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
-            if nBtag == 2 and nDeltaR >= 2:
+            if nBtag == 2 and nDeltaR == 2:
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
@@ -540,15 +540,15 @@ class ExampleAnalysis(Module):
                 jet_jer2 = 1
         
 
-            if nBtag == 0 and nDeltaR >= 2:
+            if nBtag == 0 and nDeltaR == 2:
                 self.fill_histograms_for_emu("emu_Zerotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Zerotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
 
-            if nBtag == 1 and nDeltaR >= 2:
+            if nBtag == 1 and nDeltaR == 2:
                 self.fill_histograms_for_emu("emu_Onetag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Onetag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
-            if nBtag == 2 and nDeltaR >= 2:
+            if nBtag == 2 and nDeltaR == 2:
                 self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
 
