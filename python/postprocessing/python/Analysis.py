@@ -400,24 +400,24 @@ class ExampleAnalysis(Module):
 
             jet_jer1 = 0
             if len(genjets1) >= 1:
-                jet_jer1 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
+                jet_jer1 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets1[0].pt)/jets[0].pt
                 jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets1) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer1 >= 0.0 else 0.0
+                jet_jer1 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)))
 
             genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer2 = 0
             if len(genjets2) >= 1:
-                jet_jer2 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
+                jet_jer2 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets2[0].pt)/jets[1].pt
                 jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets2) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer2 >= 0.0 else 0.0
+                jet_jer2 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -464,7 +464,7 @@ class ExampleAnalysis(Module):
             if len(genjets1) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer1 >= 0.0 else 0.0
+                jet_jer1 = max(0.0,1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)))
 
             genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)] if "MC" in self.some_variable else [ ]
@@ -476,7 +476,7 @@ class ExampleAnalysis(Module):
             if len(genjets2) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer2 >= 0.0 else 0.0
+                jet_jer2 = max(0.0,1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -522,7 +522,7 @@ class ExampleAnalysis(Module):
             if len(genjets1) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)
-                jet_jer1 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer1 >= 0.0 else 0.0
+                jet_jer1 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode)**2 - 1, 0)))
 
             genjets2 = [j for j in genjets2 if deltaR(jets[1].eta, jets[1].phi, j.eta, j.phi) < 0.2 
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)] if "MC" in self.some_variable else [ ]
@@ -534,7 +534,7 @@ class ExampleAnalysis(Module):
             if len(genjets2) == 0:
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
-                jet_jer2 = 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)) if jet_jer2 >= 0.0 else 0.0
+                jet_jer2 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
