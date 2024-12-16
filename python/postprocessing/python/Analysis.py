@@ -312,6 +312,7 @@ class ExampleAnalysis(Module):
                 channel.append("emu")
             if hlt_conditions["mumu_2018"] or hlt_conditions["single_mu_2018"]:
                 channel.append("mumu")
+        list(set(channel))
 
         # HLT condition check
         if len(channel) == 0:
