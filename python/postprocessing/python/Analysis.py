@@ -280,28 +280,41 @@ class ExampleAnalysis(Module):
 
         channel = []
 
+        is_data_2018 = "Data" in self.some_variable and "2018" in self.some_variable
         # HLT conditions of Data 
-        if "Data" in self.some_variable and "2018" in self.some_variable:
+        if is_data_2018:
+            # DoubleMuon
             if "DoubleMuon" in self.some_variable and hlt_conditions["mumu_2018"]:
                 channel.append("mumu")
-            if "SingleMuon" in self.some_variable:
-                if not hlt_conditions["mumu_2018"] and hlt_conditions["single_mu_2018"]:
-                    channel.append("mumu")
-                if not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"] and hlt_conditions["single_mu_2018"]:
+        
+            # SingleMuon
+            elif "SingleMuon" in self.some_variable:
+                if hlt_conditions["single_mu_2018"]:
+                    if not hlt_conditions["mumu_2018"]:
+                        channel.append("mumu")
+                    if not hlt_conditions["emu_2018"] and not hlt_conditions["single_e_2018"]:
+                        channel.append("emu")
+        
+            # SingleElectron
+            elif "SingleElectron" in self.some_variable and hlt_conditions["single_e_2018"]:
+                if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"]:
                     channel.append("emu")
-            if "SingleElectron" in self.some_variable:
-                if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
-                    channel.append("emu")
-                if not hlt_conditions["ee_2018"] and hlt_conditions["single_e_2018"]:
+                if not hlt_conditions["ee_2018"]:
                     channel.append("ee")
-            if "DoubleEG" in self.some_variable and hlt_conditions["ee_2018"]:
+        
+            # DoubleEG
+            elif "DoubleEG" in self.some_variable and hlt_conditions["ee_2018"]:
                 channel.append("ee")
-            if "MuonEG" in self.some_variable and hlt_conditions["emu_2018"]:
+        
+            # MuonEG
+            elif "MuonEG" in self.some_variable and hlt_conditions["emu_2018"]:
                 channel.append("emu")
-            if "EGamma" in self.some_variable:
+        
+            # EGamma
+            elif "EGamma" in self.some_variable:
                 if hlt_conditions["ee_2018"] or hlt_conditions["single_e_2018"]:
                     channel.append("ee")
-                if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"] and hlt_conditions["single_e_2018"]:
+                if not hlt_conditions["emu_2018"] and not hlt_conditions["single_mu_2018"]:
                     channel.append("emu")
 
         # MC 채널 결정
@@ -383,9 +396,8 @@ class ExampleAnalysis(Module):
                     and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4]
         
             nDeltaR = len(jets)
-            nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
-                        and deltaR(j.eta, j.phi, muons[1].eta, muons[1].phi) > 0.4
-                        and j.btagDeepFlavB > 0.2783)
+            nBtag = 0
+            nBtag = sum(1 for j in jets if j.btagDeepFlavB > 0.7100)
 
             valsf_mu1 = self.evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, muon_id_mode) * self.evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, muon_iso_mode) if "MC" in self.some_variable else 1.0 
             valsf_mu2 = self.evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[1].eta, muons[1].pt, muon_id_mode) * self.evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[1].eta, muons[1].pt, muon_iso_mode)  if "MC" in self.some_variable else 1.0
@@ -400,7 +412,7 @@ class ExampleAnalysis(Module):
                     and abs(jets[0].pt - j.pt)/3.0/jets[0].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer1 = 0
-            if len(genjets1) >= 1:
+            if len(genjets1) == 1:
                 jet_jer1 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets1[0].pt)/jets[0].pt
                 jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets1) == 0:
@@ -412,7 +424,7 @@ class ExampleAnalysis(Module):
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer2 = 0
-            if len(genjets2) >= 1:
+            if len(genjets2) == 1:
                 jet_jer2 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets2[0].pt)/jets[1].pt
                 jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets2) == 0:
@@ -444,9 +456,9 @@ class ExampleAnalysis(Module):
                     and deltaR(j.eta, j.phi, electrons[1].eta, electrons[1].phi) > 0.4]
         
             nDeltaR = len(jets)
-            nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
-                        and deltaR(j.eta, j.phi, electrons[1].eta, electrons[1].phi) > 0.4
-                        and j.btagDeepFlavB > 0.2783)
+            nBtag = 0
+            nBtag = sum(1 for j in jets if j.btagDeepFlavB > 0.7100)
+
             valsf_ele1 = self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) if "MC" in self.some_variable else 1.0 
             valsf_ele2 = self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[1].eta, electrons[1].pt) * self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[1].eta, electrons[1].pt) if "MC" in self.some_variable else 1.0
 
@@ -459,7 +471,7 @@ class ExampleAnalysis(Module):
                     and abs(jets[0].pt - j.pt)/3.0/jets[0].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer1 = 0
-            if  len(genjets1) >= 1:
+            if  len(genjets1) == 1:
                 jet_jer1 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
                 jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets1) == 0:
@@ -471,7 +483,7 @@ class ExampleAnalysis(Module):
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer2 = 0
-            if len(genjets2) >= 1:
+            if len(genjets2) == 1:
                 jet_jer2 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
                 jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets2) == 0:
@@ -500,9 +512,9 @@ class ExampleAnalysis(Module):
                     and deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4]
         
             nDeltaR = len(jets)
-            nBtag = sum(1 for j in jets if deltaR(j.eta, j.phi, electrons[0].eta, electrons[0].phi) > 0.4
-                        and deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4
-                        and j.btagDeepFlavB > 0.2783)
+            nBtag = 0
+            nBtag = sum(1 for j in jets if j.btagDeepFlavB > 0.7100)
+
             valsf_ele = self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) if "MC" in self.some_variable else 1.0 
             valsf_mu = self.evaluator_muo["NUM_TightID_DEN_TrackerMuons"].evaluate(muons[0].eta, muons[0].pt, muon_id_mode) * self.evaluator_muo["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate(muons[0].eta, muons[0].pt, muon_iso_mode)  if "MC" in self.some_variable else 1.0
         
@@ -517,7 +529,7 @@ class ExampleAnalysis(Module):
                     and abs(jets[0].pt - j.pt)/3.0/jets[0].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[0].eta, jets[0].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer1 = 0
-            if len(genjets1) >= 1:
+            if len(genjets1) == 1:
                 jet_jer1 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[0].eta,jet_jer_mode) - 1 )*(jets[0].pt - genjets[0].pt)/jets[0].pt
                 jet_jer1 = jet_jer1 if jet_jer1 >= 0.0 else 0.0  
             if len(genjets1) == 0:
@@ -529,7 +541,7 @@ class ExampleAnalysis(Module):
                     and abs(jets[1].pt - j.pt)/3.0/jets[1].pt < self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)] if "MC" in self.some_variable else [ ]
 
             jet_jer2 = 0
-            if len(genjets2) >= 1:
+            if len(genjets2) == 1:
                 jet_jer2 = 1.0 + ( self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode) - 1 )*(jets[1].pt - genjets[1].pt)/jets[1].pt
                 jet_jer2 = jet_jer2 if jet_jer2 >= 0.0 else 0.0  
             if len(genjets2) == 0:
