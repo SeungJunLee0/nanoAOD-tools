@@ -220,21 +220,93 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
 
+        # 비균등 bin 설정
+        pt_bin_edges = [20, 30, 50, 70, 100, 140, 200, 300, 600, 1000]
+        eta_bins = [i * 0.24 for i in range(10 + 1)]  # 0 ~ 2.4를 10개 구간으로 나눔
+        flavors = ["b", "c", "light"]  # 제트의 flavor 종류
+
+        # 히스토그램을 저장할 딕셔너리
+        histograms = {}
+
+        # 히스토그램 생성
+        for flavor in flavors:
+            hist_name = f"{flavor}_all_pt_eta"
+            title = f"{flavor}-untagged number of jets; pT; η"
+
+            # 2D 히스토그램 생성 및 속성 설정
+            hist = ROOT.TH2F(hist_name, title, len(pt_bin_edges) - 1, array('d', pt_bin_edges), len(eta_bins) - 1, array('d', eta_bins))
+            hist.GetXaxis().SetTitle("p_{T} [GeV]")
+            hist.GetYaxis().SetTitle("|η|")
+
+            # 히스토그램을 딕셔너리에 저장
+            histograms[hist_name] = hist
+            self.addObject(hist)  # 필요한 경우 ROOT 객체로 추가
+
+        # 히스토그램 생성
+        for flavor in flavors:
+            hist_name = f"{flavor}_tagged_pt_eta"
+            title = f"{flavor}-tagged number of jets; pT; η"
+
+            # 2D 히스토그램 생성 및 속성 설정
+            hist = ROOT.TH2F(hist_name, title, len(pt_bin_edges) - 1, array('d', pt_bin_edges), len(eta_bins) - 1, array('d', eta_bins))
+            hist.GetXaxis().SetTitle("p_{T} [GeV]")
+            hist.GetYaxis().SetTitle("|η|")
+
+            # 히스토그램을 딕셔너리에 저장
+            histograms[hist_name] = hist
+            self.addObject(hist)  # 필요한 경우 ROOT 객체로 추가
+
+
+    # Example function to fill histograms based on jet properties
+    def fill_histograms(jets):
+        for jet in jets:
+            # 제트 flavor 결정
+            flavor = "b" if jet.hadronFlavour == 5 else "c" if jet.hadronFlavour == 4 else "light"
+
+            # pt와 eta 값 가져오기
+            pt = jet.pt
+            eta = abs(jet.eta)
+
+            # 유효한 flavor의 히스토그램에 pt와 eta 값 추가
+            hist_name = f"{flavor}_all_eff_pt_eta"
+            if hist_name in histograms:
+                histograms[hist_name].Fill(pt, eta)
+
+    def fill_histograms_b(jets):
+        for jet in jets:
+            # 제트 flavor 결정
+            flavor = "b" if jet.hadronFlavour == 5 else "c" if jet.hadronFlavour == 4 else "light"
+
+            # pt와 eta 값 가져오기
+            pt = jet.pt
+            eta = abs(jet.eta)
+
+            # 유효한 flavor의 히스토그램에 pt와 eta 값 추가
+            hist_name = f"{flavor}_tagged_eff_pt_eta"
+            if hist_name in histograms:
+                histograms[hist_name].Fill(pt, eta)
+
+
+
     def analyze(self, event):
         electrons = Collection(event, "Electron")
         muons     = Collection(event, "Muon")    
         jets      = Collection(event, "Jet")     
         genjets      = Collection(event, "GenJet")  if "MC" in self.some_variable else [ ] 
-        gen_weight2 = getattr(event, 'genWeight', 1.0) if "MC" in self.some_variable else 1.0
-        gen_weight1 = abs(gen_weight2) if "MC" in self.some_variable else 1.0
-        # get the genWeight value if that is data, genWeight = 1
-        gen_weight = gen_weight2/gen_weight1
+        gen_weight3 = 1.0
+        if "MC" in self.some_variable:
+            #gen_weight2 = Collection(event,"Generator").
+            gen_weight2 = getattr(event, 'genWeight', 1.0)
+            gen_weight1 = abs(gen_weight2)
+            gen_weight3 = gen_weight2 / gen_weight1
+        else:
+            gen_weight3 = 1.0
         met = Object(event, "MET")
         hlt = Object(event, "HLT")
         pv = Object(event,"PV")
         pileup = Object(event,"Pileup") if "MC" in self.some_variable else 1.0
         rho = getattr(event, "fixedGridRhoFastjetAll",1.0) if "MC" in self.some_variable else 1.0
-        self.count.Fill(1.0,gen_weight)
+        self.count.Fill(1.0,gen_weight3)
 
         muon_id_mode = self.mode_dict["muon_id"]
         if "up" == muon_id_mode: muon_id_mode = "systup"
@@ -256,14 +328,7 @@ class ExampleAnalysis(Module):
         if "nominal" == jet_jer_mode: jet_jer_mode ="nom"
         plieup_mode = self.mode_dict["plieup"]
 
-        #evaluator_ele = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/EGM/2018_UL/electron.json.gz')
-        #evaluator_muo = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz')
-        #evaluator_pu = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz')
-        #evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
-
-
-        
-        gen_weight = gen_weight2/gen_weight1 * self.evaluator_pu["Collisions18_UltraLegacy_goldenJSON"].evaluate(pileup.nTrueInt, plieup_mode) if "MC" in self.some_variable else 1.0
+        gen_weight = gen_weight3 * self.evaluator_pu["Collisions18_UltraLegacy_goldenJSON"].evaluate(pileup.nTrueInt, plieup_mode) if "MC" in self.some_variable else 1.0
 
         if pv.npvs == 0 or pv.ndof < 4 or abs(pv.z) >= 24.:
         #primary vertex selection
@@ -437,16 +502,16 @@ class ExampleAnalysis(Module):
 
 
             if nBtag == 0 and nDeltaR == 2:
-                self.fill_histograms("mumu_Zerotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
-                self.fill_histograms("combine_Zerotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                self.fill_histograms("mumu_Zerotag",   jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                self.fill_histograms("combine_Zerotag",jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
             if nBtag == 1 and nDeltaR == 2:
                 self.fill_histograms("mumu_Onetag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
             if nBtag == 2 and nDeltaR == 2:
-                self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
-                self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight,  lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
 
 
