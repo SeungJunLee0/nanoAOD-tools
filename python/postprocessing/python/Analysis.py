@@ -513,6 +513,25 @@ class ExampleAnalysis(Module):
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
+            if "MC" in self.some_variable:
+                for jet in jets:
+                    pt = jet.pt
+                    eta = abs(jet.eta)
+        
+                    # Determine jet flavor
+                    if jet.hadronFlavour == 5:
+                        flavor = "b"
+                    elif jet.hadronFlavour == 4:
+                        flavor = "c"
+                    else:
+                        flavor = "light"
+        
+                    # Fill all jets histogram
+                    self.histograms[f"{flavor}_all_pt_eta"].Fill(pt, eta)
+        
+                    # Check if jet is tagged (example working point: DeepFlavB > 0.7100)
+                    if jet.btagDeepFlavB > 0.7100:
+                        self.histograms[f"{flavor}_tagged_pt_eta"].Fill(pt, eta)
 
 
         if "ee" in channel:
@@ -571,6 +590,25 @@ class ExampleAnalysis(Module):
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
+            if "MC" in self.some_variable:
+                for jet in jets:
+                    pt = jet.pt
+                    eta = abs(jet.eta)
+        
+                    # Determine jet flavor
+                    if jet.hadronFlavour == 5:
+                        flavor = "b"
+                    elif jet.hadronFlavour == 4:
+                        flavor = "c"
+                    else:
+                        flavor = "light"
+        
+                    # Fill all jets histogram
+                    self.histograms[f"{flavor}_all_pt_eta"].Fill(pt, eta)
+        
+                    # Check if jet is tagged (example working point: DeepFlavB > 0.7100)
+                    if jet.btagDeepFlavB > 0.7100:
+                        self.histograms[f"{flavor}_tagged_pt_eta"].Fill(pt, eta)
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
@@ -630,6 +668,25 @@ class ExampleAnalysis(Module):
                 self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
 
+            if "MC" in self.some_variable:
+                for jet in jets:
+                    pt = jet.pt
+                    eta = abs(jet.eta)
+        
+                    # Determine jet flavor
+                    if jet.hadronFlavour == 5:
+                        flavor = "b"
+                    elif jet.hadronFlavour == 4:
+                        flavor = "c"
+                    else:
+                        flavor = "light"
+        
+                    # Fill all jets histogram
+                    self.histograms[f"{flavor}_all_pt_eta"].Fill(pt, eta)
+        
+                    # Check if jet is tagged (example working point: DeepFlavB > 0.7100)
+                    if jet.btagDeepFlavB > 0.7100:
+                        self.histograms[f"{flavor}_tagged_pt_eta"].Fill(pt, eta)
 
 
         return True
