@@ -579,8 +579,8 @@ class ExampleAnalysis(Module):
                 jet_jer2 = 1
         
             if nBtag == 0 and nDeltaR == 2:
-                self.fill_histograms("ee_Zerotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
-                self.fill_histograms("combine_Zerotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                self.fill_histograms("ee_Zerotag",     jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                self.fill_histograms("combine_Zerotag",jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
             
             if nBtag == 1 and nDeltaR == 2:
                 self.fill_histograms("ee_Onetag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
