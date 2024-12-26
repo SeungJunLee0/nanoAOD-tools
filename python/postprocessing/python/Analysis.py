@@ -5,6 +5,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 from PhysicsTools.NanoAODTools.postprocessing.tools import *
 from importlib import import_module
 from correctionlib import _core
+from array import array
 #import FWCore.PythonUtilities.LumiList as LumiList
 import numpy as np
 import os
@@ -258,7 +259,7 @@ class ExampleAnalysis(Module):
 
 
     # Example function to fill histograms based on jet properties
-    def fill_histograms(jets):
+    def fill_histograms_tagging(jets):
         for jet in jets:
             # 제트 flavor 결정
             flavor = "b" if jet.hadronFlavour == 5 else "c" if jet.hadronFlavour == 4 else "light"
@@ -272,7 +273,7 @@ class ExampleAnalysis(Module):
             if hist_name in histograms:
                 histograms[hist_name].Fill(pt, eta)
 
-    def fill_histograms_b(jets):
+    def fill_histograms_b_tagging(jets):
         for jet in jets:
             # 제트 flavor 결정
             flavor = "b" if jet.hadronFlavour == 5 else "c" if jet.hadronFlavour == 4 else "light"
@@ -544,6 +545,7 @@ class ExampleAnalysis(Module):
             nBtag = sum(1 for j in jets if j.btagDeepFlavB > 0.7100)
 
             valsf_ele1 = self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[0].eta, electrons[0].pt) * self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[0].eta, electrons[0].pt) if "MC" in self.some_variable else 1.0 
+            print(valsf_ele1)
             valsf_ele2 = self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_reco_mode,"RecoAbove20",electrons[1].eta, electrons[1].pt) * self.evaluator_ele["UL-Electron-ID-SF"].evaluate("2018",electron_id_mode,"Tight",electrons[1].eta, electrons[1].pt) if "MC" in self.some_variable else 1.0
 
             if nDeltaR < 2:
