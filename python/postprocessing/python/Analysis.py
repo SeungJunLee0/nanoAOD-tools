@@ -28,6 +28,7 @@ class ExampleAnalysis(Module):
         self.evaluator_muo = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz')
         self.evaluator_pu = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz')
         self.evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
+        self.histograms = {}  # ← 클래스 멤버(dict)로 선언
 
     def beginJob(self, histFile=None, histDirName=None):
         Module.beginJob(self, histFile, histDirName)
@@ -221,71 +222,31 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
 
-        # 비균등 bin 설정
-        pt_bin_edges = [20, 30, 50, 70, 100, 140, 200, 300, 600, 1000]
-        eta_bins = [i * 0.24 for i in range(10 + 1)]  # 0 ~ 2.4를 10개 구간으로 나눔
-        flavors = ["b", "c", "light"]  # 제트의 flavor 종류
+    pt_bin_edges = [20, 30, 50, 70, 100, 140, 200, 300, 600, 1000]
+    eta_bins = [i * 0.24 for i in range(0, 11)]  # 0~2.4 구간을 10개로 분할
+    flavors = ["b", "c", "light"]
 
-        # 히스토그램을 저장할 딕셔너리
-        histograms = {}
+    for flavor in flavors:
+        # all
+        hist_name_all = f"{flavor}_all_pt_eta"
+        hist_all = ROOT.TH2F(
+            hist_name_all, f"{flavor}-untagged number of jets; pT; |#eta|",
+            len(pt_bin_edges)-1, array('d', pt_bin_edges),
+            len(eta_bins)-1, array('d', eta_bins)
+        )
+        self.addObject(hist_all)
+        self.histograms[hist_name_all] = hist_all
 
-        # 히스토그램 생성
-        for flavor in flavors:
-            hist_name = f"{flavor}_all_pt_eta"
-            title = f"{flavor}-untagged number of jets; pT; η"
+        # tagged
+        hist_name_tag = f"{flavor}_tagged_pt_eta"
+        hist_tag = ROOT.TH2F(
+            hist_name_tag, f"{flavor}-tagged number of jets; pT; |#eta|",
+            len(pt_bin_edges)-1, array('d', pt_bin_edges),
+            len(eta_bins)-1, array('d', eta_bins)
+        )
+        self.addObject(hist_tag)
+        self.histograms[hist_name_tag] = hist_tag
 
-            # 2D 히스토그램 생성 및 속성 설정
-            hist = ROOT.TH2F(hist_name, title, len(pt_bin_edges) - 1, array('d', pt_bin_edges), len(eta_bins) - 1, array('d', eta_bins))
-            hist.GetXaxis().SetTitle("p_{T} [GeV]")
-            hist.GetYaxis().SetTitle("|η|")
-
-            # 히스토그램을 딕셔너리에 저장
-            histograms[hist_name] = hist
-            self.addObject(hist)  # 필요한 경우 ROOT 객체로 추가
-
-        # 히스토그램 생성
-        for flavor in flavors:
-            hist_name = f"{flavor}_tagged_pt_eta"
-            title = f"{flavor}-tagged number of jets; pT; η"
-
-            # 2D 히스토그램 생성 및 속성 설정
-            hist = ROOT.TH2F(hist_name, title, len(pt_bin_edges) - 1, array('d', pt_bin_edges), len(eta_bins) - 1, array('d', eta_bins))
-            hist.GetXaxis().SetTitle("p_{T} [GeV]")
-            hist.GetYaxis().SetTitle("|η|")
-
-            # 히스토그램을 딕셔너리에 저장
-            histograms[hist_name] = hist
-            self.addObject(hist)  # 필요한 경우 ROOT 객체로 추가
-
-
-    # Example function to fill histograms based on jet properties
-    def fill_histograms_tagging(jets):
-        for jet in jets:
-            # 제트 flavor 결정
-            flavor = "b" if jet.hadronFlavour == 5 else "c" if jet.hadronFlavour == 4 else "light"
-
-            # pt와 eta 값 가져오기
-            pt = jet.pt
-            eta = abs(jet.eta)
-
-            # 유효한 flavor의 히스토그램에 pt와 eta 값 추가
-            hist_name = f"{flavor}_all_eff_pt_eta"
-            if hist_name in histograms:
-                histograms[hist_name].Fill(pt, eta)
-
-    def fill_histograms_b_tagging(jets):
-        for jet in jets:
-            # 제트 flavor 결정
-            flavor = "b" if jet.hadronFlavour == 5 else "c" if jet.hadronFlavour == 4 else "light"
-
-            # pt와 eta 값 가져오기
-            pt = jet.pt
-            eta = abs(jet.eta)
-
-            # 유효한 flavor의 히스토그램에 pt와 eta 값 추가
-            hist_name = f"{flavor}_tagged_eff_pt_eta"
-            if hist_name in histograms:
-                histograms[hist_name].Fill(pt, eta)
 
 
 
@@ -514,25 +475,6 @@ class ExampleAnalysis(Module):
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
-            if "MC" in self.some_variable:
-                for jet in jets:
-                    pt = jet.pt
-                    eta = abs(jet.eta)
-        
-                    # Determine jet flavor
-                    if jet.hadronFlavour == 5:
-                        flavor = "b"
-                    elif jet.hadronFlavour == 4:
-                        flavor = "c"
-                    else:
-                        flavor = "light"
-        
-                    # Fill all jets histogram
-                    self.histograms[f"{flavor}_all_pt_eta"].Fill(pt, eta)
-        
-                    # Check if jet is tagged (example working point: DeepFlavB > 0.7100)
-                    if jet.btagDeepFlavB > 0.7100:
-                        self.histograms[f"{flavor}_tagged_pt_eta"].Fill(pt, eta)
 
 
         if "ee" in channel:
@@ -592,25 +534,6 @@ class ExampleAnalysis(Module):
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
-            if "MC" in self.some_variable:
-                for jet in jets:
-                    pt = jet.pt
-                    eta = abs(jet.eta)
-        
-                    # Determine jet flavor
-                    if jet.hadronFlavour == 5:
-                        flavor = "b"
-                    elif jet.hadronFlavour == 4:
-                        flavor = "c"
-                    else:
-                        flavor = "light"
-        
-                    # Fill all jets histogram
-                    self.histograms[f"{flavor}_all_pt_eta"].Fill(pt, eta)
-        
-                    # Check if jet is tagged (example working point: DeepFlavB > 0.7100)
-                    if jet.btagDeepFlavB > 0.7100:
-                        self.histograms[f"{flavor}_tagged_pt_eta"].Fill(pt, eta)
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
@@ -672,24 +595,24 @@ class ExampleAnalysis(Module):
 
             if "MC" in self.some_variable:
                 for jet in jets:
-                    pt = jet.pt
+                    pt  = jet.pt
                     eta = abs(jet.eta)
-        
-                    # Determine jet flavor
+                    # Determine flavor
                     if jet.hadronFlavour == 5:
                         flavor = "b"
                     elif jet.hadronFlavour == 4:
                         flavor = "c"
                     else:
                         flavor = "light"
-        
-                    # Fill all jets histogram
-                    self.histograms[f"{flavor}_all_pt_eta"].Fill(pt, eta)
-        
-                    # Check if jet is tagged (example working point: DeepFlavB > 0.7100)
+            
+                    # Fill "all" histogram
+                    hist_name_all = f"{flavor}_all_pt_eta"
+                    self.histograms[hist_name_all].Fill(pt, eta)
+            
+                    # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
-                        self.histograms[f"{flavor}_tagged_pt_eta"].Fill(pt, eta)
-
+                        hist_name_tag = f"{flavor}_tagged_pt_eta"
+                        self.histograms[hist_name_tag].Fill(pt, eta)
 
         return True
 
