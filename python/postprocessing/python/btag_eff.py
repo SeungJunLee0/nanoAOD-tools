@@ -59,7 +59,7 @@ def merge_histograms_by_pattern(file_dir, file_pattern, dir_name, hist_pattern, 
 file_dir = "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/output_nominal/"  # ROOT 파일들이 있는 디렉토리
 file_pattern = "MC"  # 파일 이름에 포함된 구문
 dir_name = "plots"  # TDirectory 이름
-hist_pattern = "hist"  # 히스토그램 이름에 포함된 구문
+hist_pattern = "_pt_eta"  # 히스토그램 이름에 포함된 구문
 output_file = "merged_histograms.root"  # 저장할 파일 이름
 
 merge_histograms_by_pattern(file_dir, file_pattern, dir_name, hist_pattern, output_file)
