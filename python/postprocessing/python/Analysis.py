@@ -245,7 +245,7 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr)
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
-    def in_bin(value, bins):
+    def in_bin(self,value, bins):
         """값이 주어진 bin 범위에 속하는지 확인"""
         for i in range(len(bins) - 1):
             if bins[i] <= value < bins[i + 1]:
@@ -499,8 +499,8 @@ class ExampleAnalysis(Module):
                     else:
                         flavor = "light"
 
-                    pt_bin_index = in_bin(pt, pt_bin_edges)
-                    eta_bin_index = in_bin(eta, eta_bins)
+                    pt_bin_index =  self.in_bin(pt, pt_bin_edges)
+                    eta_bin_index = self.in_bin(eta, eta_bins)
 
                     # 범위 밖인 경우 건너뜀
                     if pt_bin_index is None or eta_bin_index is None:
@@ -508,12 +508,12 @@ class ExampleAnalysis(Module):
             
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
-                    self.histograms[hist_name_all].Fill(pt, eta)
+                    self.histograms[hist_name_all].Fill(pt_bin_index, eta_bin_index)
             
                     # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
                         hist_name_tag = f"{flavor}_tagged_pt_eta"
-                        self.histograms[hist_name_tag].Fill(pt, eta)
+                        self.histograms[hist_name_tag].Fill(pt_bin_index, eta_bin_index)
 
 
         if "ee" in channel:
@@ -584,21 +584,21 @@ class ExampleAnalysis(Module):
                     else:
                         flavor = "light"
 
-                    pt_bin_index = in_bin(pt, pt_bin_edges)
-                    eta_bin_index = in_bin(eta, eta_bins)
+                    pt_bin_index =  self.in_bin(pt, pt_bin_edges)
+                    eta_bin_index = self.in_bin(eta, eta_bins)
 
                     # 범위 밖인 경우 건너뜀
                     if pt_bin_index is None or eta_bin_index is None:
                         continue
-            
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
-                    self.histograms[hist_name_all].Fill(pt, eta)
+                    self.histograms[hist_name_all].Fill(pt_bin_index, eta_bin_index)
             
                     # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
                         hist_name_tag = f"{flavor}_tagged_pt_eta"
-                        self.histograms[hist_name_tag].Fill(pt, eta)
+                        self.histograms[hist_name_tag].Fill(pt_bin_index, eta_bin_index)
+            
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
@@ -670,8 +670,8 @@ class ExampleAnalysis(Module):
                     else:
                         flavor = "light"
 
-                    pt_bin_index = in_bin(pt, pt_bin_edges)
-                    eta_bin_index = in_bin(eta, eta_bins)
+                    pt_bin_index =  self.in_bin(pt, pt_bin_edges)
+                    eta_bin_index = self.in_bin(eta, eta_bins)
 
                     # 범위 밖인 경우 건너뜀
                     if pt_bin_index is None or eta_bin_index is None:
@@ -679,12 +679,12 @@ class ExampleAnalysis(Module):
             
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
-                    self.histograms[hist_name_all].Fill(pt, eta)
+                    self.histograms[hist_name_all].Fill(pt_bin_index, eta_bin_index)
             
                     # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
                         hist_name_tag = f"{flavor}_tagged_pt_eta"
-                        self.histograms[hist_name_tag].Fill(pt, eta)
+                        self.histograms[hist_name_tag].Fill(pt_bin_index, eta_bin_index)
 
         return True
 
