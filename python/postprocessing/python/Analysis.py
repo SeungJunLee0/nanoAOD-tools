@@ -33,6 +33,30 @@ class ExampleAnalysis(Module):
     def beginJob(self, histFile=None, histDirName=None):
         Module.beginJob(self, histFile, histDirName)
 
+        pt_bin_edges = [20, 30, 50, 70, 100, 140, 200, 300, 600, 1000]
+        eta_bins = [i * 0.24 for i in range(0, 11)]  # 0~2.4 구간을 10개로 분할
+        flavors = ["b", "c", "light"]
+    
+        for flavor in flavors:
+            # all
+            hist_name_all = f"{flavor}_all_pt_eta"
+            hist_all = ROOT.TH2F(
+                hist_name_all, f"{flavor}-untagged number of jets; pT; |#eta|",
+                len(pt_bin_edges)-1, array('d', pt_bin_edges),
+                len(eta_bins)-1, array('d', eta_bins)
+            )
+            self.addObject(hist_all)
+            self.histograms[hist_name_all] = hist_all
+    
+            # tagged
+            hist_name_tag = f"{flavor}_tagged_pt_eta"
+            hist_tag = ROOT.TH2F(
+                hist_name_tag, f"{flavor}-tagged number of jets; pT; |#eta|",
+                len(pt_bin_edges)-1, array('d', pt_bin_edges),
+                len(eta_bins)-1, array('d', eta_bins)
+            )
+            self.addObject(hist_tag)
+            self.histograms[hist_name_tag] = hist_tag
 
     
         hist_configs = {
@@ -221,31 +245,14 @@ class ExampleAnalysis(Module):
         getattr(self, f"{prefix}_jet2eta").Fill(jets[1].eta, gen_weight*jet2_corr)
         getattr(self, f"{prefix}_m_ll").Fill((lep1.p4() + lep2.p4()).M(), gen_weight)
 
+    def in_bin(value, bins):
+        """값이 주어진 bin 범위에 속하는지 확인"""
+        for i in range(len(bins) - 1):
+            if bins[i] <= value < bins[i + 1]:
+                return i  # 해당 bin의 인덱스 반환
+        return None  # 범위에 속하지 않으면 None 반환
 
-    pt_bin_edges = [20, 30, 50, 70, 100, 140, 200, 300, 600, 1000]
-    eta_bins = [i * 0.24 for i in range(0, 11)]  # 0~2.4 구간을 10개로 분할
-    flavors = ["b", "c", "light"]
 
-    for flavor in flavors:
-        # all
-        hist_name_all = f"{flavor}_all_pt_eta"
-        hist_all = ROOT.TH2F(
-            hist_name_all, f"{flavor}-untagged number of jets; pT; |#eta|",
-            len(pt_bin_edges)-1, array('d', pt_bin_edges),
-            len(eta_bins)-1, array('d', eta_bins)
-        )
-        self.addObject(hist_all)
-        self.histograms[hist_name_all] = hist_all
-
-        # tagged
-        hist_name_tag = f"{flavor}_tagged_pt_eta"
-        hist_tag = ROOT.TH2F(
-            hist_name_tag, f"{flavor}-tagged number of jets; pT; |#eta|",
-            len(pt_bin_edges)-1, array('d', pt_bin_edges),
-            len(eta_bins)-1, array('d', eta_bins)
-        )
-        self.addObject(hist_tag)
-        self.histograms[hist_name_tag] = hist_tag
 
 
 
@@ -295,6 +302,11 @@ class ExampleAnalysis(Module):
         if pv.npvs == 0 or pv.ndof < 4 or abs(pv.z) >= 24.:
         #primary vertex selection
             return False
+
+        pt_bin_edges = [20, 30, 50, 70, 100, 140, 200, 300, 600, 1000]
+        eta_bins = [i * 0.24 for i in range(0, 11)]  # 0~2.4 구간을 10개로 분할
+        flavors = ["b", "c", "light"]
+
 
         hlt_conditions = {
             "mumu_2018":        hlt.Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,
@@ -475,6 +487,33 @@ class ExampleAnalysis(Module):
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
         
+            if "MC" in self.some_variable and nDeltaR == 2:
+                for jet in jets:
+                    pt  = jet.pt
+                    eta = abs(jet.eta)
+                    # Determine flavor
+                    if jet.hadronFlavour == 5:
+                        flavor = "b"
+                    elif jet.hadronFlavour == 4:
+                        flavor = "c"
+                    else:
+                        flavor = "light"
+
+                    pt_bin_index = in_bin(pt, pt_bin_edges)
+                    eta_bin_index = in_bin(eta, eta_bins)
+
+                    # 범위 밖인 경우 건너뜀
+                    if pt_bin_index is None or eta_bin_index is None:
+                        continue
+            
+                    # Fill "all" histogram
+                    hist_name_all = f"{flavor}_all_pt_eta"
+                    self.histograms[hist_name_all].Fill(pt, eta)
+            
+                    # Check b-tag
+                    if jet.btagDeepFlavB > 0.7100:
+                        hist_name_tag = f"{flavor}_tagged_pt_eta"
+                        self.histograms[hist_name_tag].Fill(pt, eta)
 
 
         if "ee" in channel:
@@ -533,7 +572,33 @@ class ExampleAnalysis(Module):
             if nBtag == 2 and nDeltaR == 2:
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
-        
+            if "MC" in self.some_variable and nDeltaR == 2:
+                for jet in jets:
+                    pt  = jet.pt
+                    eta = abs(jet.eta)
+                    # Determine flavor
+                    if jet.hadronFlavour == 5:
+                        flavor = "b"
+                    elif jet.hadronFlavour == 4:
+                        flavor = "c"
+                    else:
+                        flavor = "light"
+
+                    pt_bin_index = in_bin(pt, pt_bin_edges)
+                    eta_bin_index = in_bin(eta, eta_bins)
+
+                    # 범위 밖인 경우 건너뜀
+                    if pt_bin_index is None or eta_bin_index is None:
+                        continue
+            
+                    # Fill "all" histogram
+                    hist_name_all = f"{flavor}_all_pt_eta"
+                    self.histograms[hist_name_all].Fill(pt, eta)
+            
+                    # Check b-tag
+                    if jet.btagDeepFlavB > 0.7100:
+                        hist_name_tag = f"{flavor}_tagged_pt_eta"
+                        self.histograms[hist_name_tag].Fill(pt, eta)
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
             jets = [j for j in jets if deltaR(j.eta, j.phi, muons[0].eta, muons[0].phi) > 0.4 
@@ -593,7 +658,7 @@ class ExampleAnalysis(Module):
                 self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
 
-            if "MC" in self.some_variable:
+            if "MC" in self.some_variable and nDeltaR == 2:
                 for jet in jets:
                     pt  = jet.pt
                     eta = abs(jet.eta)
@@ -604,6 +669,13 @@ class ExampleAnalysis(Module):
                         flavor = "c"
                     else:
                         flavor = "light"
+
+                    pt_bin_index = in_bin(pt, pt_bin_edges)
+                    eta_bin_index = in_bin(eta, eta_bins)
+
+                    # 범위 밖인 경우 건너뜀
+                    if pt_bin_index is None or eta_bin_index is None:
+                        continue
             
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
