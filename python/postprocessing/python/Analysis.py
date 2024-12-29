@@ -28,7 +28,14 @@ class ExampleAnalysis(Module):
         self.evaluator_muo = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz')
         self.evaluator_pu = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz')
         self.evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
+        self.evaluator_b = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/BTV/2018_UL/btagging.json.gz')
         self.histograms = {}  # ← 클래스 멤버(dict)로 선언
+        root_file = ROOT.TFile.Open("/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms_1.root")
+        if not root_file or root_file.IsZombie():
+            print(f"파일 {input_file}을(를) 열 수 없습니다.")
+            return None
+
+
 
     def beginJob(self, histFile=None, histDirName=None):
         Module.beginJob(self, histFile, histDirName)
@@ -267,7 +274,8 @@ class ExampleAnalysis(Module):
             #gen_weight2 = Collection(event,"Generator").
             gen_weight2 = getattr(event, 'genWeight', 1.0)
             gen_weight1 = abs(gen_weight2)
-            gen_weight3 = gen_weight2 / gen_weight1
+            prefire_nom = getattr(event, "L1PreFiringWeight_Nom", 1.0)
+            gen_weight3 = gen_weight2 / gen_weight1*prefire_nom
         else:
             gen_weight3 = 1.0
         met = Object(event, "MET")
@@ -470,6 +478,30 @@ class ExampleAnalysis(Module):
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
                 jet_jer2 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
+
+            jet_jer1_b = self.evaluator_jet_b["deepJet_wp_values"].evaluate("T")
+            b_all_hist = root_file.Get("b_all_pt_eta")
+            b_tagged_hist = root_file.Get("b_tagged_pt_eta")
+            c_all_hist = root_file.Get("c_all_pt_eta")
+            c_tagged_hist = root_file.Get("c_tagged_pt_eta")
+            light_all_hist = root_file.Get("light_all_pt_eta")
+            light_tagged_hist = root_file.Get("light_tagged_pt_eta")
+            # pT와 |eta|에 해당하는 bin 찾기
+            pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
+            eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
+            # b_all와 b_tagged 값 가져오기
+            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            jet_jer1 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+
+            pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
+            eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
+            # b_all와 b_tagged 값 가져오기
+            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            jet_jer2 *= jet_jer2_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -557,6 +589,29 @@ class ExampleAnalysis(Module):
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
                 jet_jer2 = max(0.0,1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
+            jet_jer1_b = self.evaluator_jet_b["deepJet_wp_values"].evaluate("T")
+            b_all_hist = root_file.Get("b_all_pt_eta")
+            b_tagged_hist = root_file.Get("b_tagged_pt_eta")
+            c_all_hist = root_file.Get("c_all_pt_eta")
+            c_tagged_hist = root_file.Get("c_tagged_pt_eta")
+            light_all_hist = root_file.Get("light_all_pt_eta")
+            light_tagged_hist = root_file.Get("light_tagged_pt_eta")
+            # pT와 |eta|에 해당하는 bin 찾기
+            pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
+            eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
+            # b_all와 b_tagged 값 가져오기
+            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            jet_jer1 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+
+            pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
+            eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
+            # b_all와 b_tagged 값 가져오기
+            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            jet_jer2 *= jet_jer2_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -641,6 +696,29 @@ class ExampleAnalysis(Module):
                 random_generator = ROOT.TRandom3()
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
                 jet_jer2 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
+            jet_jer1_b = self.evaluator_jet_b["deepJet_wp_values"].evaluate("T")
+            b_all_hist = root_file.Get("b_all_pt_eta")
+            b_tagged_hist = root_file.Get("b_tagged_pt_eta")
+            c_all_hist = root_file.Get("c_all_pt_eta")
+            c_tagged_hist = root_file.Get("c_tagged_pt_eta")
+            light_all_hist = root_file.Get("light_all_pt_eta")
+            light_tagged_hist = root_file.Get("light_tagged_pt_eta")
+            # pT와 |eta|에 해당하는 bin 찾기
+            pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
+            eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
+            # b_all와 b_tagged 값 가져오기
+            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            jet_jer1 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+
+            pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
+            eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
+            # b_all와 b_tagged 값 가져오기
+            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            jet_jer2 *= jet_jer2_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
