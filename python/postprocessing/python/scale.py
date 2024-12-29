@@ -38,6 +38,7 @@ def get_total_entries(file_path):
 
     # 총 엔트리 수 가져오기
     total_entries = hist.Integral()
+    total_entries = sum(hist.GetBinContent(i) for i in range(1, hist.GetNbinsX() + 1))
     #total_entries = hist.GetEntries()
     file.Close()
     return total_entries
