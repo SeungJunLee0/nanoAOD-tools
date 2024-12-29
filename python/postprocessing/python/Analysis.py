@@ -30,7 +30,7 @@ class ExampleAnalysis(Module):
         self.evaluator_jet_jer = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
         self.evaluator_jet_b = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/BTV/2018_UL/btagging.json.gz')
         self.histograms = {}  # ← 클래스 멤버(dict)로 선언
-        root_file = ROOT.TFile.Open("/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms_1.root")
+        self.root_file = ROOT.TFile.Open("/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms_1.root")
 
 
 
@@ -477,12 +477,12 @@ class ExampleAnalysis(Module):
                 jet_jer2 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
 
             jet_jer1_b = self.evaluator_jet_b["deepJet_wp_values"].evaluate("T")
-            b_all_hist = root_file.Get("b_all_pt_eta")
-            b_tagged_hist = root_file.Get("b_tagged_pt_eta")
-            c_all_hist = root_file.Get("c_all_pt_eta")
-            c_tagged_hist = root_file.Get("c_tagged_pt_eta")
-            light_all_hist = root_file.Get("light_all_pt_eta")
-            light_tagged_hist = root_file.Get("light_tagged_pt_eta")
+            b_all_hist =        self.root_file.Get("b_all_pt_eta")
+            b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
+            c_all_hist =        self.root_file.Get("c_all_pt_eta")
+            c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
+            light_all_hist =    self.root_file.Get("light_all_pt_eta")
+            light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
             # pT와 |eta|에 해당하는 bin 찾기
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
@@ -498,7 +498,7 @@ class ExampleAnalysis(Module):
             b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
             c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
             light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer2_b*c_eff)/(1-c_eff)
+            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -587,12 +587,12 @@ class ExampleAnalysis(Module):
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
                 jet_jer2 = max(0.0,1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
             jet_jer1_b = self.evaluator_jet_b["deepJet_wp_values"].evaluate("T")
-            b_all_hist = root_file.Get("b_all_pt_eta")
-            b_tagged_hist = root_file.Get("b_tagged_pt_eta")
-            c_all_hist = root_file.Get("c_all_pt_eta")
-            c_tagged_hist = root_file.Get("c_tagged_pt_eta")
-            light_all_hist = root_file.Get("light_all_pt_eta")
-            light_tagged_hist = root_file.Get("light_tagged_pt_eta")
+            b_all_hist =        self.root_file.Get("b_all_pt_eta")
+            b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
+            c_all_hist =        self.root_file.Get("c_all_pt_eta")
+            c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
+            light_all_hist =    self.root_file.Get("light_all_pt_eta")
+            light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
             # pT와 |eta|에 해당하는 bin 찾기
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
@@ -608,7 +608,7 @@ class ExampleAnalysis(Module):
             b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
             c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
             light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer2_b*c_eff)/(1-c_eff)
+            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -694,12 +694,12 @@ class ExampleAnalysis(Module):
                 mean, sigma = 0.0, self.evaluator_jet_jer["Summer19UL18_JRV2_MC_PtResolution_AK4PFchs"].evaluate(jets[1].eta, jets[1].pt, rho)
                 jet_jer2 = max(0.0, 1.0 + (random_generator.Gaus(mean, sigma) - 1.0) * math.sqrt(max(self.evaluator_jet_jer["Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs"].evaluate(jets[1].eta,jet_jer_mode)**2 - 1, 0)))
             jet_jer1_b = self.evaluator_jet_b["deepJet_wp_values"].evaluate("T")
-            b_all_hist = root_file.Get("b_all_pt_eta")
-            b_tagged_hist = root_file.Get("b_tagged_pt_eta")
-            c_all_hist = root_file.Get("c_all_pt_eta")
-            c_tagged_hist = root_file.Get("c_tagged_pt_eta")
-            light_all_hist = root_file.Get("light_all_pt_eta")
-            light_tagged_hist = root_file.Get("light_tagged_pt_eta")
+            b_all_hist =        self.root_file.Get("b_all_pt_eta")
+            b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
+            c_all_hist =        self.root_file.Get("c_all_pt_eta")
+            c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
+            light_all_hist =    self.root_file.Get("light_all_pt_eta")
+            light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
             # pT와 |eta|에 해당하는 bin 찾기
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
@@ -715,7 +715,7 @@ class ExampleAnalysis(Module):
             b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
             c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
             light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer2_b*c_eff)/(1-c_eff)
+            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
