@@ -1,7 +1,7 @@
 import ROOT
 import os
 
-# 파일 목록과 각각의 크로스 섹션 값 (fb 단위)
+# 파일 목록과 각각의 크로스 섹션 값 (pb 단위)
 file_info = {
     "hist_DoubleMuon_Data_2018.root": 1,
     "hist_EGamma_Data_2018.root": 1,
