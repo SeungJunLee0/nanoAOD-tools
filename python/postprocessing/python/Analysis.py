@@ -508,12 +508,12 @@ class ExampleAnalysis(Module):
             
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
-                    self.histograms[hist_name_all].Fill(pt_bin_index, eta_bin_index)
+                    self.histograms[hist_name_all].Fill(pt, eta)
             
                     # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
                         hist_name_tag = f"{flavor}_tagged_pt_eta"
-                        self.histograms[hist_name_tag].Fill(pt_bin_index, eta_bin_index)
+                        self.histograms[hist_name_tag].Fill(pt, eta)
 
 
         if "ee" in channel:
@@ -592,12 +592,12 @@ class ExampleAnalysis(Module):
                         continue
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
-                    self.histograms[hist_name_all].Fill(pt_bin_index, eta_bin_index)
+                    self.histograms[hist_name_all].Fill(pt, eta)
             
                     # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
                         hist_name_tag = f"{flavor}_tagged_pt_eta"
-                        self.histograms[hist_name_tag].Fill(pt_bin_index, eta_bin_index)
+                        self.histograms[hist_name_tag].Fill(pt, eta)
             
         if "emu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
@@ -679,12 +679,12 @@ class ExampleAnalysis(Module):
             
                     # Fill "all" histogram
                     hist_name_all = f"{flavor}_all_pt_eta"
-                    self.histograms[hist_name_all].Fill(pt_bin_index, eta_bin_index)
+                    self.histograms[hist_name_all].Fill(pt, eta)
             
                     # Check b-tag
                     if jet.btagDeepFlavB > 0.7100:
                         hist_name_tag = f"{flavor}_tagged_pt_eta"
-                        self.histograms[hist_name_tag].Fill(pt_bin_index, eta_bin_index)
+                        self.histograms[hist_name_tag].Fill(pt, eta)
 
         return True
 
