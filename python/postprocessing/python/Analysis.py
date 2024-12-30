@@ -485,7 +485,7 @@ class ExampleAnalysis(Module):
             light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
             # pT와 |eta|에 해당하는 bin 찾기
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
+            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
             # b_all와 b_tagged 값 가져오기
             if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
                 b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
@@ -501,7 +501,7 @@ class ExampleAnalysis(Module):
                 light_eff =0.0
 
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
+            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
             # b_all와 b_tagged 값 가져오기
             if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
                 b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
@@ -620,7 +620,7 @@ class ExampleAnalysis(Module):
             light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
             # pT와 |eta|에 해당하는 bin 찾기
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
+            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
             # b_all와 b_tagged 값 가져오기
             if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
                 b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
@@ -636,7 +636,7 @@ class ExampleAnalysis(Module):
                 light_eff =0.0
 
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
+            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
             # b_all와 b_tagged 값 가져오기
             if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
                 b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
@@ -752,7 +752,7 @@ class ExampleAnalysis(Module):
             light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
             # pT와 |eta|에 해당하는 bin 찾기
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
+            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
             # b_all와 b_tagged 값 가져오기
             if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
                 b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
@@ -768,7 +768,7 @@ class ExampleAnalysis(Module):
                 light_eff =0.0
 
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
+            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
             # b_all와 b_tagged 값 가져오기
             if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
                 b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
