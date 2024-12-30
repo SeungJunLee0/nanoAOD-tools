@@ -487,34 +487,59 @@ class ExampleAnalysis(Module):
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
             # b_all와 b_tagged 값 가져오기
-            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer1 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                b_eff = 0.0
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                c_eff = 0.0
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                light_eff =0.0
 
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
             # b_all와 b_tagged 값 가져오기
-            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                b_eff = 0.0
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                c_eff = 0.0
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                light_eff =0.0
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
 
 
             if nBtag == 0 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=(1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff)) * (1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff))
                 self.fill_histograms("mumu_Zerotag",   jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Zerotag",jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
             
             if nBtag == 1 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=(1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff)) * jet_jer1_b
                 self.fill_histograms("mumu_Onetag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
             
             if nBtag == 2 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=jet_jer1_b * jet_jer1_b
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight, lep1_corr =valsf_mu1, lep2_corr =valsf_mu2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
         
             if "MC" in self.some_variable and nDeltaR == 2:
                 for jet in jets:
@@ -597,33 +622,58 @@ class ExampleAnalysis(Module):
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
             # b_all와 b_tagged 값 가져오기
-            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer1 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                b_eff = 0.0
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                c_eff = 0.0
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                light_eff =0.0
 
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
             # b_all와 b_tagged 값 가져오기
-            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                b_eff = 0.0
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                c_eff = 0.0
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                light_eff =0.0
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
         
             if nBtag == 0 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=(1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff)) * (1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff))
                 self.fill_histograms("ee_Zerotag",     jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Zerotag",jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
             
             if nBtag == 1 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=(1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff)) * jet_jer1_b
                 self.fill_histograms("ee_Onetag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
             
             if nBtag == 2 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *= jet_jer1_b * jet_jer1_b
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight,  lep1_corr =valsf_ele1, lep2_corr =valsf_ele2, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
             if "MC" in self.some_variable and nDeltaR == 2:
                 for jet in jets:
                     pt  = jet.pt
@@ -704,34 +754,59 @@ class ExampleAnalysis(Module):
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[0].eta)
             # b_all와 b_tagged 값 가져오기
-            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer1 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                b_eff = 0.0
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                c_eff = 0.0
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                light_eff =0.0
 
             pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
             eta_bin = b_all_hist.GetYaxis().FindBin(jets[1].eta)
             # b_all와 b_tagged 값 가져오기
-            b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            jet_jer2 *= jet_jer1_b*b_eff/b_eff*(1-jet_jer1_b*c_eff)/(1-c_eff)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                b_eff = 0.0
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                c_eff = 0.0
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                light_eff =0.0
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
         
 
             if nBtag == 0 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=(1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff)) * (1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff))
                 self.fill_histograms_for_emu("emu_Zerotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Zerotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
 
             if nBtag == 1 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *=(1- jet_jer1_b*(c_eff+light_eff))/(1-(c_eff+light_eff)) * jet_jer1_b
                 self.fill_histograms_for_emu("emu_Onetag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Onetag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
         
             if nBtag == 2 and nDeltaR == 2:
+                gen_weight1 = gen_weight
+                gen_weight *= jet_jer1_b * jet_jer1_b
                 self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
                 self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight, ele_corr =valsf_ele, muo_corr =valsf_mu, jet1_corr = jet_jer1,jet2_corr = jet_jer2)
+                gen_weight = gen_weight1
 
             if "MC" in self.some_variable and nDeltaR == 2:
                 for jet in jets:
