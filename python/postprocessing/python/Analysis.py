@@ -31,7 +31,15 @@ class ExampleAnalysis(Module):
         self.evaluator_jet_jec = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
         self.evaluator_jet_b = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/BTV/2018_UL/btagging.json.gz')
         self.histograms = {}  # ← 클래스 멤버(dict)로 선언
-        self.root_file = ROOT.TFile.Open("/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms.root")
+        self.efficiency_file_path = "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms.root"
+
+        # 파일 존재 여부 확인
+        if os.path.exists(self.efficiency_file_path):
+            self.root_file = ROOT.TFile.Open(self.efficiency_file_path)
+            print("Efficiency file loaded successfully.")
+        else:
+            self.root_file = None
+            print(f"Warning: Efficiency file '{self.efficiency_file_path}' not found. Related functionality will be skipped.")
 
 
 
@@ -494,45 +502,45 @@ class ExampleAnalysis(Module):
                         self.histograms[hist_name_tag].Fill(pt, eta)
             if nDeltaR < 2:
                 return False
+            if self.root_file:
+                b_all_hist =        self.root_file.Get("b_all_pt_eta")
+                b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
+                c_all_hist =        self.root_file.Get("c_all_pt_eta")
+                c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
+                light_all_hist =    self.root_file.Get("light_all_pt_eta")
+                light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
+                # pT와 |eta|에 해당하는 bin 찾기
+                pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
+                eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
+                # b_all와 b_tagged 값 가져오기
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    b_eff = 0.0
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    c_eff = 0.0
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    light_eff =0.0
 
-            b_all_hist =        self.root_file.Get("b_all_pt_eta")
-            b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
-            c_all_hist =        self.root_file.Get("c_all_pt_eta")
-            c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
-            light_all_hist =    self.root_file.Get("light_all_pt_eta")
-            light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
-            # pT와 |eta|에 해당하는 bin 찾기
-            pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
-            # b_all와 b_tagged 값 가져오기
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                b_eff = 0.0
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                c_eff = 0.0
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                light_eff =0.0
-
-            pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
-            # b_all와 b_tagged 값 가져오기
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                b_eff = 0.0
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                c_eff = 0.0
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                light_eff =0.0
+                pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
+                eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
+                # b_all와 b_tagged 값 가져오기
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    b_eff = 0.0
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    c_eff = 0.0
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    light_eff =0.0
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -541,26 +549,29 @@ class ExampleAnalysis(Module):
             if nBtag == 0 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0 
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0 
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0 
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                        jet_flavor_scale2 = 0.0 
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                    
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
+                    gen_weight *= valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
                 self.fill_histograms("mumu_Zerotag",   jets, genjets,rho, muons, met, gen_weight)
                 self.fill_histograms("combine_Zerotag",jets, genjets,rho, muons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -568,29 +579,31 @@ class ExampleAnalysis(Module):
             if nBtag == 1 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0 
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0 
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0 
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    if jets[0].hadronFlavour == 5:
-                        jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
-                    if jets[1].hadronFlavour == 5:
-                        jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b 
+                        jet_flavor_scale2 = 0.0 
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        if jets[0].hadronFlavour == 5:
+                            jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                        if jets[1].hadronFlavour == 5:
+                            jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b 
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
+                    gen_weight *= valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
                 self.fill_histograms("mumu_Onetag",    jets, genjets,rho, muons, met, gen_weight)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, muons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -598,26 +611,28 @@ class ExampleAnalysis(Module):
             if nBtag == 2 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0 
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0 
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0 
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    jet_b = jet_jer1_b  * jet_jer2_b 
+                        jet_flavor_scale2 = 0.0 
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        jet_b = jet_jer1_b  * jet_jer2_b 
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
+                    gen_weight *= valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -639,44 +654,45 @@ class ExampleAnalysis(Module):
 
             if nDeltaR < 2:
                 return False
-            b_all_hist =        self.root_file.Get("b_all_pt_eta")
-            b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
-            c_all_hist =        self.root_file.Get("c_all_pt_eta")
-            c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
-            light_all_hist =    self.root_file.Get("light_all_pt_eta")
-            light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
-            # pT와 |eta|에 해당하는 bin 찾기
-            pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
-            # b_all와 b_tagged 값 가져오기
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                b_eff = 0.0
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                c_eff = 0.0
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                light_eff =0.0
+            if self.root_file:
+                b_all_hist =        self.root_file.Get("b_all_pt_eta")
+                b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
+                c_all_hist =        self.root_file.Get("c_all_pt_eta")
+                c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
+                light_all_hist =    self.root_file.Get("light_all_pt_eta")
+                light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
+                # pT와 |eta|에 해당하는 bin 찾기
+                pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
+                eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
+                # b_all와 b_tagged 값 가져오기
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    b_eff = 0.0
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    c_eff = 0.0
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    light_eff =0.0
 
-            pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
-            # b_all와 b_tagged 값 가져오기
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                b_eff = 0.0
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                c_eff = 0.0
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                light_eff =0.0
+                pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
+                eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
+                # b_all와 b_tagged 값 가져오기
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    b_eff = 0.0
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    c_eff = 0.0
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    light_eff =0.0
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -684,26 +700,28 @@ class ExampleAnalysis(Module):
             if nBtag == 0 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                        jet_flavor_scale2 = 0.0
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_ele1 * valsf_ele2 * jet_jec * jet_b
+                    gen_weight *= valsf_ele1 * valsf_ele2 * jet_jec * jet_b
                 self.fill_histograms("ee_Zerotag",     jets, genjets,rho, electrons, met, gen_weight)
                 self.fill_histograms("combine_Zerotag",jets, genjets,rho, electrons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -711,29 +729,31 @@ class ExampleAnalysis(Module):
             if nBtag == 1 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    if jets[0].hadronFlavour == 5:
-                        jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
-                    if jets[1].hadronFlavour == 5:
-                        jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b
+                        jet_flavor_scale2 = 0.0
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        if jets[0].hadronFlavour == 5:
+                            jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                        if jets[1].hadronFlavour == 5:
+                            jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_ele1 * valsf_ele2 * jet_jec * jet_b
+                    gen_weight *= valsf_ele1 * valsf_ele2 * jet_jec * jet_b
                 self.fill_histograms("ee_Onetag",      jets, genjets,rho, electrons, met, gen_weight)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, electrons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -741,26 +761,28 @@ class ExampleAnalysis(Module):
             if nBtag == 2 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    jet_b = jet_jer1_b  * jet_jer2_b
+                        jet_flavor_scale2 = 0.0
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        jet_b = jet_jer1_b  * jet_jer2_b
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_ele1 * valsf_ele2 * jet_jec * jet_b
+                    gen_weight *= valsf_ele1 * valsf_ele2 * jet_jec * jet_b
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -779,44 +801,45 @@ class ExampleAnalysis(Module):
         
             if nDeltaR < 2:
                 return False
-            b_all_hist =        self.root_file.Get("b_all_pt_eta")
-            b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
-            c_all_hist =        self.root_file.Get("c_all_pt_eta")
-            c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
-            light_all_hist =    self.root_file.Get("light_all_pt_eta")
-            light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
-            # pT와 |eta|에 해당하는 bin 찾기
-            pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
-            # b_all와 b_tagged 값 가져오기
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                b_eff = 0.0
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                c_eff = 0.0
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                light_eff =0.0
+            if self.root_file:
+                b_all_hist =        self.root_file.Get("b_all_pt_eta")
+                b_tagged_hist =     self.root_file.Get("b_tagged_pt_eta")
+                c_all_hist =        self.root_file.Get("c_all_pt_eta")
+                c_tagged_hist =     self.root_file.Get("c_tagged_pt_eta")
+                light_all_hist =    self.root_file.Get("light_all_pt_eta")
+                light_tagged_hist = self.root_file.Get("light_tagged_pt_eta")
+                # pT와 |eta|에 해당하는 bin 찾기
+                pt_bin = b_all_hist.GetXaxis().FindBin(jets[0].pt)
+                eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[0].eta))
+                # b_all와 b_tagged 값 가져오기
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    b_eff = 0.0
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    c_eff = 0.0
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    light_eff =0.0
 
-            pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
-            eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
-            # b_all와 b_tagged 값 가져오기
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
-            if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                b_eff = 0.0
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
-            if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                c_eff = 0.0
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
-                light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
-            if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
-                light_eff =0.0
+                pt_bin = b_all_hist.GetXaxis().FindBin(jets[1].pt)
+                eta_bin = b_all_hist.GetYaxis().FindBin(abs(jets[1].eta))
+                # b_all와 b_tagged 값 가져오기
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    b_eff = b_tagged_hist.GetBinContent(pt_bin, eta_bin)/b_all_hist.GetBinContent(pt_bin, eta_bin)
+                if b_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    b_eff = 0.0
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    c_eff = c_tagged_hist.GetBinContent(pt_bin, eta_bin)/c_all_hist.GetBinContent(pt_bin, eta_bin)
+                if c_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    c_eff = 0.0
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) > 0:
+                    light_eff = light_tagged_hist.GetBinContent(pt_bin, eta_bin)/light_all_hist.GetBinContent(pt_bin, eta_bin)
+                if light_tagged_hist.GetBinContent(pt_bin, eta_bin) <= 0:
+                    light_eff =0.0
             if "MC" not in self.some_variable:
                 jet_jer1 = 1
                 jet_jer2 = 1
@@ -825,26 +848,28 @@ class ExampleAnalysis(Module):
             if nBtag == 0 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                        jet_flavor_scale2 = 0.0
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_ele * valsf_mu * jet_jec * jet_b
+                    gen_weight *=  valsf_ele * valsf_mu * jet_jec * jet_b
                 self.fill_histograms_for_emu("emu_Zerotag",     jets, genjets,rho, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Zerotag", jets, genjets,rho, electrons,muons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -852,29 +877,31 @@ class ExampleAnalysis(Module):
             if nBtag == 1 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    if jets[0].hadronFlavour == 5:
-                        jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
-                    if jets[1].hadronFlavour == 5:
-                        jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b
+                        jet_flavor_scale2 = 0.0
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        if jets[0].hadronFlavour == 5:
+                            jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
+                        if jets[1].hadronFlavour == 5:
+                            jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_ele * valsf_mu * jet_jec * jet_b
+                    gen_weight *=  valsf_ele * valsf_mu * jet_jec * jet_b
                 self.fill_histograms_for_emu("emu_Onetag",     jets, genjets,rho, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Onetag", jets, genjets,rho, electrons,muons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -882,26 +909,28 @@ class ExampleAnalysis(Module):
             if nBtag == 2 and nDeltaR == 2:
                 gen_weight1 = gen_weight
                 if "MC" in self.some_variable:
-                    jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                    jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
-                    jet_flavor_scale1 = 0.0
-                    if jets[0].hadronFlavour == 5:
-                        jet_flavor_scale1 = b_eff
-                    elif jets[0].hadronFlavour == 4:
-                        jet_flavor_scale1 = c_eff
-                    else:
-                        jet_flavor_scale1 = light_eff
+                    jet_b = 1.0
+                    if self.root_file:
+                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        jet_flavor_scale1 = 0.0
+                        if jets[0].hadronFlavour == 5:
+                            jet_flavor_scale1 = b_eff
+                        elif jets[0].hadronFlavour == 4:
+                            jet_flavor_scale1 = c_eff
+                        else:
+                            jet_flavor_scale1 = light_eff
 
-                    jet_flavor_scale2 = 0.0
-                    if jets[1].hadronFlavour == 5:
-                        jet_flavor_scale2 = b_eff
-                    elif jets[1].hadronFlavour == 4:
-                        jet_flavor_scale2 = c_eff
-                    else:
-                        jet_flavor_scale2 = light_eff
-                    jet_b = jet_jer1_b  * jet_jer2_b
+                        jet_flavor_scale2 = 0.0
+                        if jets[1].hadronFlavour == 5:
+                            jet_flavor_scale2 = b_eff
+                        elif jets[1].hadronFlavour == 4:
+                            jet_flavor_scale2 = c_eff
+                        else:
+                            jet_flavor_scale2 = light_eff
+                        jet_b = jet_jer1_b  * jet_jer2_b
                     jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
-                    gen_weight *= jet_jer1_b * valsf_ele * valsf_mu * jet_jec * jet_b
+                    gen_weight *= valsf_ele * valsf_mu * jet_jec * jet_b
                 self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight)
                 gen_weight = gen_weight1
@@ -947,24 +976,6 @@ def presel():
         output_name = f"output_correction/hist_{args.name}_{args.correction}_{args.target}.root"
     print(f"Running for {args.correction} with target {args.target}.")
     print(f"Mode configuration: {mode_dict}")
-#    correction_sets = ["muon_id", "muon_iso", "electron_id", "electron_reco", "jet_jer","plieup"]
-#    modes = ["up", "down"]
-#    if "MC" in args.name:
-#        for target_switch in correction_sets:
-#            for mode in modes:
-#                # 모든 스위치를 "nominal"로 설정
-#                mode_dict = {key: "nominal" for key in correction_sets}
-#                # 특정 스위치만 현재 mode로 설정
-#                mode_dict[target_switch] = mode
-#                
-#                # 출력 파일 이름에 현재 스위치 상태를 반영
-#                output_name = f"output/hist_{args.name}_{target_switch}_{mode}.root"
-#
-#                print(f"Running for {target_switch} in {mode} mode.")
-#                print(f"Mode configuration: {mode_dict}")
-#                p = PostProcessor(".", files, branchsel=None, modules=[
-#                                  ExampleAnalysis(some_variable , mode_dict)],jsonInput=json, noOut=True, histFileName= output_name, histDirName="plots" )
-#                p.run()
     p = PostProcessor(".", files, branchsel=None, modules=[
                       ExampleAnalysis(some_variable, mode_dict)],jsonInput=json, noOut=True, histFileName= output_name, histDirName="plots" )
     p.run()
