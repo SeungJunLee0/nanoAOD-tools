@@ -1,6 +1,6 @@
 # DeepTopwidth
 
-[ ] seperate the b_eff
+ - [ ] seperate the b_eff
 
 ## Useful Links:
 - [azh_coffe](https://github.com/GageDeZoort/azh_coffea/blob/main/README.md) : markdowon example
