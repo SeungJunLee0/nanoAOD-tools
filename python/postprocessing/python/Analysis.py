@@ -17,8 +17,6 @@ import math
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 
-
-
 class ExampleAnalysis(Module):
     def __init__(self,  some_variable=None, mode_dict=None):
         self.writeHistFile = True
