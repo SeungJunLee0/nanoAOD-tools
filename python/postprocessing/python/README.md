@@ -37,6 +37,14 @@ bash dashgo.sh
 ### After condor job Merge the output
 ```
 python3 merge_result.py
+
+cd output_all/
+
+python3 scale.py
+
+cp -r correction/*.root .
+
+python3 draw_now.py
 ```
 
 ### Find some nanoAODv9
