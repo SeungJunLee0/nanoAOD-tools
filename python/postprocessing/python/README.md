@@ -23,7 +23,6 @@ mkdir output_all
 
 ```
 ## Run the code 
----
 1 is for the mc,data, 3 is for the correction
 ```
 python3 set_the_condor_job.py
