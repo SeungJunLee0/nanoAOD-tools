@@ -29,7 +29,7 @@ class ExampleAnalysis(Module):
         self.evaluator_jet_jec = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz')
         self.evaluator_jet_b = _core.CorrectionSet.from_file('./../../../../../jsonpog-integration/POG/BTV/2018_UL/btagging.json.gz')
         self.histograms = {}  # ← 클래스 멤버(dict)로 선언
-        self.efficiency_file_path = "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms.root"
+        self.efficiency_file_path = "/cms/ldap_home/seungjun/CMSSW_13_0_10/src/PhysicsTools/NanoAODTools/python/postprocessing/python/efficiency_histograms_1.root"
 
         # 파일 존재 여부 확인
         if os.path.exists(self.efficiency_file_path):
@@ -549,8 +549,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0 
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -579,8 +585,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0 
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -611,8 +623,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0 
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -700,8 +718,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -729,8 +753,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -761,8 +791,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -848,8 +884,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -877,8 +919,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
@@ -909,8 +957,14 @@ class ExampleAnalysis(Module):
                 if "MC" in self.some_variable:
                     jet_b = 1.0
                     if self.root_file:
-                        jet_jer1_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
-                        jet_jer2_b = self.evaluator_jet_b["deepJet_incl"].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
+                        deep_jet_tag_1 = "deepJet_incl"
+                        if jets[0].hadronFlavour == 5 or jets[0].hadronFlavour == 4:
+                            deep_jet_tag_1 = "deepJet_comb"
+                        jet_jer1_b = self.evaluator_jet_b[deep_jet_tag_1].evaluate("central","T",int(jets[0].hadronFlavour),abs(jets[0].eta),jets[0].pt)
+                        deep_jet_tag_2 = "deepJet_incl"
+                        if jets[1].hadronFlavour == 5 or jets[1].hadronFlavour == 4:
+                            deep_jet_tag_2 = "deepJet_comb"
+                        jet_jer2_b = self.evaluator_jet_b[deep_jet_tag_2].evaluate("central","T",int(jets[1].hadronFlavour),abs(jets[1].eta),jets[1].pt)
                         jet_flavor_scale1 = 0.0
                         if jets[0].hadronFlavour == 5:
                             jet_flavor_scale1 = b_eff
