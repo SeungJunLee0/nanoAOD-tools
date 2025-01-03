@@ -23,10 +23,12 @@ mkdir output_all
 
 ```
 ### Run the code 
+Choice 1 is for the mc,data, 3 is for the correction
 ```
 python3 set_the_condor_job.py
 
 python3 excute_all.py 
+
 ```
 ### if you want specific dir(specific mc or data)
 ```
