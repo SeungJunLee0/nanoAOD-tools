@@ -29,7 +29,7 @@ python3 set_the_condor_job.py
 
 python3 excute_all.py 
 ```
-### if you want specific dir(specific mc or data)
+## if you want specific dir(specific mc or data)
 ```
 python3 mc_test.py
 
@@ -37,7 +37,7 @@ cd run_~~~~/HTCondor/
 
 bash dashgo.sh
 ```
-### After condor job Merge the output
+## After condor job Merge the output
 ```
 python3 merge_result.py
 
@@ -50,7 +50,7 @@ cp -r correction/*.root .
 python3 draw_now.py
 ```
 
-### Find some nanoAODv9
+## Find some nanoAODv9
 
 ```
 dasgoclient --query="dataset dataset=/*/*UL18*NanoAODv9*/NANOAOD*"
