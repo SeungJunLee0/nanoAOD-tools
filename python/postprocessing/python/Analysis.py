@@ -458,6 +458,7 @@ class ExampleAnalysis(Module):
                 jets[i].mass *=jet_jer1
 
 
+        jet_jec = 1.0
 
         if "mumu" in channel:
             jets = [j for j in jets if j.pt > 30 and abs(j.eta) < 2.4 and j.jetId >= 1]
@@ -574,7 +575,7 @@ class ExampleAnalysis(Module):
                             jet_flavor_scale2 = light_eff
                         jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
                     
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
                 self.fill_histograms("mumu_Zerotag",   jets, genjets,rho, muons, met, gen_weight)
                 self.fill_histograms("combine_Zerotag",jets, genjets,rho, muons, met, gen_weight)
@@ -612,7 +613,7 @@ class ExampleAnalysis(Module):
                             jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
                         if jets[1].hadronFlavour == 5:
                             jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b 
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
                 self.fill_histograms("mumu_Onetag",    jets, genjets,rho, muons, met, gen_weight)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, muons, met, gen_weight)
@@ -647,7 +648,7 @@ class ExampleAnalysis(Module):
                         else:
                             jet_flavor_scale2 = light_eff
                         jet_b = jet_jer1_b  * jet_jer2_b 
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_mu1 * valsf_mu2 * jet_jec * jet_b 
                 self.fill_histograms("mumu_Twotag",    jets, genjets,rho, muons, met, gen_weight)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, muons, met, gen_weight)
@@ -742,7 +743,7 @@ class ExampleAnalysis(Module):
                         else:
                             jet_flavor_scale2 = light_eff
                         jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_ele1 * valsf_ele2 * jet_jec * jet_b
                 self.fill_histograms("ee_Zerotag",     jets, genjets,rho, electrons, met, gen_weight)
                 self.fill_histograms("combine_Zerotag",jets, genjets,rho, electrons, met, gen_weight)
@@ -780,7 +781,7 @@ class ExampleAnalysis(Module):
                             jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
                         if jets[1].hadronFlavour == 5:
                             jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_ele1 * valsf_ele2 * jet_jec * jet_b
                 self.fill_histograms("ee_Onetag",      jets, genjets,rho, electrons, met, gen_weight)
                 self.fill_histograms("combine_Onetag", jets, genjets,rho, electrons, met, gen_weight)
@@ -815,7 +816,7 @@ class ExampleAnalysis(Module):
                         else:
                             jet_flavor_scale2 = light_eff
                         jet_b = jet_jer1_b  * jet_jer2_b
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_ele1 * valsf_ele2 * jet_jec * jet_b
                 self.fill_histograms("ee_Twotag",      jets, genjets,rho, electrons, met, gen_weight)
                 self.fill_histograms("combine_Twotag", jets, genjets,rho, electrons, met, gen_weight)
@@ -908,7 +909,7 @@ class ExampleAnalysis(Module):
                         else:
                             jet_flavor_scale2 = light_eff
                         jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *=  valsf_ele * valsf_mu * jet_jec * jet_b
                 self.fill_histograms_for_emu("emu_Zerotag",     jets, genjets,rho, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Zerotag", jets, genjets,rho, electrons,muons, met, gen_weight)
@@ -946,7 +947,7 @@ class ExampleAnalysis(Module):
                             jet_b = jet_jer1_b  * (1 - jet_jer2_b * jet_flavor_scale2 ) / (1 - jet_flavor_scale2 )
                         if jets[1].hadronFlavour == 5:
                             jet_b = (1 - jet_jer1_b * jet_flavor_scale1 ) / (1 - jet_flavor_scale1 ) * jet_jer2_b
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *=  valsf_ele * valsf_mu * jet_jec * jet_b
                 self.fill_histograms_for_emu("emu_Onetag",     jets, genjets,rho, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Onetag", jets, genjets,rho, electrons,muons, met, gen_weight)
@@ -981,7 +982,7 @@ class ExampleAnalysis(Module):
                         else:
                             jet_flavor_scale2 = light_eff
                         jet_b = jet_jer1_b  * jet_jer2_b
-                    jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
+                    #jet_jec = self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[0].eta,jets[0].pt) * self.evaluator_jet_jer["Summer19UL18_V5_MC_Total_AK4PFchs"].evaluate(jets[1].eta,jets[1].pt)
                     gen_weight *= valsf_ele * valsf_mu * jet_jec * jet_b
                 self.fill_histograms_for_emu("emu_Twotag",     jets, genjets,rho, electrons,muons, met, gen_weight)
                 self.fill_histograms_for_emu("combine_Twotag", jets, genjets,rho, electrons,muons, met, gen_weight)
