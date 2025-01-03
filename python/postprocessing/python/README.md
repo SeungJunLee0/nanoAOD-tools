@@ -17,7 +17,9 @@ git clone https://github.com/SeungJunLee0/nanoAOD-tools.git  PhysicsTools/NanoAO
 
 cd PhysicsTools/NanoAODTools/python/postprocessing/python
 
-mkdir output
+mkdir output_nominal
+
+mkdir output_all
 
 ```
 ### Run the code 
