@@ -23,7 +23,7 @@ mkdir output_all
 
 ```
 ## Running analysis 
-1 is for the mc,data, 3 is for the correction
+### run the mc,data or correction(mc,data = 1 ,correction = 3 )
 ```
 python3 set_the_condor_job.py
 
